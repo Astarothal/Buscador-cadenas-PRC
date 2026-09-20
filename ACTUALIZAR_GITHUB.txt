@@ -1,0 +1,14 @@
+PRC v4 CORREGIDO
+El índice CNX1 va integrado en index.html, por lo que ya no depende de cargar index.json.
+
+Para actualizar:
+- Reemplaza index.html
+- Reemplaza sw.js
+- Conserva/sube las carpetas prenda y paqueteria
+- Commit changes
+- Espera al despliegue de GitHub Pages
+
+Pruebas:
+CNX1_GG_03_02_04_A
+03.90.09.A
+PER01

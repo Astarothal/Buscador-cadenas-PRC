@@ -1,0 +1,13 @@
+PRC v6 HD
+Los planos se sirven como JPG HD de 4200 px.
+
+SUBE TODO EL CONTENIDO DEL ZIP A GITHUB, conservando carpetas:
+- index.html
+- sw.js
+- prenda/layout/*.jpg
+- paqueteria/cnx1/*.jpg
+- paqueteria/cnx1/index.json
+
+Pruebas:
+Prenda: 229
+Paquetería: CNX1_GG_03_02_04_A

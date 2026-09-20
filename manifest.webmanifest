@@ -1,0 +1,23 @@
+{
+  "name": "Buscador PRC",
+  "short_name": "PRC",
+  "description": "Buscador visual PRC y Paquetería CNX1 con layouts vectoriales y QR.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#10141a",
+  "theme_color": "#10141a",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

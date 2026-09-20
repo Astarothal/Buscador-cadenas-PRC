@@ -1,21 +1,28 @@
-CAMBIO DE IDENTIDAD
+Buscador Saldaña00 — Icono profesional
 
-Nuevo nombre: Buscador Saldaña00
-Nuevo icono: lupa con AMS.
+Se ha integrado el nuevo diseño en:
+- Icono PWA 512x512
+- Icono PWA 192x192
+- Icono iPhone 180x180
+- Favicon 32x32
 
-Para GitHub sustituye:
+Se mantiene la versión HD del mapa de Prenda y la búsqueda/QR de Paquetería.
+
+PARA GITHUB
+Sustituye:
 - index.html
-- manifest.webmanifest
-- icon.svg
-- apple-touch-icon.png
 - sw.js
+- manifest.webmanifest
+- apple-touch-icon.png
+- icon-512.png
+Y añade:
+- icon-192.png
+- favicon.png
 
-La carpeta paqueteria/ no cambia.
+Después espera a que GitHub Pages termine el despliegue.
 
-IMPORTANTE EN IPHONE:
-Si ya tenías la web añadida a la pantalla de inicio, iOS puede conservar el nombre/icono antiguo.
-Después de desplegar la actualización:
-1. Abre la web actualizada en Safari.
-2. Elimina de la pantalla de inicio el acceso antiguo si sigue mostrando PRC.
-3. En Safari: Compartir → Añadir a pantalla de inicio.
-Así aparecerán el nuevo nombre y el icono de lupa con AMS.
+IPHONE
+Para que iOS cambie el icono:
+1. Elimina Buscador Saldaña00 de la pantalla de inicio.
+2. Abre la web actualizada en Safari.
+3. Compartir > Añadir a pantalla de inicio.

@@ -43,3 +43,11 @@ ACTUALIZACIÓN DPL2 — 20/09/2026
 - Planos WebP HD (2620 px de ancho).
 - Total actual: 55 layouts entre CNX1, CNX2 y DPL2.
 - Caché PWA: v6-dpl2.
+
+
+ACTUALIZACIÓN EMP1
+- Añadido PLC EMP1 (planos DEMATIC identificados internamente como EMP).
+- Layouts añadidos: 31.
+- Posiciones eléctricas distintas indexadas: 145.
+- Planos en WebP HD y búsqueda visual por PER/posición.
+- Caché PWA: v7-emp1.

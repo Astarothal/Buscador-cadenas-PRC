@@ -1,14 +1,14 @@
-ACTUALIZACIÓN v3
+PRC v4 CORREGIDO
+El índice CNX1 va integrado en index.html, por lo que ya no depende de cargar index.json.
 
-1. En GitHub abre tu repositorio.
-2. Add file > Upload files.
-3. Sube TODO el contenido de este ZIP manteniendo las carpetas prenda/layout y paqueteria/cnx1.
-4. Confirma Commit changes.
-5. Espera 1-2 minutos a GitHub Pages.
-6. En iPhone, cierra completamente la app PRC y vuelve a abrirla. Si siguiera la versión antigua, abre la URL en Safari una vez y recarga.
+Para actualizar:
+- Reemplaza index.html
+- Reemplaza sw.js
+- Conserva/sube las carpetas prenda y paqueteria
+- Commit changes
+- Espera al despliegue de GitHub Pages
 
-CAMBIOS:
-- Prenda Colgada ahora usa SVG vectorial de las 16 páginas: zoom sin pixelado.
-- Paquetería acepta nombres completos como CNX1_GG_03_02_04_A.
-- Ese ejemplo se normaliza a 03.02.04.A, localizado en PER16, página 941 del esquema, y se marca en el layout.
-- Caché actualizada a prc-v3.
+Pruebas:
+CNX1_GG_03_02_04_A
+03.90.09.A
+PER01

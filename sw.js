@@ -1,5 +1,5 @@
-const CACHE='prc-v3';
-const CORE=['./','./index.html','./manifest.webmanifest','./icon.svg','./apple-touch-icon.png','./paqueteria/cnx1/index.json','./prenda/layout/page_01.svg'];
+const CACHE='prc-v4';
+const CORE=['./','./index.html','./manifest.webmanifest','./icon.svg','./apple-touch-icon.png','./prenda/layout/page_01.svg'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)));
   self.skipWaiting();

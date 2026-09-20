@@ -1,0 +1,21 @@
+CAMBIO DE IDENTIDAD
+
+Nuevo nombre: Buscador Saldaña00
+Nuevo icono: lupa con AMS.
+
+Para GitHub sustituye:
+- index.html
+- manifest.webmanifest
+- icon.svg
+- apple-touch-icon.png
+- sw.js
+
+La carpeta paqueteria/ no cambia.
+
+IMPORTANTE EN IPHONE:
+Si ya tenías la web añadida a la pantalla de inicio, iOS puede conservar el nombre/icono antiguo.
+Después de desplegar la actualización:
+1. Abre la web actualizada en Safari.
+2. Elimina de la pantalla de inicio el acceso antiguo si sigue mostrando PRC.
+3. En Safari: Compartir → Añadir a pantalla de inicio.
+Así aparecerán el nuevo nombre y el icono de lupa con AMS.

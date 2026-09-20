@@ -138,6 +138,14 @@ flex:0 0 24px;appearance:none;-webkit-appearance:none;
 .paq-select.paq-compact{height:29px;padding:2px 20px 2px 7px;border-radius:7px;font-size:11px;line-height:1.1}
 @media(max-width:430px){.paq-compactbar{gap:4px}.paq-select.paq-compact{font-size:10px;padding-left:5px}}
 
+
+.garment-rel{margin:6px 0 7px;padding:7px 9px;border:1px solid var(--border);border-radius:9px;background:var(--panel)}
+.gr-title{font-size:11px;color:var(--muted);font-weight:700;margin-bottom:3px}
+.gr-route{font-size:17px;font-weight:900;letter-spacing:.02em}
+.gr-desc{font-size:11px;color:var(--muted);margin-top:2px;overflow-wrap:anywhere}
+.gr-scroll{display:flex;gap:5px;overflow-x:auto;padding:1px 0}
+.gr-bp{flex:0 0 auto;border:1px solid var(--border);background:var(--soft);color:var(--text);border-radius:999px;padding:5px 8px;font-size:11px}
+
 </style>
 
 <link rel="manifest" href="./manifest.webmanifest">
@@ -155,6 +163,7 @@ flex:0 0 24px;appearance:none;-webkit-appearance:none;
 <div class="types"><button type="button" class="all active" data-type="all">Todos</button><button type="button" class="chain" data-type="chain">Cadenas</button><button type="button" class="bypass" data-type="bypass">Bypass</button></div>
 <p id="layoutStatus" class="status">Cadena = “Pos. XXX” · Bypass = número dentro de círculo.</p>
 <div id="layoutHits" class="hits"></div>
+<div id="garmentRelation" class="garment-rel" style="display:none"></div>
 <div id="layoutViewer" class="viewer">
   <div class="head">
     <div class="head-top"><div><div id="layoutTitle"></div><div id="layoutCtx" class="ctx"></div></div></div>
@@ -230,8 +239,40 @@ function qrMarkup(r){const n=r.s,q=4,size=n+q*2,a=bits(r.q,n*n);let d='',k=0;for
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c])}
 function normNum(v){const m=String(v||'').match(/\d+/);return m?m[0]:''}
 
+const GARMENT_RELATIONS={"bypass":{"501":{"from":"224","to":"223"},"566":{"from":"240","to":"222"},"940":{"from":"256","to":"251"},"503":{"from":"224","to":"265"},"567":{"from":"225","to":"221"},"942":{"from":"258","to":"256"},"504":{"from":"278","to":"265"},"568":{"from":"221","to":"225"},"943":{"from":"276","to":"258"},"505":{"from":"261","to":"265"},"569":{"from":"222","to":"239"},"944":{"from":"276","to":"261"},"508":{"from":"256","to":"265"},"570":{"from":"228","to":"270"},"945":{"from":"278","to":"274"},"509":{"from":"223","to":"266"},"571":{"from":"231","to":"268"},"941":{"from":"256","to":"258"},"510":{"from":"267","to":"266"},"572":{"from":"266","to":"267"},"949":{"from":"255","to":"254"},"511":{"from":"267","to":"268"},"574":{"from":"238","to":"232"},"950":{"from":"259","to":"255"},"512":{"from":"268","to":"256"},"575":{"from":"232","to":"238"},"951":{"from":"259","to":"257"},"513":{"from":"268","to":"265"},"576":{"from":"226","to":"229"},"952":{"from":"260","to":"257"},"514":{"from":"268","to":"275"},"577":{"from":"227","to":"230"},"953":{"from":"278","to":"277"},"515":{"from":"277","to":"268"},"901":{"from":"216","to":"271"},"954":{"from":"RET1","to":"256"},"516":{"from":"267","to":"278"},"902":{"from":"217","to":"251"},"955":{"from":"277","to":"273"},"519":{"from":"221","to":"222"},"903":{"from":"217","to":"271"},"957":{"from":"255","to":"257"},"523":{"from":"227","to":"222"},"904":{"from":"217","to":"273"},"958":{"from":"257","to":"255"},"525":{"from":"227","to":"226"},"905":{"from":"216","to":"273"},"959":{"from":"262","to":"260"},"526":{"from":"222","to":"227"},"906":{"from":"254","to":"218"},"960":{"from":"262","to":"257"},"527":{"from":"232","to":"224"},"907":{"from":"255","to":"218"},"961":{"from":"257","to":"262"},"529":{"from":"270","to":"256"},"908":{"from":"216","to":"217"},"962":{"from":"278","to":"262"},"530":{"from":"268","to":"256"},"909":{"from":"252","to":"254"},"963":{"from":"262","to":"277"},"531":{"from":"268","to":"266"},"910":{"from":"253","to":"254"},"964":{"from":"272","to":"276"},"532":{"from":"232","to":"226"},"911":{"from":"253","to":"255"},"965":{"from":"275","to":"271"},"533":{"from":"232","to":"227"},"912":{"from":"254","to":"255"},"966":{"from":"276","to":"272"},"534":{"from":"226","to":"232"},"913":{"from":"272","to":"251"},"967":{"from":"274","to":"278"},"535":{"from":"226","to":"232"},"914":{"from":"274","to":"251"},"968":{"from":"273","to":"277"},"536":{"from":"229","to":"226"},"915":{"from":"219","to":"216"},"969":{"from":"276","to":"278"},"537":{"from":"227","to":"230"},"916":{"from":"216","to":"219"},"970":{"from":"278","to":"276"},"541":{"from":"230","to":"229"},"917":{"from":"219","to":"220"},"971":{"from":"222","to":"262"},"543":{"from":"229","to":"230"},"918":{"from":"223","to":"219"},"973":{"from":"251","to":"256"},"546":{"from":"228","to":"229"},"919":{"from":"219","to":"223"},"975":{"from":"218","to":"221"},"547":{"from":"269","to":"229"},"920":{"from":"223","to":"224"},"976":{"from":"221","to":"218"},"548":{"from":"279","to":"230"},"922":{"from":"217","to":"256"},"977":{"from":"271","to":"275"},"549":{"from":"231","to":"230"},"923":{"from":"220","to":"275"},"978":{"from":"219","to":"277"},"550":{"from":"229","to":"285"},"924":{"from":"220","to":"256"},"979":{"from":"276","to":"275"},"551":{"from":"230","to":"285"},"925":{"from":"224","to":"275"},"980":{"from":"272","to":"271"},"552":{"from":"285","to":"286"},"926":{"from":"224","to":"261"},"981":{"from":"274","to":"273"},"553":{"from":"286","to":"285"},"927":{"from":"220","to":"258"},"982":{"from":"219","to":"275"},"554":{"from":"230","to":"286"},"928":{"from":"223","to":"264"},"983":{"from":"223","to":"275"},"555":{"from":"229","to":"286"},"929":{"from":"217","to":"222"},"984":{"from":"222","to":"277"},"556":{"from":"287","to":"228"},"930":{"from":"220","to":"216"},"985":{"from":"224","to":"277"},"557":{"from":"287","to":"231"},"931":{"from":"220","to":"222"},"986":{"from":"222","to":"217"},"558":{"from":"287","to":"288"},"932":{"from":"222","to":"220"},"987":{"from":"261","to":"256"},"559":{"from":"288","to":"287"},"933":{"from":"224","to":"222"},"988":{"from":"261","to":"258"},"560":{"from":"288","to":"231"},"934":{"from":"222","to":"224"},"989":{"from":"278","to":"261"},"561":{"from":"288","to":"228"},"935":{"from":"263","to":"268"},"992":{"from":"263","to":"225"},"562":{"from":"238","to":"227"},"936":{"from":"257","to":"221"},"993":{"from":"222","to":"264"},"563":{"from":"238","to":"240"},"937":{"from":"272","to":"274"},"994":{"from":"262","to":"263"},"564":{"from":"238","to":"239"},"938":{"from":"274","to":"272"},"995":{"from":"256","to":"RET1"},"565":{"from":"230","to":"227"},"939":{"from":"272","to":"256"},"996":{"from":"263","to":"276"},"997":{"from":"264","to":"263"}},"chains":{"263":"Salida STOCK 5","217":"Picking Pre-1","264":"Entrada STOCK 5","218":"reparto Export 1","265":"Colectora CLA6","266":"Entrada STOCK 6","220":"Picking Pre-2","267":"Salida STOCK 6","221":"Reparto Export 2","222":"Colectora Pre-Repartos","271":"Entrada STOCK 1","223":"Muelles 13 y 14","272":"Picking STOCK 1","224":"Pre-3","273":"Entrada STOCK 2","225":"Reparto Export 3","274":"Picking STOCK 2","227":"Entrada Splitter II","275":"Entrada STOCK 4","226":"Entrada Splitter I","276":"Picking STOCK 4","229":"Salida Splitter I","277":"Entrada STOCK 3","230":"Salida Splitter II","278":"Picking STOCK 3","991":"mini 510-520","232":"Indock 4","992":"mini 710","238":"Indock 5","993":"mini 520","239":"Salida GIB-5","240":"Entrada GIB-5","279":"Salida Pick II","269":"Salida Pick I","285":"Loop Entr. Silo Fase I","286":"Loop Entr. Silo Fase II","287":"Loop Sal. Silo Fase I","288":"Loop Sal. Silo Fase II","251":"Colectora CLA 1 y CLA 2","252":"Evacuación CLA 1","253":"Evacuación CLA 2","254":"Reparto Packing 1","255":"Reparto Packing 2","256":"Colectora Fondo CLAS","257":"Reparto Packing 3","258":"Colectora CLA 3 y CLA 4","259":"Evacuación CLA 3","260":"Evacuación CLA 4","261":"Cadena ZCOM","262":"Reparto packing 4"}};
+
+
+function garmentChainLabel(n){return GARMENT_RELATIONS.chains[String(n)]||''}
+function garmentRelatedBypasses(chain){
+  chain=String(chain);
+  return Object.entries(GARMENT_RELATIONS.bypass).filter(([bp,r])=>r.from===chain||r.to===chain)
+    .sort((a,b)=>Number(a[0])-Number(b[0]));
+}
+function renderGarmentRelation(key,h){
+  const box=$('garmentRelation'); if(!box)return;
+  box.style.display='none'; box.innerHTML='';
+  if(h.type==='bypass'){
+    const r=GARMENT_RELATIONS.bypass[String(key)]; if(!r)return;
+    const a=garmentChainLabel(r.from),b=garmentChainLabel(r.to);
+    box.innerHTML='<div class="gr-title">BYPASS '+esc(key)+'</div><div class="gr-route">'+esc(r.from)+' → '+esc(r.to)+'</div>'+
+      ((a||b)?'<div class="gr-desc">'+esc(a||r.from)+' → '+esc(b||r.to)+'</div>':'');
+    box.style.display='block'; return;
+  }
+  if(h.type==='chain'){
+    const rel=garmentRelatedBypasses(key); if(!rel.length)return;
+    box.innerHTML='<div class="gr-title">Bypass relacionados ('+rel.length+')</div><div class="gr-scroll">'+
+      rel.map(([bp,r])=>'<button type="button" class="gr-bp" data-bp="'+esc(bp)+'">'+
+      (r.from===String(key)?esc(bp)+' → '+esc(r.to):esc(bp)+' ← '+esc(r.from))+'</button>').join('')+'</div>';
+    box.style.display='block';
+    box.querySelectorAll('[data-bp]').forEach(btn=>btn.onclick=()=>{
+      $('layoutQ').value=btn.dataset.bp; mode='bypass';
+      document.querySelectorAll('.types button').forEach(x=>x.classList.toggle('active',x.dataset.type==='bypass'));
+      searchLayout();
+    });
+  }
+}
 function searchLayout(){
-  const key=normNum($('layoutQ').value);$('layoutQ').value=key;$('layoutHits').innerHTML='';$('asset').classList.remove('show');
+  const key=normNum($('layoutQ').value);$('layoutQ').value=key;$('layoutHits').innerHTML='';$('asset').classList.remove('show');$('garmentRelation').style.display='none';
   if(!key){$('layoutStatus').textContent='Escribe una cadena o bypass.';return}
   let arr=[];
   if(mode!=='bypass')(LAYOUT.chains[key]||[]).forEach(h=>arr.push(Object.assign({},h,{type:'chain'})));
@@ -246,7 +287,7 @@ function selectLayout(key,h,b){
   active={key:key,h:h};zoom=h.type==='chain'?3.0:3.4;
   $('layoutTitle').innerHTML='<span class="badge '+h.type+'">'+(h.type==='chain'?'CADENA':'BYPASS')+'</span> '+esc(key);
   $('layoutCtx').textContent=h.type==='chain'?(h.context||'Pos. '+key):'Número '+key+' dentro de círculo';
-  $('layoutImg').src=pageData(h.page);$('layoutImg').onload=renderLayout;$('layoutViewer').style.display='block';renderAsset(key,h);
+  $('layoutImg').src=pageData(h.page);$('layoutImg').onload=renderLayout;$('layoutViewer').style.display='block';renderAsset(key,h);renderGarmentRelation(key,h);
 }
 function renderLayout(){
   if(!active)return;const p=LAYOUT.pages[active.h.page-1],h=active.h,bw=$('crop').clientWidth,s=bw/p.w;

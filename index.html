@@ -83,6 +83,12 @@ input{flex:1;min-width:0;min-height:48px;border:1px solid var(--border);border-r
 .paq-sheetbar button.active{background:var(--blue);color:#fff;border-color:var(--blue)}
 .paq-title{font-weight:800}.paq-note{font-size:12px;color:var(--muted);margin-top:3px}
 @media(max-width:600px){.tab{font-size:11px;padding:0 4px}.paq-crop{min-height:65vw}}
+
+.paq-qr-head{text-align:center;font-weight:800;font-size:15px;margin-bottom:8px}
+.paq-qr-list{display:grid;gap:8px}
+.paq-qr-card{border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--panel)}
+.paq-qr-card .asset-code{font-size:28px;text-align:center}
+.paq-qr-card .asset-sub{text-align:center}
 </style>
 
 <link rel="manifest" href="./manifest.webmanifest">
@@ -139,6 +145,9 @@ input{flex:1;min-width:0;min-height:48px;border:1px solid var(--border);border-r
 <div id="paqViewer" class="paq-viewer"><div class="paq-head"><div id="paqTitle" class="paq-title"></div><div id="paqCtx" class="paq-note"></div>
 <div class="paq-controls"><button type="button" id="paqZone">Zona</button><button type="button" id="paqPage">Página</button><button type="button" id="paqMinus">−</button><button type="button" id="paqPlus">+</button></div></div>
 <div id="paqCrop" class="paq-crop"><div id="paqCanvas" class="paq-canvas"><img id="paqImg" alt="Layout de paquetería"><div id="paqMark" class="paq-mark" style="display:none"></div></div></div></div>
+  <div id="paqQr" class="asset" style="display:none;margin-top:10px">
+    <div id="paqQrContent"></div>
+  </div>
 </section>
 
 </main>
@@ -291,7 +300,45 @@ async function searchPaq(){
   }
   const first=hits[0];showPaq(first,first.position||null,null);
 }
-function showPaq(h,pos,btn){if(btn){Array.from($('paqSheets').children).forEach(x=>x.classList.remove('active'));btn.classList.add('active')}paqActive={h,pos};paqZoom=pos?2.4:1.45;$('paqTitle').textContent=h.per+' · Layout '+h.layout_sheet+'/'+h.layout_total;$('paqCtx').textContent='Página '+h.pdf_page+(pos?' · Posición '+pos:'');$('paqImg').src='./'+h.image;$('paqImg').onload=renderPaq;$('paqViewer').style.display='block'}
+
+function paqAssetMatches(per,pos){
+  const source=(fullAssets&&fullAssets.length)?fullAssets:MAPPED_ASSETS;
+  const perKey=String(per||'').toUpperCase();
+  const posKey=String(pos||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  let scored=[];
+  for(const r of source){
+    const hay=(String(r.e||'')+' '+String(r.l||'')+' '+String(r.c||'')).toUpperCase();
+    const compact=hay.replace(/[^A-Z0-9]/g,'');
+    let score=0;
+    if(posKey && compact.includes(posKey)) score+=100;
+    if(hay.includes(perKey)) score+=20;
+    if(score) scored.push({r,score});
+  }
+  scored.sort((a,b)=>b.score-a.score);
+  const seen=new Set(),out=[];
+  for(const x of scored){if(!seen.has(x.r.c)){seen.add(x.r.c);out.push(x.r)}if(out.length>=12)break}
+  return out;
+}
+async function renderPaqQR(per,pos){
+  const box=$('paqQr'),content=$('paqQrContent');
+  if(!box||!content)return;
+  box.style.display='block';
+  content.innerHTML='<div class="status">Buscando QR relacionado…</div>';
+  let rows=paqAssetMatches(per,pos);
+  if(!fullAssets){
+    try{await loadFullAssets()}catch(e){}
+    rows=paqAssetMatches(per,pos);
+  }
+  if(!rows.length){
+    content.innerHTML='<div class="status">No se ha encontrado un QR relacionado en la base de activos.</div>';
+    return;
+  }
+  content.innerHTML='<div class="paq-qr-head">QR relacionado</div><div class="paq-qr-list">'+rows.map(r=>
+    '<div class="paq-qr-card"><div class="asset-title">'+esc(r.e)+'</div><div class="asset-sub">'+esc(r.l)+'</div><div class="asset-code">'+esc(r.c)+'</div><div class="qrbox">'+qrMarkup(r)+'</div></div>'
+  ).join('')+'</div>';
+}
+
+function showPaq(h,pos,btn){if(btn){Array.from($('paqSheets').children).forEach(x=>x.classList.remove('active'));btn.classList.add('active')}paqActive={h,pos};paqZoom=pos?2.4:1.45;$('paqTitle').textContent=h.per+' · Layout '+h.layout_sheet+'/'+h.layout_total;$('paqCtx').textContent='Página '+h.pdf_page+(pos?' · Posición '+pos:'');$('paqImg').src='./'+h.image;$('paqImg').onload=renderPaq;$('paqViewer').style.display='block';renderPaqQR(h.per,pos).catch(()=>{})}
 function renderPaq(){if(!paqActive)return;const h=paqActive.h,crop=$('paqCrop'),bw=crop.clientWidth,img=$('paqImg'),pw=h.page_w||img.naturalWidth,ph=h.page_h||img.naturalHeight,s=bw/pw;$('paqCanvas').style.width=bw+'px';$('paqCanvas').style.height=(ph*s)+'px';img.style.width=bw+'px';const mark=$('paqMark'),boxes=h.boxes||[];if(paqActive.pos&&boxes.length){const b=boxes[0],pad=7;mark.style.display='block';mark.style.left=(b[0]*s-pad)+'px';mark.style.top=(b[1]*s-pad)+'px';mark.style.width=((b[2]-b[0])*s+pad*2)+'px';mark.style.height=((b[3]-b[1])*s+pad*2)+'px'}else mark.style.display='none';applyPaqZoom()}
 function applyPaqZoom(){$('paqCanvas').style.transform='scale('+paqZoom+')';centerPaq()}
 function centerPaq(){if(!paqActive)return;const crop=$('paqCrop'),h=paqActive.h,boxes=h.boxes||[];if(paqActive.pos&&boxes.length){const s=crop.clientWidth/(h.page_w||1),b=boxes[0],cx=((b[0]+b[2])/2)*s*paqZoom,cy=((b[1]+b[3])/2)*s*paqZoom;crop.scrollLeft=Math.max(0,cx-crop.clientWidth/2);crop.scrollTop=Math.max(0,cy-crop.clientHeight/2)}else{crop.scrollLeft=0;crop.scrollTop=0}}

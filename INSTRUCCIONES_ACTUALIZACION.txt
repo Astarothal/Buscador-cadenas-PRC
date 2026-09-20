@@ -51,3 +51,12 @@ ACTUALIZACIÓN EMP1
 - Posiciones eléctricas distintas indexadas: 145.
 - Planos en WebP HD y búsqueda visual por PER/posición.
 - Caché PWA: v7-emp1.
+
+
+ACTUALIZACIÓN EMP2 — 20/09/2026 18:55
+- Añadido EMP2 desde 4 partes PDF.
+- Layouts LYT añadidos: 31.
+- Posiciones eléctricas distintas indexadas: 161.
+- Planos WebP HD y marcado visual.
+- Ayuda actualizada con EMP2 y fecha de despliegue.
+- Caché PWA: v9-emp2.

@@ -1,10 +1,21 @@
-Buscador Saldaña00 — QR en Paquetería
+CAMBIO DE IDENTIDAD
 
-Al abrir un resultado de Paquetería, la app busca en la misma base OT/QR que ya usa la pestaña de Prenda y muestra debajo del layout el número y su QR relacionado.
+Nuevo nombre: Buscador Saldaña00
+Nuevo icono: lupa con AMS.
 
-Para actualizar GitHub:
-- sustituye index.html
-- sustituye sw.js
-La carpeta paqueteria y los iconos no cambian.
+Para GitHub sustituye:
+- index.html
+- manifest.webmanifest
+- icon.svg
+- apple-touch-icon.png
+- sw.js
 
-Nota: la relación QR se obtiene buscando el PER (PER01, PER02, etc.) dentro de la base OT existente. Si un PER tiene varias coincidencias, se muestran varias tarjetas QR para no inventar una relación.
+La carpeta paqueteria/ no cambia.
+
+IMPORTANTE EN IPHONE:
+Si ya tenías la web añadida a la pantalla de inicio, iOS puede conservar el nombre/icono antiguo.
+Después de desplegar la actualización:
+1. Abre la web actualizada en Safari.
+2. Elimina de la pantalla de inicio el acceso antiguo si sigue mostrando PRC.
+3. En Safari: Compartir → Añadir a pantalla de inicio.
+Así aparecerán el nuevo nombre y el icono de lupa con AMS.

@@ -83,12 +83,6 @@ input{flex:1;min-width:0;min-height:48px;border:1px solid var(--border);border-r
 .paq-sheetbar button.active{background:var(--blue);color:#fff;border-color:var(--blue)}
 .paq-title{font-weight:800}.paq-note{font-size:12px;color:var(--muted);margin-top:3px}
 @media(max-width:600px){.tab{font-size:11px;padding:0 4px}.paq-crop{min-height:65vw}}
-
-.paq-qr-head{text-align:center;font-weight:800;font-size:15px;margin-bottom:8px}
-.paq-qr-list{display:grid;gap:8px}
-.paq-qr-card{border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--panel)}
-.paq-qr-card .asset-code{font-size:28px;text-align:center}
-.paq-qr-card .asset-sub{text-align:center}
 </style>
 
 <link rel="manifest" href="./manifest.webmanifest">
@@ -252,7 +246,7 @@ function compactPaq(v){return normPaq(v).replace(/[^A-Z0-9]/g,'')}
 async function searchPaq(){
   await loadPaq();if(!PAQ)return;
   const raw=normPaq($('paqQ').value),q=compactPaq(raw);
-  $('paqResults').innerHTML='';$('paqSheets').innerHTML='';$('paqViewer').style.display='none';$('paqQr').style.display='none';
+  $('paqResults').innerHTML='';$('paqSheets').innerHTML='';$('paqViewer').style.display='none';
   if(!q){$('paqStatus').textContent='Escribe parte de un PER o de una posición.';return}
   let hits=[],seen=new Set(),numericOnly=/^\d+$/.test(q);
 
@@ -297,38 +291,7 @@ async function searchPaq(){
   }
   const first=hits[0];showPaq(first,first.position||null,null);
 }
-
-function paqAssetMatches(per){
-  const key=String(per||'').toUpperCase();
-  // MAPPED_ASSETS is immediately available; the full database may be loaded later.
-  const source=(fullAssets&&fullAssets.length)?fullAssets:MAPPED_ASSETS;
-  let matches=source.filter(r=>{
-    const hay=(String(r.e||'')+' '+String(r.l||'')+' '+String(r.c||'')).toUpperCase();
-    return hay.includes(key);
-  });
-  // Avoid duplicate QR codes.
-  const seen=new Set();
-  return matches.filter(r=>{if(seen.has(r.c))return false;seen.add(r.c);return true}).slice(0,12);
-}
-async function renderPaqQR(per){
-  const box=$('paqQr'),content=$('paqQrContent');
-  box.style.display='block';
-  content.innerHTML='<div class="status">Buscando QR relacionado con '+esc(per)+'…</div>';
-  // Try immediate mapped assets first, then load the complete OT database for the best match.
-  let rows=paqAssetMatches(per);
-  if(!fullAssets){
-    try{await loadFullAssets();rows=paqAssetMatches(per)}catch(e){}
-  }
-  if(!rows.length){
-    content.innerHTML='<div class="status">No se ha encontrado un QR relacionado con '+esc(per)+' en la base OT.</div>';
-    return;
-  }
-  content.innerHTML='<div class="paq-qr-head">QR relacionado · '+esc(per)+'</div><div class="paq-qr-list">'+rows.map(r=>
-    '<div class="paq-qr-card"><div class="asset-title">'+esc(r.e)+'</div><div class="asset-sub">'+esc(r.l)+'</div><div class="asset-code">'+esc(r.c)+'</div><div class="qrbox">'+qrMarkup(r)+'</div></div>'
-  ).join('')+'</div>';
-}
-
-function showPaq(h,pos,btn){if(btn){Array.from($('paqSheets').children).forEach(x=>x.classList.remove('active'));btn.classList.add('active')}paqActive={h,pos};paqZoom=pos?2.4:1.45;renderPaqQR(h.per);$('paqTitle').textContent=h.per+' · Layout '+h.layout_sheet+'/'+h.layout_total;$('paqCtx').textContent='Página '+h.pdf_page+(pos?' · Posición '+pos:'');$('paqImg').src='./'+h.image;$('paqImg').onload=renderPaq;$('paqViewer').style.display='block'}
+function showPaq(h,pos,btn){if(btn){Array.from($('paqSheets').children).forEach(x=>x.classList.remove('active'));btn.classList.add('active')}paqActive={h,pos};paqZoom=pos?2.4:1.45;$('paqTitle').textContent=h.per+' · Layout '+h.layout_sheet+'/'+h.layout_total;$('paqCtx').textContent='Página '+h.pdf_page+(pos?' · Posición '+pos:'');$('paqImg').src='./'+h.image;$('paqImg').onload=renderPaq;$('paqViewer').style.display='block'}
 function renderPaq(){if(!paqActive)return;const h=paqActive.h,crop=$('paqCrop'),bw=crop.clientWidth,img=$('paqImg'),pw=h.page_w||img.naturalWidth,ph=h.page_h||img.naturalHeight,s=bw/pw;$('paqCanvas').style.width=bw+'px';$('paqCanvas').style.height=(ph*s)+'px';img.style.width=bw+'px';const mark=$('paqMark'),boxes=h.boxes||[];if(paqActive.pos&&boxes.length){const b=boxes[0],pad=7;mark.style.display='block';mark.style.left=(b[0]*s-pad)+'px';mark.style.top=(b[1]*s-pad)+'px';mark.style.width=((b[2]-b[0])*s+pad*2)+'px';mark.style.height=((b[3]-b[1])*s+pad*2)+'px'}else mark.style.display='none';applyPaqZoom()}
 function applyPaqZoom(){$('paqCanvas').style.transform='scale('+paqZoom+')';centerPaq()}
 function centerPaq(){if(!paqActive)return;const crop=$('paqCrop'),h=paqActive.h,boxes=h.boxes||[];if(paqActive.pos&&boxes.length){const s=crop.clientWidth/(h.page_w||1),b=boxes[0],cx=((b[0]+b[2])/2)*s*paqZoom,cy=((b[1]+b[3])/2)*s*paqZoom;crop.scrollLeft=Math.max(0,cx-crop.clientWidth/2);crop.scrollTop=Math.max(0,cy-crop.clientHeight/2)}else{crop.scrollLeft=0;crop.scrollTop=0}}

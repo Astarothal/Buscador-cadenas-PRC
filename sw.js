@@ -1,20 +1,3 @@
-const CACHE='prc-v4';
-const CORE=['./','./index.html','./manifest.webmanifest','./icon.svg','./apple-touch-icon.png','./prenda/layout/page_01.svg'];
-self.addEventListener('install',event=>{
-  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)));
-  self.skipWaiting();
-});
-self.addEventListener('activate',event=>{
-  event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
-  self.clients.claim();
-});
-self.addEventListener('fetch',event=>{
-  if(event.request.method!=='GET') return;
-  event.respondWith(
-    caches.match(event.request).then(hit=>hit || fetch(event.request).then(resp=>{
-      const copy=resp.clone();
-      caches.open(CACHE).then(cache=>cache.put(event.request,copy));
-      return resp;
-    }).catch(()=>caches.match('./index.html')))
-  );
-});
+self.addEventListener('install',e=>self.skipWaiting());
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.map(x=>caches.delete(x)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',()=>{});

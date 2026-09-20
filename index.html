@@ -89,23 +89,6 @@ input{flex:1;min-width:0;min-height:48px;border:1px solid var(--border);border-r
 .paq-qr-card{border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--panel)}
 .paq-qr-card .asset-code{font-size:28px;text-align:center}
 .paq-qr-card .asset-sub{text-align:center}
-
-/* --- Ayuda / información de versión --- */
-.help-fab{position:fixed;right:14px;top:14px;z-index:1200;width:38px;height:38px;border:0;border-radius:50%;
-background:#2388f5;color:#fff;font-size:22px;font-weight:800;line-height:38px;text-align:center;box-shadow:0 3px 12px #0002;cursor:pointer}
-.help-modal{display:none;position:fixed;inset:0;z-index:1300;background:#0008;padding:18px;overflow:auto}
-.help-card{max-width:620px;margin:5vh auto;background:#fff;border-radius:18px;padding:20px;box-shadow:0 10px 35px #0005;color:#172033}
-.help-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.help-head h2{margin:0;font-size:22px}
-.help-close{border:0;background:#eef2f7;border-radius:10px;width:38px;height:38px;font-size:24px;cursor:pointer}
-.help-card h3{margin:20px 0 7px;font-size:16px}
-.help-card p{margin:6px 0;line-height:1.45}
-.help-version{background:#eef6ff;border:1px solid #cfe4ff;border-radius:12px;padding:12px;margin-top:14px}
-.help-plcs{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
-.help-chip{background:#eef2f7;border-radius:999px;padding:6px 10px;font-weight:700;font-size:13px}
-.help-steps{padding-left:22px;line-height:1.55}
-@media(max-width:600px){.help-fab{right:10px;top:10px}.help-card{margin:2vh auto;padding:17px}}
-
 </style>
 
 <link rel="manifest" href="./manifest.webmanifest">
@@ -378,46 +361,4 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 }
 </script>
 
-
-<button id="helpBtn" class="help-fab" type="button" aria-label="Ayuda" title="Ayuda">?</button>
-<div id="helpModal" class="help-modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
-  <div class="help-card">
-    <div class="help-head">
-      <h2 id="helpTitle">Ayuda · Buscador AMS</h2>
-      <button id="helpClose" class="help-close" type="button" aria-label="Cerrar">×</button>
-    </div>
-    <div class="help-version">
-      <strong>Versión actual</strong>
-      <p><b>Desplegada:</b> 20/09/2026 18:40 (hora peninsular española)</p>
-      <p><b>PLCs incluidos:</b></p>
-      <div class="help-plcs">
-        <span class="help-chip">CNX1</span><span class="help-chip">CNX2</span>
-        <span class="help-chip">DPL2</span><span class="help-chip">EMP1</span>
-      </div>
-    </div>
-    <h3>¿Cómo actualizar si tienes una versión antigua?</h3>
-    <ol class="help-steps">
-      <li>Abre de nuevo la dirección web de <b>Buscador AMS</b> con conexión a Internet.</li>
-      <li>Espera unos segundos para que el navegador descargue la versión nueva.</li>
-      <li>Cierra completamente la app o la pestaña y vuelve a abrirla.</li>
-      <li>Comprueba en esta ayuda que aparecen los PLCs de la versión actual.</li>
-    </ol>
-    <p><b>Si sigue apareciendo la versión anterior:</b> elimina el acceso de Buscador AMS de la pantalla de inicio, abre otra vez la web publicada en Safari/Chrome y vuelve a añadirla a la pantalla de inicio.</p>
-    <h3>Contenido de esta versión</h3>
-    <p>Buscador visual de Paquetería con layouts en alta resolución y búsqueda por PER o posición eléctrica. Se mantienen también las funciones existentes de Prenda y QR.</p>
-  </div>
-</div>
-
-<script>
-(function(){
- const b=document.getElementById('helpBtn'), m=document.getElementById('helpModal'), c=document.getElementById('helpClose');
- if(!b||!m||!c)return;
- function openHelp(){m.style.display='block';document.body.style.overflow='hidden';}
- function closeHelp(){m.style.display='none';document.body.style.overflow='';}
- b.addEventListener('click',openHelp);
- c.addEventListener('click',closeHelp);
- m.addEventListener('click',function(e){if(e.target===m)closeHelp();});
- document.addEventListener('keydown',function(e){if(e.key==='Escape')closeHelp();});
-})();
-</script>
 </body></html>

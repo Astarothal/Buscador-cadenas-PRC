@@ -18,7 +18,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,B
 header{position:sticky;top:0;z-index:20;background:var(--bg);padding:calc(8px + env(safe-area-inset-top)) 10px 8px;border-bottom:1px solid var(--border)}
 .wrap,main{max-width:900px;margin:auto}
 h1{font-size:18px;margin:0 0 8px}
-.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 button{border:0;border-radius:10px;min-height:48px;padding:0 12px;font:700 14px inherit;background:var(--blue);color:white;touch-action:manipulation}
 .tab{background:var(--panel);border:1px solid var(--border);color:var(--text);font-size:13px;line-height:1.15}
 .tab.active{background:var(--blue);border-color:var(--blue);color:white}
@@ -68,6 +68,10 @@ input{flex:1;min-width:0;min-height:48px;border:1px solid var(--border);border-r
 .qr-code{font:900 32px ui-monospace,monospace;text-align:center;margin:12px 0}
 .loading{padding:18px;text-align:center;color:var(--muted)}
 @media(orientation:landscape) and (max-height:500px){header{position:relative;padding-top:8px}.crop{max-height:72vh;min-height:280px}}
+
+#paqResults .hit{white-space:nowrap}
+#paqMarker{background:rgba(255,59,48,.10);box-shadow:0 0 0 3px rgba(255,255,255,.9)}
+@media(max-width:700px){.tabs{grid-template-columns:1fr 1fr 1fr}.tab{font-size:11px;padding:6px 3px}}
 </style>
 
 <link rel="manifest" href="./manifest.webmanifest">
@@ -77,7 +81,7 @@ input{flex:1;min-width:0;min-height:48px;border:1px solid var(--border);border-r
 </head>
 <body>
 <header><div class="wrap"><h1>PRC · Buscador técnico</h1>
-<div class="tabs"><button type="button" class="tab active" data-tab="layout">Plano · Cadenas / Bypass</button><button type="button" class="tab" data-tab="qr">OT · Número / QR</button></div>
+<div class="tabs"><button type="button" class="tab active" data-tab="layout">Plano · Cadenas / Bypass</button><button type="button" class="tab" data-tab="paq">Paquetería · CNX1</button><button type="button" class="tab" data-tab="qr">OT · Número / QR</button></div>
 </div></header>
 <main>
 <section id="layoutSection" class="section active">
@@ -100,6 +104,20 @@ input{flex:1;min-width:0;min-height:48px;border:1px solid var(--border);border-r
   <div class="legend">Rojo = cadena · Verde = bypass</div>
 </div>
 <div id="asset" class="asset"><div id="assetContent"></div></div>
+</section>
+
+
+<section id="paqSection" class="section">
+<div class="info"><b>Paquetería · CNX1</b> · 16 PER · 17 layouts vectoriales. Busca PER01, una posición como 03.90.09.A o una referencia del esquema.</div>
+<form id="paqForm" class="search"><input id="paqQ" type="search" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Ej.: PER01, 03.90.09.A, A20.2"><button type="submit">Buscar</button></form>
+<p id="paqStatus" class="status">Escribe un PER, posición o referencia.</p>
+<div id="paqResults" class="hits"></div>
+<div id="paqViewer" class="viewer">
+ <div class="head"><div class="head-top"><div><div id="paqTitle"></div><div id="paqCtx" class="ctx"></div></div></div>
+ <div class="controls"><button type="button" id="paqFit">Plano</button><button type="button" id="paqMinus">−</button><button type="button" id="paqPlus">+</button><button type="button" id="paqMark">Marca</button></div></div>
+ <div id="paqCrop" class="crop"><div id="paqCanvas" class="canvas"><img id="paqImg" alt="Layout Paquetería"><div id="paqMarker" class="mark chain"></div></div></div>
+ <div class="legend">Plano vectorial: puedes ampliar sin perder nitidez. La marca roja señala la referencia encontrada.</div>
+</div>
 </section>
 
 <section id="qrSection" class="section">
@@ -202,10 +220,20 @@ function showQR(r){$('qrSearchView').style.display='none';$('qrDetail').classLis
 $('qrForm').onsubmit=e=>{e.preventDefault();searchQR()};
 $('qrBack').onclick=()=>{$('qrDetail').classList.remove('show');$('qrSearchView').style.display=''};
 
+
+let PAQ=null,paqZoom=1,paqActive=null,paqMarkerVisible=true;
+async function loadPaq(){if(PAQ)return; $('paqStatus').textContent='Cargando índice CNX1…'; try{PAQ=await fetch('./paqueteria/cnx1/index.json').then(r=>r.json()); $('paqStatus').textContent='CNX1 cargado · 16 PER · 17 layouts.';}catch(e){$('paqStatus').textContent='No se pudo cargar el índice de Paquetería.';}}
+function paqNorm(s){return String(s||'').trim().toUpperCase().replace(/\s+/g,'')}
+async function searchPaq(){await loadPaq();if(!PAQ)return;const q=paqNorm($('paqQ').value);$('paqResults').innerHTML='';if(!q){$('paqStatus').textContent='Escribe un PER, posición o referencia.';return}let found=[];for(const l of PAQ){if(paqNorm(l.per)===q||paqNorm(l.per).includes(q)){found.push({l,item:null,label:l.per});continue}for(const it of l.items){if(paqNorm(it.t).includes(q))found.push({l,item:it,label:it.t})}}const uniq=[];const seen=new Set();for(const f of found){const k=f.l.file+'|'+(f.item?f.item.t+'|'+f.item.x0+'|'+f.item.y0:'PER');if(!seen.has(k)){seen.add(k);uniq.push(f)}}$('paqStatus').textContent=uniq.length+' coincidencia'+(uniq.length===1?'':'s')+'.';uniq.slice(0,80).forEach(f=>{const b=document.createElement('button');b.type='button';b.className='hit';b.textContent=f.l.per+(f.l.parts>1?' · '+f.l.part+'/'+f.l.parts:'')+(f.item?' · '+f.item.t:'')+' · pág. '+f.l.page;b.onclick=()=>selectPaq(f,b);$('paqResults').appendChild(b)});if(uniq.length)selectPaq(uniq[0],$('paqResults').firstElementChild)}
+function selectPaq(f,b){Array.from($('paqResults').children).forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');paqActive=f;paqZoom=f.item?2.2:1;$('paqTitle').innerHTML='<span class="badge chain">'+esc(f.l.per)+'</span> '+(f.item?esc(f.item.t):'Layout');$('paqCtx').textContent='CNX1 · página '+f.l.page+(f.l.parts>1?' · layout '+f.l.part+'/'+f.l.parts:'');$('paqViewer').style.display='block';$('paqImg').src=f.l.file;$('paqImg').onload=renderPaq;}
+function renderPaq(){if(!paqActive)return;const l=paqActive.l,bw=$('paqCrop').clientWidth,s=bw/l.w;$('paqCanvas').style.width=bw+'px';$('paqCanvas').style.height=(l.h*s)+'px';$('paqImg').style.width=bw+'px';const m=$('paqMarker');if(paqActive.item){const h=paqActive.item,pad=6;m.style.display=paqMarkerVisible?'block':'none';m.style.left=(h.x0*s-pad)+'px';m.style.top=(h.y0*s-pad)+'px';m.style.width=((h.x1-h.x0)*s+pad*2)+'px';m.style.height=((h.y1-h.y0)*s+pad*2)+'px'}else m.style.display='none';applyPaqZoom()}
+function applyPaqZoom(){$('paqCanvas').style.transform='scale('+paqZoom+')';if(paqActive&&paqActive.item){const l=paqActive.l,h=paqActive.item,s=$('paqCrop').clientWidth/l.w;const cx=((h.x0+h.x1)/2)*s*paqZoom,cy=((h.y0+h.y1)/2)*s*paqZoom;$('paqCrop').scrollLeft=Math.max(0,cx-$('paqCrop').clientWidth/2);$('paqCrop').scrollTop=Math.max(0,cy-$('paqCrop').clientHeight/2)}}
+$('paqForm').onsubmit=e=>{e.preventDefault();searchPaq()};$('paqFit').onclick=()=>{paqZoom=1;applyPaqZoom();$('paqCrop').scrollLeft=0;$('paqCrop').scrollTop=0};$('paqMinus').onclick=()=>{paqZoom=Math.max(1,paqZoom-.4);applyPaqZoom()};$('paqPlus').onclick=()=>{paqZoom=Math.min(6,paqZoom+.5);applyPaqZoom()};$('paqMark').onclick=()=>{paqMarkerVisible=!paqMarkerVisible;if(paqActive&&paqActive.item)$('paqMarker').style.display=paqMarkerVisible?'block':'none'};
+
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');
-  $('layoutSection').classList.toggle('active',b.dataset.tab==='layout');$('qrSection').classList.toggle('active',b.dataset.tab==='qr');
-  if(b.dataset.tab==='qr')loadFullAssets();
+  $('layoutSection').classList.toggle('active',b.dataset.tab==='layout');$('paqSection').classList.toggle('active',b.dataset.tab==='paq');$('qrSection').classList.toggle('active',b.dataset.tab==='qr');
+  if(b.dataset.tab==='paq')loadPaq(); if(b.dataset.tab==='qr')loadFullAssets();
 });
 
 $('layoutQ').value='229';searchLayout();

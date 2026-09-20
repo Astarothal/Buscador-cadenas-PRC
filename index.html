@@ -115,6 +115,19 @@ flex:0 0 24px;appearance:none;-webkit-appearance:none;
 .help-steps{padding-left:22px;line-height:1.55}
 @media(max-width:600px){.help-fab{right:8px;top:7px}.help-card{margin:2vh auto;padding:17px}}
 
+
+.paq-tools{display:flex;gap:7px;align-items:center;margin:8px 0;overflow-x:auto;padding-bottom:2px}
+.paq-filter{flex:0 0 auto;border:1px solid #334155;background:#161d27;color:#e5edf7;border-radius:9px;padding:7px 9px;font-size:12px}
+.paq-filter.active{border-color:#2388f5;background:#173a62;color:#fff}
+.paq-mini-title{font-size:12px;color:#8fa0b5;margin:8px 0 4px}
+.paq-history,.paq-favs{display:flex;gap:6px;overflow-x:auto;padding-bottom:3px}
+.paq-chipbtn{flex:0 0 auto;border:1px solid #334155;background:#161d27;color:#dce7f5;border-radius:999px;padding:6px 9px;font-size:12px}
+.paq-navrow{display:flex;align-items:center;justify-content:space-between;gap:7px;margin:8px 0}
+.paq-navrow button,.paq-favbtn{border:1px solid #334155;background:#161d27;color:#e5edf7;border-radius:9px;padding:7px 10px}
+.paq-navrow button:disabled{opacity:.35}
+.paq-favbtn.active{background:#3b3212;border-color:#8a7422}
+.help-update{width:100%;margin-top:8px;border:0;border-radius:10px;padding:10px 12px;background:#2388f5;color:#fff;font-weight:700;cursor:pointer}
+
 </style>
 
 <link rel="manifest" href="./manifest.webmanifest">
@@ -166,10 +179,15 @@ flex:0 0 24px;appearance:none;-webkit-appearance:none;
 <section id="paqSection" class="section">
 <div class="info">Busca un PER o parte de una posición. No hace falta escribir el código completo ni los puntos.</div>
 <form id="paqForm" class="search"><input id="paqQ" type="search" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Ej.: PER1, 01.28, 030128A, 28A…"><button type="submit">Buscar</button></form>
+<div id="paqPlcFilters" class="paq-tools"></div>
+<div class="paq-mini-title">Recientes</div><div id="paqHistory" class="paq-history"></div>
+<div class="paq-mini-title">Favoritos</div><div id="paqFavs" class="paq-favs"></div>
+
 <p id="paqStatus" class="status">CNX1 + CNX2 + DPL2 + EMP1 + EMP2 + EMP3 + ENT1 + ENT2 · búsqueda por PER o posición eléctrica.</p>
 <div id="paqResults" class="results"></div><div id="paqSheets" class="paq-sheetbar"></div>
 <div id="paqViewer" class="paq-viewer"><div class="paq-head"><div id="paqTitle" class="paq-title"></div><div id="paqCtx" class="paq-note"></div>
 <div class="paq-controls"><button type="button" id="paqZone">Zona</button><button type="button" id="paqPage">Página</button><button type="button" id="paqMinus">−</button><button type="button" id="paqPlus">+</button></div></div>
+<div class="paq-navrow"><button type="button" id="paqPrev">← PER anterior</button><button type="button" id="paqFav" class="paq-favbtn">☆ Favorito</button><button type="button" id="paqNext">PER siguiente →</button></div>
 <div id="paqCrop" class="paq-crop"><div id="paqCanvas" class="paq-canvas"><img id="paqImg" alt="Layout de paquetería"><div id="paqMark" class="paq-mark" style="display:none"></div></div></div></div>
   <div id="paqQr" class="asset" style="display:none;margin-top:10px">
     <div id="paqQrContent"></div>
@@ -278,14 +296,31 @@ function normPaq(v){
     .replace(/\s+/g,'');
 }
 function compactPaq(v){return normPaq(v).replace(/[^A-Z0-9]/g,'')}
+
+const PAQ_STORE_HISTORY='ams_paq_history_v1',PAQ_STORE_FAV='ams_paq_favs_v1';
+let paqPlcFilter='TODOS';
+function paqLoadStore(k){try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return[]}}
+function paqSaveStore(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function paqAddHistory(q){q=String(q||'').trim();if(!q)return;let a=paqLoadStore(PAQ_STORE_HISTORY).filter(x=>x!==q);a.unshift(q);paqSaveStore(PAQ_STORE_HISTORY,a.slice(0,10));renderPaqHistory()}
+function renderPaqHistory(){const box=$('paqHistory');if(!box)return;const a=paqLoadStore(PAQ_STORE_HISTORY);box.innerHTML=a.length?'':'<span class="status">Sin búsquedas todavía.</span>';a.forEach(q=>{const b=document.createElement('button');b.type='button';b.className='paq-chipbtn';b.textContent=q;b.onclick=()=>{$('paqQ').value=q;searchPaq()};box.appendChild(b)})}
+function paqFavKey(h,pos){return [h.plc||'CNX1',h.per,h.layout_sheet,pos||''].join('|')}
+function togglePaqFav(){if(!paqActive)return;const h=paqActive.h,pos=paqActive.pos||'';let a=paqLoadStore(PAQ_STORE_FAV),k=paqFavKey(h,pos),i=a.findIndex(x=>x.k===k);if(i>=0)a.splice(i,1);else a.unshift({k,plc:h.plc||'CNX1',per:h.per,sheet:h.layout_sheet,pos});paqSaveStore(PAQ_STORE_FAV,a.slice(0,30));renderPaqFavs();updatePaqFavButton()}
+function renderPaqFavs(){const box=$('paqFavs');if(!box)return;const a=paqLoadStore(PAQ_STORE_FAV);box.innerHTML=a.length?'':'<span class="status">Sin favoritos.</span>';a.forEach(f=>{const b=document.createElement('button');b.type='button';b.className='paq-chipbtn';b.textContent='★ '+f.plc+' · '+(f.pos||f.per);b.onclick=()=>{const h=PAQ.layouts.find(x=>(x.plc||'CNX1')===f.plc&&x.per===f.per&&String(x.layout_sheet)===String(f.sheet));if(h){let hh=Object.assign({},h);if(f.pos){const pe=(PAQ.positions[f.pos]||[]).find(x=>(x.plc||'CNX1')===f.plc&&x.per===f.per&&String(x.layout_sheet)===String(f.sheet));if(pe)hh=Object.assign({},pe)}showPaq(hh,f.pos||null,null)}};box.appendChild(b)})}
+function updatePaqFavButton(){const b=$('paqFav');if(!b||!paqActive)return;const k=paqFavKey(paqActive.h,paqActive.pos),yes=paqLoadStore(PAQ_STORE_FAV).some(x=>x.k===k);b.textContent=yes?'★ Favorito':'☆ Favorito';b.classList.toggle('active',yes)}
+function renderPaqFilters(){const box=$('paqPlcFilters');if(!box)return;const plcs=['TODOS',...Array.from(new Set(PAQ.layouts.map(x=>x.plc||'CNX1'))).sort()];box.innerHTML='';plcs.forEach(plc=>{const b=document.createElement('button');b.type='button';b.className='paq-filter'+(paqPlcFilter===plc?' active':'');b.textContent=plc==='TODOS'?'Todos':plc;b.onclick=()=>{paqPlcFilter=plc;renderPaqFilters();if($('paqQ').value.trim())searchPaq()};box.appendChild(b)})}
+function paqOrderedPers(plc){return Array.from(new Set(PAQ.layouts.filter(x=>(x.plc||'CNX1')===plc&&/^PER\d+$/i.test(x.per)).map(x=>x.per))).sort((a,b)=>parseInt(a.replace(/\D/g,''))-parseInt(b.replace(/\D/g,'')))}
+function paqGo(delta){if(!paqActive)return;const h=paqActive.h,plc=h.plc||'CNX1',pers=paqOrderedPers(plc),i=pers.indexOf(h.per);if(i<0||!pers[i+delta])return;const per=pers[i+delta],next=PAQ.layouts.find(x=>(x.plc||'CNX1')===plc&&x.per===per);if(next)showPaq(next,null,null)}
+function updatePaqNav(){if(!paqActive)return;const h=paqActive.h,pers=paqOrderedPers(h.plc||'CNX1'),i=pers.indexOf(h.per);$('paqPrev').disabled=i<=0;$('paqNext').disabled=i<0||i>=pers.length-1}
+
 async function searchPaq(){
   await loadPaq();if(!PAQ)return;
-  const raw=normPaq($('paqQ').value),q=compactPaq(raw);
+  const raw=normPaq($('paqQ').value),q=compactPaq(raw);if(q)paqAddHistory(raw);
   $('paqResults').innerHTML='';$('paqSheets').innerHTML='';$('paqViewer').style.display='none';
   if(!q){$('paqStatus').textContent='Escribe parte de un PER o de una posición.';return}
   let hits=[],seen=new Set(),numericOnly=/^\d+$/.test(q);
 
   for(const h of PAQ.layouts){
+    if(paqPlcFilter!=='TODOS'&&(h.plc||'CNX1')!==paqPlcFilter)continue;
     const perC=compactPaq(h.per),perNum=String(parseInt(h.per.replace(/\D/g,''),10)),perNum2=perNum.padStart(2,'0');
     let ok=false;
     if(q.startsWith('PER')){
@@ -301,6 +336,7 @@ async function searchPaq(){
       const pc=compactPaq(pos);
       if(pc.includes(q)){
         for(const h of arr){
+          if(paqPlcFilter!=='TODOS'&&(h.plc||'CNX1')!==paqPlcFilter)continue;
           const k=(h.plc||'CNX1')+'|'+h.per+'|'+h.layout_sheet+'|'+pos;
           if(!seen.has(k)){seen.add(k);hits.push(Object.assign({},h,{position:pos,matchType:'position'}))}
         }
@@ -364,11 +400,11 @@ async function renderPaqQR(per,pos){
   ).join('')+'</div>';
 }
 
-function showPaq(h,pos,btn){if(btn){Array.from($('paqSheets').children).forEach(x=>x.classList.remove('active'));btn.classList.add('active')}paqActive={h,pos};paqZoom=pos?2.4:1.45;$('paqTitle').textContent=(h.plc||'CNX1')+' · '+h.per+' · Layout '+h.layout_sheet+'/'+h.layout_total;$('paqCtx').textContent='Página '+h.pdf_page+(pos?' · Posición '+pos:'');$('paqImg').src='./'+h.image;$('paqImg').onload=renderPaq;$('paqViewer').style.display='block';renderPaqQR(h.per,pos).catch(()=>{})}
+function showPaq(h,pos,btn){if(btn){Array.from($('paqSheets').children).forEach(x=>x.classList.remove('active'));btn.classList.add('active')}paqActive={h,pos};paqZoom=pos?2.4:1.45;$('paqTitle').textContent=(h.plc||'CNX1')+' · '+h.per+' · Layout '+h.layout_sheet+'/'+h.layout_total;$('paqCtx').textContent='Página '+h.pdf_page+(pos?' · Posición '+pos:'');$('paqImg').src='./'+h.image;$('paqImg').onload=renderPaq;$('paqViewer').style.display='block';renderPaqQR(h.per,pos).catch(()=>{});updatePaqNav();updatePaqFavButton()}
 function renderPaq(){if(!paqActive)return;const h=paqActive.h,crop=$('paqCrop'),bw=crop.clientWidth,img=$('paqImg'),pw=h.page_w||img.naturalWidth,ph=h.page_h||img.naturalHeight,s=bw/pw;$('paqCanvas').style.width=bw+'px';$('paqCanvas').style.height=(ph*s)+'px';img.style.width=bw+'px';const mark=$('paqMark'),boxes=h.boxes||[];if(paqActive.pos&&boxes.length){const b=boxes[0],pad=7;mark.style.display='block';mark.style.left=(b[0]*s-pad)+'px';mark.style.top=(b[1]*s-pad)+'px';mark.style.width=((b[2]-b[0])*s+pad*2)+'px';mark.style.height=((b[3]-b[1])*s+pad*2)+'px'}else mark.style.display='none';applyPaqZoom()}
 function applyPaqZoom(){$('paqCanvas').style.transform='scale('+paqZoom+')';centerPaq()}
 function centerPaq(){if(!paqActive)return;const crop=$('paqCrop'),h=paqActive.h,boxes=h.boxes||[];if(paqActive.pos&&boxes.length){const s=crop.clientWidth/(h.page_w||1),b=boxes[0],cx=((b[0]+b[2])/2)*s*paqZoom,cy=((b[1]+b[3])/2)*s*paqZoom;crop.scrollLeft=Math.max(0,cx-crop.clientWidth/2);crop.scrollTop=Math.max(0,cy-crop.clientHeight/2)}else{crop.scrollLeft=0;crop.scrollTop=0}}
-$('paqForm').onsubmit=e=>{e.preventDefault();searchPaq()};$('paqZone').onclick=()=>{paqZoom=2.2;applyPaqZoom()};$('paqPage').onclick=()=>{paqZoom=1;$('paqCanvas').style.transform='scale(1)';$('paqCrop').scrollLeft=0;$('paqCrop').scrollTop=0};$('paqMinus').onclick=()=>{paqZoom=Math.max(1,paqZoom-.35);applyPaqZoom()};$('paqPlus').onclick=()=>{paqZoom=Math.min(5,paqZoom+.35);applyPaqZoom()};
+$('paqForm').onsubmit=e=>{e.preventDefault();searchPaq()};$('paqZone').onclick=()=>{paqZoom=2.2;applyPaqZoom()};$('paqPage').onclick=()=>{paqZoom=1;$('paqCanvas').style.transform='scale(1)';$('paqCrop').scrollLeft=0;$('paqCrop').scrollTop=0};$('paqMinus').onclick=()=>{paqZoom=Math.max(1,paqZoom-.35);applyPaqZoom()};$('paqPlus').onclick=()=>{paqZoom=Math.min(5,paqZoom+.35);applyPaqZoom()};;$('paqPrev').onclick=()=>paqGo(-1);$('paqNext').onclick=()=>paqGo(1);$('paqFav').onclick=togglePaqFav;renderPaqFilters();renderPaqHistory();renderPaqFavs();
 
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');
@@ -412,8 +448,12 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
       <li>Comprueba en esta ayuda que aparecen los PLCs de la versión actual.</li>
     </ol>
     <p><b>Si sigue apareciendo la versión anterior:</b> elimina el acceso de Buscador AMS de la pantalla de inicio, abre otra vez la web publicada en Safari/Chrome y vuelve a añadirla a la pantalla de inicio.</p>
-    <h3>Contenido de esta versión</h3>
-    <p>Buscador visual de Paquetería con layouts en alta resolución y búsqueda por PER o posición eléctrica. Se mantienen también las funciones existentes de Prenda y QR.</p>
+    <h3>Actualización</h3>
+<p>Si sospechas que tienes una versión antigua, puedes forzar la comprobación y recarga de la aplicación.</p>
+<button id="forceUpdateBtn" class="help-update" type="button">Buscar actualización</button>
+<p id="forceUpdateMsg" class="status"></p>
+<h3>Contenido de esta versión</h3>
+    <p>Buscador visual de Paquetería con filtro por PLC, búsquedas recientes, favoritos y navegación entre PER. Se mantienen Prenda, QR y layouts en alta resolución.</p>
   </div>
 </div>
 
@@ -427,6 +467,21 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
  c.addEventListener('click',closeHelp);
  m.addEventListener('click',function(e){if(e.target===m)closeHelp();});
  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeHelp();});
+
+ const u=document.getElementById('forceUpdateBtn'),um=document.getElementById('forceUpdateMsg');
+ if(u)u.addEventListener('click',async function(){
+   u.disabled=true;if(um)um.textContent='Comprobando actualización…';
+   try{
+     if('serviceWorker' in navigator){
+       const regs=await navigator.serviceWorker.getRegistrations();
+       for(const r of regs){await r.update()}
+     }
+     if('caches' in window){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}
+     if(um)um.textContent='Comprobación terminada. Recargando…';
+     setTimeout(()=>location.reload(),500);
+   }catch(e){if(um)um.textContent='No se pudo forzar la actualización. Cierra y vuelve a abrir la app.';u.disabled=false}
+ });
+
 })();
 </script>
 </body></html>

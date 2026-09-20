@@ -69,3 +69,19 @@ ACTUALIZACIÓN EMP3 — 20/09/2026 19:22
 - Planos WebP HD con marcado visual.
 - Ayuda actualizada con EMP3 y fecha de versión.
 - Caché PWA: v12-emp3.
+
+
+ACTUALIZACIÓN ENT1 — 20/09/2026 19:26
+- Añadido PLC ENT1 desde 2 partes PDF.
+- Layouts LYT añadidos: 22.
+- Posiciones eléctricas distintas indexadas: 116.
+- Caché PWA: v13-ent1.
+
+
+ACTUALIZACIÓN ENT2 — 20/09/2026 19:40
+- Añadido PLC ENT2 desde 2 partes PDF.
+- Layouts LYT añadidos: 25.
+- Posiciones eléctricas distintas indexadas: 112.
+- Planos WebP HD con marcado visual.
+- Ayuda actualizada con ENT2.
+- Caché PWA: v14-ent2.

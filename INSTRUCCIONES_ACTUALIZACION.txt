@@ -60,3 +60,12 @@ ACTUALIZACIÓN EMP2 — 20/09/2026 18:55
 - Planos WebP HD y marcado visual.
 - Ayuda actualizada con EMP2 y fecha de despliegue.
 - Caché PWA: v9-emp2.
+
+
+ACTUALIZACIÓN EMP3 — 20/09/2026 19:22
+- Añadido PLC EMP3.
+- Layouts LYT añadidos: 10.
+- Posiciones eléctricas distintas indexadas: 42.
+- Planos WebP HD con marcado visual.
+- Ayuda actualizada con EMP3 y fecha de versión.
+- Caché PWA: v12-emp3.

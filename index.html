@@ -51,6 +51,9 @@ input{flex:1;min-width:0;min-height:48px;border:1px solid var(--border);border-r
 .mark.chain{border:4px solid var(--red);border-radius:6px}
 .mark.bypass{border:4px solid var(--green);border-radius:50%}
 .mark.hidden{display:none}
+.secmark{position:absolute;width:18px;height:18px;border:4px solid #ff9800;border-radius:50%;box-shadow:0 0 0 3px white;pointer-events:none;z-index:4}
+.secmark:after{content:"S";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:bold 10px system-ui;color:#111;background:#ff9800;border-radius:50%;width:12px;height:12px;line-height:12px;text-align:center}
+.secmark.hidden{display:none}
 .legend{padding:8px 9px;font-size:11px;color:var(--muted)}
 .asset{display:none;margin-top:10px;padding:12px}
 .asset.show{display:block}
@@ -176,12 +179,13 @@ flex:0 0 24px;appearance:none;-webkit-appearance:none;
       <button type="button" id="zone">Zona</button>
       <button type="button" id="pageFull">Página</button>
       <button type="button" id="markerToggle">Marca</button>
+      <button type="button" id="secBtn" style="display:none">Seccionador</button>
       <button type="button" id="minus">−</button>
       <button type="button" id="plus">+</button>
     </div>
   </div>
-  <div id="crop" class="crop"><div id="canvas" class="canvas"><img id="layoutImg" alt="Plano"><div id="mark" class="mark"></div></div></div>
-  <div class="legend">Rojo = cadena · Verde = bypass</div>
+  <div id="crop" class="crop"><div id="canvas" class="canvas"><img id="layoutImg" alt="Plano"><div id="mark" class="mark"></div><div id="secmark" class="secmark hidden"></div></div></div>
+  <div class="legend">Rojo = cadena · Verde = bypass · Naranja S = seccionador</div>
 </div>
 <div id="asset" class="asset"><div id="assetContent"></div></div>
 </section>
@@ -250,6 +254,8 @@ function qrMarkup(r){const n=r.s,q=4,size=n+q*2,a=bits(r.q,n*n);let d='',k=0;for
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c])}
 function normNum(v){const m=String(v||'').match(/\d+/);return m?m[0]:''}
 
+const GARMENT_SECCIONADORES={"230":{"page":1,"x":540,"y":66},"229":{"page":1,"x":665,"y":110}};
+
 const GARMENT_RELATIONS={"bypass":{"501":{"from":"224","to":"223"},"566":{"from":"240","to":"222"},"940":{"from":"256","to":"251"},"503":{"from":"224","to":"265"},"567":{"from":"225","to":"221"},"942":{"from":"258","to":"256"},"504":{"from":"278","to":"265"},"568":{"from":"221","to":"225"},"943":{"from":"276","to":"258"},"505":{"from":"261","to":"265"},"569":{"from":"222","to":"239"},"944":{"from":"276","to":"261"},"508":{"from":"256","to":"265"},"570":{"from":"228","to":"270"},"945":{"from":"278","to":"274"},"509":{"from":"223","to":"266"},"571":{"from":"231","to":"268"},"941":{"from":"256","to":"258"},"510":{"from":"267","to":"266"},"572":{"from":"266","to":"267"},"949":{"from":"255","to":"254"},"511":{"from":"267","to":"268"},"574":{"from":"238","to":"232"},"950":{"from":"259","to":"255"},"512":{"from":"268","to":"256"},"575":{"from":"232","to":"238"},"951":{"from":"259","to":"257"},"513":{"from":"268","to":"265"},"576":{"from":"226","to":"229"},"952":{"from":"260","to":"257"},"514":{"from":"268","to":"275"},"577":{"from":"227","to":"230"},"953":{"from":"278","to":"277"},"515":{"from":"277","to":"268"},"901":{"from":"216","to":"271"},"954":{"from":"RET1","to":"256"},"516":{"from":"267","to":"278"},"902":{"from":"217","to":"251"},"955":{"from":"277","to":"273"},"519":{"from":"221","to":"222"},"903":{"from":"217","to":"271"},"957":{"from":"255","to":"257"},"523":{"from":"227","to":"222"},"904":{"from":"217","to":"273"},"958":{"from":"257","to":"255"},"525":{"from":"227","to":"226"},"905":{"from":"216","to":"273"},"959":{"from":"262","to":"260"},"526":{"from":"222","to":"227"},"906":{"from":"254","to":"218"},"960":{"from":"262","to":"257"},"527":{"from":"232","to":"224"},"907":{"from":"255","to":"218"},"961":{"from":"257","to":"262"},"529":{"from":"270","to":"256"},"908":{"from":"216","to":"217"},"962":{"from":"278","to":"262"},"530":{"from":"268","to":"256"},"909":{"from":"252","to":"254"},"963":{"from":"262","to":"277"},"531":{"from":"268","to":"266"},"910":{"from":"253","to":"254"},"964":{"from":"272","to":"276"},"532":{"from":"232","to":"226"},"911":{"from":"253","to":"255"},"965":{"from":"275","to":"271"},"533":{"from":"232","to":"227"},"912":{"from":"254","to":"255"},"966":{"from":"276","to":"272"},"534":{"from":"226","to":"232"},"913":{"from":"272","to":"251"},"967":{"from":"274","to":"278"},"535":{"from":"226","to":"232"},"914":{"from":"274","to":"251"},"968":{"from":"273","to":"277"},"536":{"from":"229","to":"226"},"915":{"from":"219","to":"216"},"969":{"from":"276","to":"278"},"537":{"from":"227","to":"230"},"916":{"from":"216","to":"219"},"970":{"from":"278","to":"276"},"541":{"from":"230","to":"229"},"917":{"from":"219","to":"220"},"971":{"from":"222","to":"262"},"543":{"from":"229","to":"230"},"918":{"from":"223","to":"219"},"973":{"from":"251","to":"256"},"546":{"from":"228","to":"229"},"919":{"from":"219","to":"223"},"975":{"from":"218","to":"221"},"547":{"from":"269","to":"229"},"920":{"from":"223","to":"224"},"976":{"from":"221","to":"218"},"548":{"from":"279","to":"230"},"922":{"from":"217","to":"256"},"977":{"from":"271","to":"275"},"549":{"from":"231","to":"230"},"923":{"from":"220","to":"275"},"978":{"from":"219","to":"277"},"550":{"from":"229","to":"285"},"924":{"from":"220","to":"256"},"979":{"from":"276","to":"275"},"551":{"from":"230","to":"285"},"925":{"from":"224","to":"275"},"980":{"from":"272","to":"271"},"552":{"from":"285","to":"286"},"926":{"from":"224","to":"261"},"981":{"from":"274","to":"273"},"553":{"from":"286","to":"285"},"927":{"from":"220","to":"258"},"982":{"from":"219","to":"275"},"554":{"from":"230","to":"286"},"928":{"from":"223","to":"264"},"983":{"from":"223","to":"275"},"555":{"from":"229","to":"286"},"929":{"from":"217","to":"222"},"984":{"from":"222","to":"277"},"556":{"from":"287","to":"228"},"930":{"from":"220","to":"216"},"985":{"from":"224","to":"277"},"557":{"from":"287","to":"231"},"931":{"from":"220","to":"222"},"986":{"from":"222","to":"217"},"558":{"from":"287","to":"288"},"932":{"from":"222","to":"220"},"987":{"from":"261","to":"256"},"559":{"from":"288","to":"287"},"933":{"from":"224","to":"222"},"988":{"from":"261","to":"258"},"560":{"from":"288","to":"231"},"934":{"from":"222","to":"224"},"989":{"from":"278","to":"261"},"561":{"from":"288","to":"228"},"935":{"from":"263","to":"268"},"992":{"from":"263","to":"225"},"562":{"from":"238","to":"227"},"936":{"from":"257","to":"221"},"993":{"from":"222","to":"264"},"563":{"from":"238","to":"240"},"937":{"from":"272","to":"274"},"994":{"from":"262","to":"263"},"564":{"from":"238","to":"239"},"938":{"from":"274","to":"272"},"995":{"from":"256","to":"RET1"},"565":{"from":"230","to":"227"},"939":{"from":"272","to":"256"},"996":{"from":"263","to":"276"},"997":{"from":"264","to":"263"}},"chains":{"263":"Salida STOCK 5","217":"Picking Pre-1","264":"Entrada STOCK 5","218":"reparto Export 1","265":"Colectora CLA6","266":"Entrada STOCK 6","220":"Picking Pre-2","267":"Salida STOCK 6","221":"Reparto Export 2","222":"Colectora Pre-Repartos","271":"Entrada STOCK 1","223":"Muelles 13 y 14","272":"Picking STOCK 1","224":"Pre-3","273":"Entrada STOCK 2","225":"Reparto Export 3","274":"Picking STOCK 2","227":"Entrada Splitter II","275":"Entrada STOCK 4","226":"Entrada Splitter I","276":"Picking STOCK 4","229":"Salida Splitter I","277":"Entrada STOCK 3","230":"Salida Splitter II","278":"Picking STOCK 3","991":"mini 510-520","232":"Indock 4","992":"mini 710","238":"Indock 5","993":"mini 520","239":"Salida GIB-5","240":"Entrada GIB-5","279":"Salida Pick II","269":"Salida Pick I","285":"Loop Entr. Silo Fase I","286":"Loop Entr. Silo Fase II","287":"Loop Sal. Silo Fase I","288":"Loop Sal. Silo Fase II","251":"Colectora CLA 1 y CLA 2","252":"Evacuación CLA 1","253":"Evacuación CLA 2","254":"Reparto Packing 1","255":"Reparto Packing 2","256":"Colectora Fondo CLAS","257":"Reparto Packing 3","258":"Colectora CLA 3 y CLA 4","259":"Evacuación CLA 3","260":"Evacuación CLA 4","261":"Cadena ZCOM","262":"Reparto packing 4"}};
 
 
@@ -295,7 +301,7 @@ function searchLayout(){
 }
 function selectLayout(key,h,b){
   Array.from($('layoutHits').children).forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');
-  active={key:key,h:h};zoom=h.type==='chain'?3.0:3.4;
+  active={key:key,h:h};zoom=h.type==='chain'?3.0:3.4;const sec=(h.type==='chain'?GARMENT_SECCIONADORES[String(key)]:null);$('secBtn').style.display=sec?'':'none';
   $('layoutTitle').innerHTML='<span class="badge '+h.type+'">'+(h.type==='chain'?'CADENA':'BYPASS')+'</span> '+esc(key);
   $('layoutCtx').textContent=h.type==='chain'?(h.context||'Pos. '+key):'Número '+key+' dentro de círculo';
   $('layoutImg').src=pageData(h.page);$('layoutImg').onload=renderLayout;$('layoutViewer').style.display='block';renderAsset(key,h);renderGarmentRelation(key,h);
@@ -305,6 +311,8 @@ function renderLayout(){
   $('canvas').style.width=bw+'px';$('canvas').style.height=(p.h*s)+'px';$('layoutImg').style.width=bw+'px';
   const pad=h.type==='chain'?9:4,m=$('mark');m.className='mark '+h.type+(markerVisible?'':' hidden');
   m.style.left=(h.x0*s-pad)+'px';m.style.top=(h.y0*s-pad)+'px';m.style.width=((h.x1-h.x0)*s+pad*2)+'px';m.style.height=((h.y1-h.y0)*s+pad*2)+'px';
+  const sec=(active.h.type==='chain'?GARMENT_SECCIONADORES[String(active.key)]:null),sm=$('secmark');
+  if(sec&&sec.page===active.h.page){sm.classList.remove('hidden');sm.style.left=(sec.x*s-9)+'px';sm.style.top=(sec.y*s-9)+'px'}else sm.classList.add('hidden');
   applyZoom();
 }
 function applyZoom(){$('canvas').style.transform='scale('+zoom+')';centerMark()}
@@ -321,6 +329,7 @@ document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{mode=b.datase
 $('zone').onclick=()=>{zoom=2.0;applyZoom()};
 $('pageFull').onclick=()=>{zoom=1;$('canvas').style.transform='scale(1)';$('crop').scrollLeft=0;$('crop').scrollTop=0};
 $('markerToggle').onclick=()=>{markerVisible=!markerVisible;$('mark').classList.toggle('hidden',!markerVisible)};
+$('secBtn').onclick=()=>{const sec=active&&GARMENT_SECCIONADORES[String(active.key)];if(!sec)return;const hits=LAYOUT.chains[String(active.key)]||[];const idx=hits.findIndex(x=>x.page===sec.page);if(idx>=0&&active.h.page!==sec.page){const buttons=Array.from($('layoutHits').children);selectLayout(String(active.key),hits[idx],buttons[idx]||null);setTimeout(()=>$('secBtn').click(),60);return}const p=LAYOUT.pages[sec.page-1],s=$('crop').clientWidth/p.w,cx=sec.x*s*zoom,cy=sec.y*s*zoom;$('crop').scrollLeft=Math.max(0,cx-$('crop').clientWidth/2);$('crop').scrollTop=Math.max(0,cy-$('crop').clientHeight/2)};
 $('minus').onclick=()=>{zoom=Math.max(1,zoom-.4);applyZoom()};
 $('plus').onclick=()=>{zoom=Math.min(5,zoom+.4);applyZoom()};
 

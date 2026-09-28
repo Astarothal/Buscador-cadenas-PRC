@@ -520,16 +520,15 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     </div>
     <div class="help-version">
       <strong>Versión actual</strong>
-      <p><b>Versión:</b> <span id="helpVersion">v23</span> · <b>Actualizada:</b> 28/09/2026</p>
-      <p><b>PLCs incluidos:</b></p>
-      <div class="help-plcs" id="helpPlcs"></div>
+      <p><b>Versión:</b> <span id="helpVersion">v30c</span> · <b>Actualizada:</b> 28/09/2026</p>
+      <p><b>Paquetería:</b> incluidos todos los PLCs de <b>DEMATIC</b>.</p>
     </div>
     <h3>¿Cómo actualizar si tienes una versión antigua?</h3>
     <ol class="help-steps">
       <li>Abre de nuevo la dirección web de <b>Buscador AMS</b> con conexión a Internet.</li>
       <li>Espera unos segundos para que el navegador descargue la versión nueva.</li>
       <li>Cierra completamente la app o la pestaña y vuelve a abrirla.</li>
-      <li>Comprueba en esta ayuda que aparecen los PLCs de la versión actual.</li>
+      <li>Comprueba en esta ayuda que aparece la versión actual.</li>
     </ol>
     <p><b>Si sigue apareciendo la versión anterior:</b> elimina el acceso de Buscador AMS de la pantalla de inicio, abre otra vez la web publicada en Safari/Chrome y vuelve a añadirla a la pantalla de inicio.</p>
     <h3>Actualización</h3>
@@ -537,14 +536,15 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 <button id="forceUpdateBtn" class="help-update" type="button">Buscar actualización</button>
 <p id="forceUpdateMsg" class="status"></p>
 <h3>Contenido de esta versión</h3>
-    <p>Buscador visual de Paquetería con filtro por PLC, búsquedas recientes, favoritos y navegación entre PER. Se mantienen Prenda, QR y layouts en alta resolución.</p>
+    <p>Buscador visual de Paquetería con todos los PLCs de <b>DEMATIC</b>, filtro por PLC, búsquedas recientes, favoritos y navegación entre PER. Se mantienen Prenda, QR y layouts en alta resolución.</p>
+    <p>Se están añadiendo progresivamente los <b>seccionadores de las cadenas de Prenda Colgada</b> para poder localizar su posición física directamente en el plano.</p>
+    <p><b>Sugerencias o información que falte:</b> contacta con <b>Medina</b>.</p>
   </div>
 </div>
 
 <script>
 (function(){
  const b=document.getElementById('helpBtn'), m=document.getElementById('helpModal'), c=document.getElementById('helpClose');
- const hp=document.getElementById('helpPlcs'); if(hp&&typeof PAQ_EMBEDDED!=='undefined'){const ps=[...new Set((PAQ_EMBEDDED.layouts||[]).map(x=>x.plc).filter(Boolean))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));hp.innerHTML=ps.map(p=>'<span class="help-chip">'+p+'</span>').join('');}
  if(!b||!m||!c)return;
  function openHelp(){m.style.display='block';document.body.style.overflow='hidden';}
  function closeHelp(){m.style.display='none';document.body.style.overflow='';}

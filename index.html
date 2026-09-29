@@ -186,6 +186,88 @@ body[data-theme="tgw"] .paq-filter,body[data-theme="tgw"] .paq-chipbtn,body[data
 .construction b{display:block;font-size:16px;margin-bottom:6px}.construction span{display:block;color:var(--muted);font-size:12px}
 .section-title{font-size:13px;font-weight:800;margin:12px 0 7px}
 
+
+
+/* --- v36 · Rediseño profesional --- */
+:root{
+  --radius:14px;--radius-sm:10px;--shadow:0 10px 30px rgba(0,0,0,.12);
+  --shadow-soft:0 4px 16px rgba(0,0,0,.08);--accent:var(--blue);--soft:rgba(255,255,255,.055);
+}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;letter-spacing:-.01em;transition:background .18s ease,color .18s ease}
+header{position:sticky;top:0;z-index:20;padding:calc(10px + env(safe-area-inset-top)) 12px 10px;border-bottom:1px solid color-mix(in srgb,var(--border) 75%,transparent);box-shadow:0 4px 18px rgba(0,0,0,.08);backdrop-filter:saturate(140%) blur(14px);-webkit-backdrop-filter:saturate(140%) blur(14px)}
+.wrap,main{max-width:980px}
+.brandbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 34px 10px 2px}
+h1{font-size:19px;line-height:1.1;margin:0;font-weight:800;letter-spacing:-.025em}
+.brand-sub{font-size:11px;color:var(--muted);margin-top:3px;font-weight:600;letter-spacing:.01em}
+.brand-badge{font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;border:1px solid var(--border);border-radius:999px;padding:5px 8px;color:var(--muted);background:color-mix(in srgb,var(--panel) 88%,transparent)}
+.tabs{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:3px;border:1px solid var(--border);border-radius:14px;background:color-mix(in srgb,var(--panel) 86%,transparent);box-shadow:inset 0 1px 0 rgba(255,255,255,.035)}
+.tab{min-height:42px;border-radius:10px;border:1px solid transparent!important;background:transparent!important;color:var(--muted)!important;font-size:12px;font-weight:750;transition:all .16s ease;box-shadow:none!important}
+.tab.active{background:var(--accent)!important;color:#fff!important;border-color:color-mix(in srgb,var(--accent) 70%,white 18%)!important;box-shadow:0 3px 10px color-mix(in srgb,var(--accent) 25%,transparent)!important}
+main{padding:14px 12px 22px}
+.section.active{animation:sectionIn .16s ease-out}
+@keyframes sectionIn{from{opacity:.45;transform:translateY(3px)}to{opacity:1;transform:none}}
+.search{gap:8px;margin-bottom:10px;padding:9px;border:1px solid var(--border);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow-soft)}
+input{min-height:45px;border-radius:10px;border:1px solid var(--border);background:color-mix(in srgb,var(--panel) 91%,black 9%);padding:10px 12px;font-size:15px;outline:none;transition:border-color .15s,box-shadow .15s,background .15s}
+input:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent);background:var(--panel)}
+button{min-height:42px;border-radius:10px;font-weight:750;transition:transform .08s ease,filter .15s ease,background .15s ease,border-color .15s ease;box-shadow:none}
+button:active{transform:scale(.985)}
+.search button{background:var(--accent)!important;color:#fff!important;border:1px solid color-mix(in srgb,var(--accent) 72%,white 14%)!important;padding:0 17px;box-shadow:0 4px 12px color-mix(in srgb,var(--accent) 20%,transparent)}
+.types{gap:7px;margin-bottom:9px}
+.types button{min-height:38px;border-radius:10px;background:var(--panel);border:1px solid var(--border);font-size:11px;font-weight:750}
+.types button.active{box-shadow:inset 0 0 0 1px currentColor}
+.status,.info,.paq-note,.ctx{line-height:1.45}
+.status{padding:0 3px;margin:7px 0 9px;font-size:12px}
+.hits,.results{gap:8px}
+.hit,.result,.paq-qr-card,.garment-rel,.check-group,.construction{border-radius:var(--radius)!important;border:1px solid var(--border)!important;background:var(--panel)!important;box-shadow:var(--shadow-soft)}
+.result,.hit{min-height:0;padding:11px 12px}
+.viewer,.paq-viewer{border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;background:var(--panel)}
+.viewer .head,.paq-head{padding:11px 12px;background:color-mix(in srgb,var(--panel) 94%,white 6%)}
+.controls,.paq-controls{gap:6px}
+.controls button,.paq-controls button,.paq-navrow button,.paq-favbtn,.subtool-btn,.check-back{background:color-mix(in srgb,var(--panel) 90%,white 10%)!important;color:var(--text)!important;border:1px solid var(--border)!important;min-height:36px;border-radius:9px}
+.crop,.paq-crop{background:#f8fafc}
+.legend{font-size:10px;color:var(--muted);padding:8px 10px;border-top:1px solid var(--border);background:var(--panel)}
+.asset{border-radius:16px!important;border:1px solid var(--border)!important;background:var(--panel)!important;box-shadow:var(--shadow-soft);overflow:hidden}
+.asset-code,.qr-code{letter-spacing:.02em}
+.qrbox{border:1px solid #e5e7eb;box-shadow:0 8px 25px rgba(0,0,0,.08)}
+.paq-compactbar{gap:7px;margin:8px 0}
+.paq-select,.paq-filter,.paq-chipbtn{border-radius:9px!important;border:1px solid var(--border)!important;background:var(--panel)!important;color:var(--text)!important}
+.paq-select:focus{outline:none;border-color:var(--accent)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent)}
+.paq-chipbtn{font-weight:700}
+.paq-sheetbar button.active,.check-shifts button.active{background:var(--accent)!important;border-color:var(--accent)!important;color:white!important}
+.subtools{margin:1px 0 9px}.subtool-btn{font-size:11px}
+.construction{padding:26px 18px}.construction b{font-size:17px}.construction span{font-size:12px;line-height:1.5}
+.section-title{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 2px 8px}
+.help-fab{right:12px;top:calc(11px + env(safe-area-inset-top));border-color:var(--border);background:var(--panel);color:var(--muted);box-shadow:0 3px 10px rgba(0,0,0,.12)}
+.help-card{border:1px solid #e3e8ef;box-shadow:0 24px 70px rgba(0,0,0,.28)}
+
+/* Identidad visual por fabricante: color como acento, no como baño completo */
+body[data-theme="durkopp"]{--bg:#292d31;--panel:#353a3f;--text:#f5f6f7;--muted:#b8bec4;--border:#50575e;--accent:#aab1b7;--blue:#aab1b7}
+body[data-theme="durkopp"] header{background:linear-gradient(180deg,rgba(66,72,78,.96),rgba(45,50,55,.96))}
+body[data-theme="durkopp"] .tab.active,body[data-theme="durkopp"] .search button{color:#202326!important}
+body[data-theme="durkopp"] input{background:#2f3438;border-color:#525a61}
+
+body[data-theme="dematic"]{--bg:#0b1420;--panel:#111f30;--text:#f5f8fc;--muted:#9bacc0;--border:#243b54;--accent:#2388ff;--blue:#2388ff}
+body[data-theme="dematic"] header{background:rgba(11,20,32,.94)}
+
+body[data-theme="vanderlande"]{--bg:#07090b;--panel:#111417;--text:#f4f5f6;--muted:#92989e;--border:#2c3238;--accent:#555d65;--blue:#555d65}
+body[data-theme="vanderlande"] header{background:rgba(7,9,11,.95)}
+body[data-theme="vanderlande"] input{background:#0d1013}
+
+body[data-theme="tgw"]{--bg:#f2f4f6;--panel:#ffffff;--text:#16191d;--muted:#68717b;--border:#d9dee4;--accent:#252a30;--blue:#252a30}
+body[data-theme="tgw"] header{background:rgba(255,255,255,.94)}
+body[data-theme="tgw"] .tab{color:#69717a!important}
+body[data-theme="tgw"] .tab.active{background:#252a30!important;color:#fff!important;border-color:#252a30!important}
+body[data-theme="tgw"] button:not(.tab):not(.help-close){background:#f6f7f8;color:#1c2024;border-color:#d8dde2}
+body[data-theme="tgw"] .search button{background:#252a30!important;color:#fff!important;border-color:#252a30!important}
+body[data-theme="tgw"] input{background:#fff;color:#16191d;border-color:#d8dde2}
+body[data-theme="tgw"] .viewer .head,body[data-theme="tgw"] .paq-head{background:#fafbfc}
+
+@media(max-width:620px){
+  .brandbar{margin-right:32px}.brand-badge{display:none}
+  .tabs{grid-template-columns:repeat(2,1fr);gap:5px}.tab{min-height:38px;font-size:11px}
+  main{padding:11px 9px 20px}.search{padding:7px}.search button{padding:0 13px}
+  .viewer,.paq-viewer,.asset{border-radius:13px}.controls button,.paq-controls button{font-size:10px;padding:0 5px}
+}
 </style>
 
 <link rel="manifest" href="./manifest.webmanifest">
@@ -194,7 +276,7 @@ body[data-theme="tgw"] .paq-filter,body[data-theme="tgw"] .paq-chipbtn,body[data
 
 </head>
 <body>
-<header style="position:relative;"><div class="wrap"><h1>Buscador Saldaña00</h1>
+<header><div class="wrap"><div class="brandbar"><div><h1>Buscador Saldaña00</h1><div class="brand-sub">Buscador técnico de mantenimiento</div></div><div class="brand-badge">Meco</div></div>
 <div class="tabs"><button type="button" class="tab active" data-tab="layout">PC/Durkopp</button><button type="button" class="tab" data-tab="paq">DEMATIC</button><button type="button" class="tab" data-tab="qr">Vanderlande</button><button type="button" class="tab" data-tab="tgw">TGW</button></div>
 </div></header>
 <main>

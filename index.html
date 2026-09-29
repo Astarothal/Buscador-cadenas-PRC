@@ -268,6 +268,61 @@ body[data-theme="tgw"] .viewer .head,body[data-theme="tgw"] .paq-head{background
   main{padding:11px 9px 20px}.search{padding:7px}.search button{padding:0 13px}
   .viewer,.paq-viewer,.asset{border-radius:13px}.controls button,.paq-controls button{font-size:10px;padding:0 5px}
 }
+
+/* v37 · PC/Durkopp simplificado */
+#layoutHits{display:flex;justify-content:flex-end;min-height:0;margin:2px 0 8px}
+#layoutNext{width:44px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--panel);color:var(--text);font-size:22px;font-weight:800;display:none;align-items:center;justify-content:center;padding:0}
+#layoutNext.show{display:flex}
+#layoutNext:active{transform:translateY(1px)}
+.gr-groups{display:grid;gap:8px;margin-top:6px}
+.gr-drop{border:1px solid var(--border);border-radius:10px;background:var(--panel);overflow:hidden}
+.gr-drop summary{cursor:pointer;list-style:none;padding:10px 12px;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.gr-drop summary::-webkit-details-marker{display:none}
+.gr-drop summary:after{content:'▾';font-size:14px;opacity:.7}
+.gr-drop[open] summary:after{content:'▴'}
+.gr-drop-body{display:flex;gap:6px;flex-wrap:wrap;padding:0 10px 10px}
+.gr-empty{font-size:12px;color:var(--muted);padding:0 2px 8px}
+#secBtn.sec-hidden{opacity:.65;border-style:dashed}
+
+
+/* v38 · PC/Durkopp compacto */
+.layout-search-row{
+  display:flex;align-items:stretch;gap:8px;margin-bottom:4px
+}
+.layout-search-row .layout-search{
+  flex:0 1 360px;margin:0
+}
+.layout-search-row .layout-search input{
+  min-width:88px;max-width:170px;flex:1 1 120px
+}
+.layout-search-row .layout-check{
+  margin:0;white-space:nowrap;min-height:42px;padding:0 14px
+}
+#layoutNext{
+  width:auto!important;min-width:40px;height:auto!important;
+  border-radius:9px!important;font-size:20px!important;
+  display:none!important;align-items:center;justify-content:center;padding:0 10px!important
+}
+#layoutNext.show{display:inline-flex!important}
+.gr-groups{
+  display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:8px!important;margin-top:6px
+}
+.gr-drop{min-width:0}
+.gr-drop summary{
+  min-height:38px;padding:8px 10px!important;font-size:11px!important
+}
+.gr-drop-body{padding:0 8px 8px!important}
+@media(max-width:620px){
+  .layout-search-row{gap:6px}
+  .layout-search-row .layout-search{flex:1 1 auto;padding:6px}
+  .layout-search-row .layout-search input{min-width:62px;max-width:none}
+  .layout-search-row .layout-search button{padding:0 10px}
+  .layout-search-row .layout-check{font-size:10px;padding:0 9px;min-height:40px}
+  .gr-groups{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .gr-drop summary{font-size:10px!important;padding:7px 8px!important}
+}
+
 </style>
 
 <link rel="manifest" href="./manifest.webmanifest">
@@ -281,20 +336,20 @@ body[data-theme="tgw"] .viewer .head,body[data-theme="tgw"] .paq-head{background
 </div></header>
 <main>
 <section id="layoutSection" class="section active">
-<form id="layoutForm" class="search"><input id="layoutQ" inputmode="numeric" pattern="[0-9]*" enterkeyhint="search" placeholder="Ej.: 229 o 922"><button type="submit">Buscar</button></form>
-<div class="types"><button type="button" class="all active" data-type="all">Todos</button><button type="button" class="chain" data-type="chain">Cadenas</button><button type="button" class="bypass" data-type="bypass">Bypass</button></div>
-<div class="subtools"><button type="button" id="checkOpen" class="subtool-btn">Checklist mantenimiento</button></div>
-<p id="layoutStatus" class="status">Cadena = “Pos. XXX” · Bypass = número dentro de círculo.</p>
-<div id="layoutHits" class="hits"></div>
+<div class="layout-search-row">
+<form id="layoutForm" class="search layout-search"><input id="layoutQ" inputmode="numeric" pattern="[0-9]*" enterkeyhint="search" maxlength="4" placeholder="229 / 922"><button type="submit">Buscar</button></form>
+<button type="button" id="checkOpen" class="subtool-btn layout-check">Checklist</button>
+</div>
+<p id="layoutStatus" class="status">Busca un número: se detectará automáticamente si es cadena o bypass.</p>
 <div id="garmentRelation" class="garment-rel" style="display:none"></div>
 <div id="layoutViewer" class="viewer">
   <div class="head">
     <div class="head-top"><div><div id="layoutTitle"></div><div id="layoutCtx" class="ctx"></div></div></div>
     <div class="controls">
-      <button type="button" id="zone">Zona</button>
       <button type="button" id="pageFull">Página</button>
       <button type="button" id="markerToggle">Marca</button>
       <button type="button" id="secBtn" style="display:none">Seccionador</button>
+      <button type="button" id="layoutNext" aria-label="Siguiente coincidencia" title="Siguiente coincidencia">→</button>
       <button type="button" id="minus">−</button>
       <button type="button" id="plus">+</button>
     </div>
@@ -385,7 +440,7 @@ const MAPPED_ASSETS=[{"c":"215585","l":"PLC252 Clasificador 01","e":"PLC252_TVL_
 const ELEMENT_TO_ASSET={chain:{"216":"215958","217":"215974","218":"215937","219":"215979","220":"215995","221":"215943","222":"215804","223":"216000","224":"216016","225":"215951","226":"215657","227":"215698","228":"215889","229":"215748","230":"215682","231":"215896","232":"216023","238":"215839","239":"216044","240":"216045","251":"216068","252":"215585","253":"215593","254":"216120","255":"216127","256":"216104","257":"216135","258":"216077","259":"215601","260":"215609","261":"216097","262":"216143","263":"216154","264":"216155","265":"216089","266":"216170","267":"216171","268":"215709","269":"215890","270":"215664","271":"216194","272":"216195","273":"216208","274":"216209","275":"216240","276":"216241","277":"216221","278":"216222","279":"215897","285":"215632","286":"215645","287":"215869","288":"215879","451":"215586","452":"215594","453":"215602","454":"215610","455":"215617","456":"215623"},bypass:{"501":"216027","503":"216093","504":"216094","505":"216092","508":"216091","509":"216175","510":"216174","511":"215712","512":"216082","513":"216090","514":"216249","515":"216172","516":"216173","517":"215809","518":"215810","519":"215808","520":"216025","523":"215700","525":"215659","526":"215699","527":"216018","528":"215710","529":"216105","530":"217882","531":"216176","532":"215660","533":"215701","534":"216024","535":"215755","536":"215658","537":"215690","539":"216002","540":"216026","541":"215751","543":"215686","546":"215750","547":"215749","548":"215688","549":"215689","550":"215639","551":"215640","552":"215654","553":"215641","554":"215653","555":"215652","556":"215892","557":"215898","558":"215880","559":"215870","560":"215899","561":"215891","562":"215703","563":"216048","564":"216047","565":"215702","566":"215811","567":"215946","568":"215953","569":"216046","570":"215679","571":"215728","572":"216178","573":"215704","574":"215850","575":"215849","577":"215691","578":"216124","579":"216148","580":"216160","581":"216177","582":"215762","901":"216198","902":"216070","903":"216197","904":"216211","905":"216210","906":"215940","907":"215938","908":"215976","909":"216123","910":"216122","911":"216130","912":"216131","913":"216071","914":"216069","915":"215959","916":"215981","917":"215997","918":"215980","919":"216001","920":"216017","922":"216108","923":"216245","924":"216111","925":"216246","926":"216100","927":"216078","928":"216157","929":"215807","930":"215960","931":"215806","932":"215996","933":"215805","934":"216019","935":"215711","936":"215944","937":"216214","938":"216199","939":"216109","940":"216072","941":"216080","942":"216112","943":"216079","944":"216099","945":"216212","949":"216121","950":"216129","951":"216138","952":"216137","953":"216226","954":"216107","955":"216213","957":"216139","958":"216128","959":"216146","960":"216136","961":"216147","962":"216144","963":"216229","964":"216244","965":"216201","966":"216200","967":"216225","968":"216223","969":"216230","970":"216251","971":"216145","973":"216110","975":"215939","976":"215945","977":"216243","978":"216224","979":"216242","980":"216196","981":"216215","982":"216248","983":"216247","984":"216228","985":"216227","986":"215975","987":"216113","988":"216081","989":"216098","991":"215952","992":"215954","993":"216159","994":"216158","996":"216250","997":"216156"}};
 
 const $=id=>document.getElementById(id);
-let mode='all', active=null, zoom=3, markerVisible=true;
+let mode='all', active=null, zoom=3, markerVisible=true, secVisible=true, layoutMatches=[], layoutMatchIndex=0;
 let fullAssets=null, fullAssetsLoading=false;
 
 function pageData(n){return 'data:image/jpeg;base64,'+$('page-'+n).textContent.trim()}
@@ -406,43 +461,61 @@ function garmentRelatedBypasses(chain){
   return Object.entries(GARMENT_RELATIONS.bypass).filter(([bp,r])=>r.from===chain||r.to===chain)
     .sort((a,b)=>Number(a[0])-Number(b[0]));
 }
+function garmentBypassButton(bp,r,chain,outgoing){
+  const other=outgoing?r.to:r.from;
+  const arrow=outgoing?'→':'←';
+  return '<button type="button" class="gr-bp" data-bp="'+esc(bp)+'">'+esc(bp)+' '+arrow+' '+esc(other)+'</button>';
+}
 function renderGarmentRelation(key,h){
   const box=$('garmentRelation'); if(!box)return;
   box.style.display='none'; box.innerHTML='';
   if(h.type==='bypass'){
     const r=GARMENT_RELATIONS.bypass[String(key)]; if(!r)return;
     const a=garmentChainLabel(r.from),b=garmentChainLabel(r.to);
-    box.innerHTML='<div class="gr-title">BYPASS '+esc(key)+'</div><div class="gr-route">'+esc(r.from)+' → '+esc(r.to)+'</div>'+
-      ((a||b)?'<div class="gr-desc">'+esc(a||r.from)+' → '+esc(b||r.to)+'</div>':'');
+    box.innerHTML='<div class="gr-title">BYPASS '+esc(key)+'</div><div class="gr-route">'+esc(r.from)+' → '+esc(r.to)+'</div>'+((a||b)?'<div class="gr-desc">'+esc(a||r.from)+' → '+esc(b||r.to)+'</div>':'');
     box.style.display='block'; return;
   }
   if(h.type==='chain'){
-    const rel=garmentRelatedBypasses(key); if(!rel.length)return;
-    box.innerHTML='<div class="gr-title">Bypass relacionados ('+rel.length+')</div><div class="gr-scroll">'+
-      rel.map(([bp,r])=>'<button type="button" class="gr-bp" data-bp="'+esc(bp)+'">'+
-      (r.from===String(key)?esc(bp)+' → '+esc(r.to):esc(bp)+' ← '+esc(r.from))+'</button>').join('')+'</div>';
+    const chain=String(key);
+    const outgoing=Object.entries(GARMENT_RELATIONS.bypass).filter(([bp,r])=>r.from===chain).sort((a,b)=>Number(a[0])-Number(b[0]));
+    const incoming=Object.entries(GARMENT_RELATIONS.bypass).filter(([bp,r])=>r.to===chain).sort((a,b)=>Number(a[0])-Number(b[0]));
+    const outHtml=outgoing.length?outgoing.map(([bp,r])=>garmentBypassButton(bp,r,chain,true)).join(''):'<div class="gr-empty">No hay bypass registrados que salgan de esta cadena.</div>';
+    const inHtml=incoming.length?incoming.map(([bp,r])=>garmentBypassButton(bp,r,chain,false)).join(''):'<div class="gr-empty">No hay bypass registrados que se dirijan a esta cadena.</div>';
+    box.innerHTML='<div class="gr-groups">'+
+      '<details class="gr-drop"><summary>Salen de esta cadena</summary><div class="gr-drop-body">'+outHtml+'</div></details>'+
+      '<details class="gr-drop"><summary>Se dirigen a esta cadena</summary><div class="gr-drop-body">'+inHtml+'</div></details>'+
+      '</div>';
     box.style.display='block';
-    box.querySelectorAll('[data-bp]').forEach(btn=>btn.onclick=()=>{
-      $('layoutQ').value=btn.dataset.bp; mode='bypass';
-      document.querySelectorAll('.types button').forEach(x=>x.classList.toggle('active',x.dataset.type==='bypass'));
-      searchLayout();
-    });
+    box.querySelectorAll('[data-bp]').forEach(btn=>btn.onclick=()=>{$('layoutQ').value=btn.dataset.bp;searchLayout()});
   }
 }
+function updateLayoutNext(){
+  const b=$('layoutNext'); if(!b)return;
+  b.classList.toggle('show',layoutMatches.length>1);
+}
+function showLayoutMatch(index){
+  if(!layoutMatches.length)return;
+  layoutMatchIndex=((index%layoutMatches.length)+layoutMatches.length)%layoutMatches.length;
+  selectLayout($('layoutQ').value,layoutMatches[layoutMatchIndex],null);
+}
 function searchLayout(){
-  const key=normNum($('layoutQ').value);$('layoutQ').value=key;$('layoutHits').innerHTML='';$('asset').classList.remove('show');$('garmentRelation').style.display='none';
-  if(!key){$('layoutStatus').textContent='Escribe una cadena o bypass.';return}
-  let arr=[];
-  if(mode!=='bypass')(LAYOUT.chains[key]||[]).forEach(h=>arr.push(Object.assign({},h,{type:'chain'})));
-  if(mode!=='chain')(LAYOUT.bypasses[key]||[]).forEach(h=>arr.push(Object.assign({},h,{type:'bypass'})));
-  if(!arr.length){$('layoutStatus').textContent='No encuentro '+key+' en el tipo seleccionado.';$('layoutViewer').style.display='none';return}
-  $('layoutStatus').textContent=key+' · '+arr.length+' coincidencia'+(arr.length===1?'':'s');
-  arr.forEach(h=>{const b=document.createElement('button');b.type='button';b.className='hit '+h.type;b.textContent=(h.type==='chain'?'Cadena':'Bypass')+' · P'+h.page;b.onclick=()=>selectLayout(key,h,b);$('layoutHits').appendChild(b)});
-  selectLayout(key,arr[0],$('layoutHits').firstElementChild);
+  const key=normNum($('layoutQ').value);$('layoutQ').value=key;$('asset').classList.remove('show');$('garmentRelation').style.display='none';
+  layoutMatches=[];layoutMatchIndex=0;secVisible=true;updateLayoutNext();
+  if(!key){$('layoutStatus').textContent='Escribe una cadena o bypass.';$('layoutViewer').style.display='none';return}
+  const chainHits=(LAYOUT.chains[key]||[]).map(h=>Object.assign({},h,{type:'chain'}));
+  const bypassHits=(LAYOUT.bypasses[key]||[]).map(h=>Object.assign({},h,{type:'bypass'}));
+  layoutMatches=chainHits.length?chainHits:bypassHits;
+  if(!layoutMatches.length){$('layoutStatus').textContent='No encuentro '+key+' como cadena ni como bypass.';$('layoutViewer').style.display='none';return}
+  updateLayoutNext();
+  showLayoutMatch(0);
 }
 function selectLayout(key,h,b){
-  Array.from($('layoutHits').children).forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');
-  active={key:key,h:h};zoom=h.type==='chain'?3.0:3.4;const sec=(h.type==='chain'?GARMENT_SECCIONADORES[String(key)]:null);$('secBtn').style.display=sec?'':'none';
+  active={key:key,h:h};zoom=h.type==='chain'?3.0:3.4;
+  const sec=(h.type==='chain'?GARMENT_SECCIONADORES[String(key)]:null);
+  $('secBtn').style.display=sec?'':'none';
+  $('secBtn').classList.remove('sec-hidden');
+  $('secBtn').textContent=sec?'Ocultar seccionador':'Seccionador';
+  $('layoutStatus').textContent=(h.type==='chain'?'Cadena ':'Bypass ')+key;
   $('layoutTitle').innerHTML='<span class="badge '+h.type+'">'+(h.type==='chain'?'CADENA':'BYPASS')+'</span> '+esc(key);
   $('layoutCtx').textContent=h.type==='chain'?(h.context||'Pos. '+key):'Número '+key+' dentro de círculo';
   $('layoutImg').src=pageData(h.page);$('layoutImg').onload=renderLayout;$('layoutViewer').style.display='block';renderAsset(key,h);renderGarmentRelation(key,h);
@@ -453,7 +526,7 @@ function renderLayout(){
   const pad=h.type==='chain'?9:4,m=$('mark');m.className='mark '+h.type+(markerVisible?'':' hidden');
   m.style.left=(h.x0*s-pad)+'px';m.style.top=(h.y0*s-pad)+'px';m.style.width=((h.x1-h.x0)*s+pad*2)+'px';m.style.height=((h.y1-h.y0)*s+pad*2)+'px';
   const sec=(active.h.type==='chain'?GARMENT_SECCIONADORES[String(active.key)]:null),sm=$('secmark');
-  if(sec&&sec.page===active.h.page){sm.classList.remove('hidden');sm.style.left=(sec.x*s-9)+'px';sm.style.top=(sec.y*s-9)+'px'}else sm.classList.add('hidden');
+  if(sec&&secVisible&&sec.page===active.h.page){sm.classList.remove('hidden');sm.style.left=(sec.x*s-9)+'px';sm.style.top=(sec.y*s-9)+'px'}else sm.classList.add('hidden');
   applyZoom();
 }
 function applyZoom(){$('canvas').style.transform='scale('+zoom+')';centerMark()}
@@ -466,11 +539,26 @@ function renderAsset(key,h){
 }
 
 $('layoutForm').onsubmit=e=>{e.preventDefault();searchLayout()};
-document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{mode=b.dataset.type;document.querySelectorAll('[data-type]').forEach(x=>x.classList.remove('active'));b.classList.add('active');if($('layoutQ').value)searchLayout()});
-$('zone').onclick=()=>{zoom=2.0;applyZoom()};
+$('layoutNext').onclick=()=>showLayoutMatch(layoutMatchIndex+1);
 $('pageFull').onclick=()=>{zoom=1;$('canvas').style.transform='scale(1)';$('crop').scrollLeft=0;$('crop').scrollTop=0};
 $('markerToggle').onclick=()=>{markerVisible=!markerVisible;$('mark').classList.toggle('hidden',!markerVisible)};
-$('secBtn').onclick=()=>{const sec=active&&GARMENT_SECCIONADORES[String(active.key)];if(!sec)return;const hits=LAYOUT.chains[String(active.key)]||[];const idx=hits.findIndex(x=>x.page===sec.page);if(idx>=0&&active.h.page!==sec.page){const buttons=Array.from($('layoutHits').children);selectLayout(String(active.key),hits[idx],buttons[idx]||null);setTimeout(()=>$('secBtn').click(),60);return}const p=LAYOUT.pages[sec.page-1],s=$('crop').clientWidth/p.w,cx=sec.x*s*zoom,cy=sec.y*s*zoom;$('crop').scrollLeft=Math.max(0,cx-$('crop').clientWidth/2);$('crop').scrollTop=Math.max(0,cy-$('crop').clientHeight/2)};
+$('secBtn').onclick=()=>{
+  const sec=active&&GARMENT_SECCIONADORES[String(active.key)];if(!sec)return;
+  if(secVisible){
+    secVisible=false;$('secmark').classList.add('hidden');$('secBtn').classList.add('sec-hidden');$('secBtn').textContent='Mostrar seccionador';return;
+  }
+  secVisible=true;$('secBtn').classList.remove('sec-hidden');$('secBtn').textContent='Ocultar seccionador';
+  const hits=LAYOUT.chains[String(active.key)]||[];
+  const idx=hits.findIndex(x=>x.page===sec.page);
+  if(idx>=0&&active.h.page!==sec.page){
+    const target=Object.assign({},hits[idx],{type:'chain'});
+    const mi=layoutMatches.findIndex(x=>x.type==='chain'&&x.page===target.page&&x.x0===target.x0&&x.y0===target.y0);
+    if(mi>=0)layoutMatchIndex=mi;
+    selectLayout(String(active.key),target,null);
+  }else renderLayout();
+  const p=LAYOUT.pages[sec.page-1],scale=$('crop').clientWidth/p.w,cx=sec.x*scale*zoom,cy=sec.y*scale*zoom;
+  setTimeout(()=>{$('crop').scrollLeft=Math.max(0,cx-$('crop').clientWidth/2);$('crop').scrollTop=Math.max(0,cy-$('crop').clientHeight/2)},30);
+};
 $('minus').onclick=()=>{zoom=Math.max(1,zoom-.4);applyZoom()};
 $('plus').onclick=()=>{zoom=Math.min(5,zoom+.4);applyZoom()};
 
@@ -696,7 +784,7 @@ const CHECK_DAYS=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','S�
 function isoInfo(s){const d=new Date(s+'T12:00:00'),x=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));let id=x.getUTCDay();if(!id)id=7;x.setUTCDate(x.getUTCDate()+4-id);const y=new Date(Date.UTC(x.getUTCFullYear(),0,1));return{week:Math.ceil((((x-y)/86400000)+1)/7),isoDay:id,date:d}}
 function todayLocal(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())}
 function ck(d,s,t,n){return'ams-check|'+d+'|'+s+'|'+t+'|'+n}
-function openCheck(t,n){showMainTab('layout');$('layoutQ').value=n;mode=t;document.querySelectorAll('[data-type]').forEach(x=>x.classList.toggle('active',x.dataset.type===t));searchLayout();window.scrollTo({top:0,behavior:'smooth'})}
+function openCheck(t,n){showMainTab('layout');$('layoutQ').value=n;mode='all';searchLayout();window.scrollTo({top:0,behavior:'smooth'})}
 function checkRow(t,n,d,s){const done=localStorage.getItem(ck(d,s,t,n))==='1';let desc='';if(t==='chain')desc=garmentChainLabel(n)||('Cadena '+n);else{const r=GARMENT_RELATIONS.bypass[String(n)];desc=r?(r.from+' → '+r.to):('Bypass '+n)}const action=t==='chain'?'Revisar uniones flexibles':'Revisión / lubricación';return'<div class="check-item'+(done?' done':'')+'"><input type="checkbox" '+(done?'checked':'')+' data-check="'+t+'" data-num="'+n+'"><div class="check-main"><b>'+(t==='chain'?'Cadena ':'Bypass ')+n+'</b><small>'+esc(action)+' · '+esc(desc)+'</small></div><button type="button" class="check-map" data-open="'+t+'" data-num="'+n+'">Ver plano</button></div>'}
 function renderChecklist(){if(!$('checkDate').value)$('checkDate').value=todayLocal();const d=$('checkDate').value,i=isoInfo(d),day=CHECK_DAYS[i.date.getDay()],key=i.week+'-'+i.isoDay+'-'+checkShift;$('checkDay').textContent=day+' · '+d.split('-').reverse().join('/');$('checkWeek').textContent='Semana ISO '+i.week;document.querySelectorAll('.check-shifts button').forEach(b=>b.classList.toggle('active',b.dataset.shift===checkShift));const c=MAINT_SCHEDULE.chains[key]||[],bp=MAINT_SCHEDULE.bypass[key]||[];let h='';if(c.length)h+='<div class="check-group"><h3>Uniones flexibles · Cadenas</h3>'+c.map(n=>checkRow('chain',n,d,checkShift)).join('')+'</div>';if(bp.length)h+='<div class="check-group"><h3>Bypass · Revisión / lubricación</h3>'+bp.map(n=>checkRow('bypass',n,d,checkShift)).join('')+'</div>';if(!c.length&&!bp.length)h='<div class="check-empty">No hay tareas asignadas para este día y turno.</div>';$('checkTasks').innerHTML=h;const all=[...$('checkTasks').querySelectorAll('input[data-check]')],done=all.filter(x=>x.checked).length;$('checkSummary').textContent=all.length?(done+' de '+all.length+' completadas'):'';all.forEach(x=>x.onchange=()=>{localStorage.setItem(ck(d,checkShift,x.dataset.check,x.dataset.num),x.checked?'1':'0');renderChecklist()});$('checkTasks').querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openCheck(b.dataset.open,b.dataset.num))}
 $('checkDate').value=todayLocal();$('checkDate').onchange=renderChecklist;document.querySelectorAll('.check-shifts button').forEach(b=>b.onclick=()=>{checkShift=b.dataset.shift;localStorage.setItem('ams-check-shift',checkShift);renderChecklist()});

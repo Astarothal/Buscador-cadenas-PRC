@@ -61,7 +61,7 @@ input{flex:1;min-width:0;min-height:48px;border:1px solid var(--border);border-r
 .asset-title{font-weight:800;font-size:16px}.asset-sub{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
 .asset-code{font:900 32px ui-monospace,monospace;margin:8px 0}
 .qrbox{background:white;border-radius:12px;padding:12px;width:min(78vw,280px);margin:auto}
-.qrbox svg{display:block;width:100%;height:auto;image-rendering:pixelated}
+.qrbox svg{display:block;width:100%;height:auto;image-rendering:pixelated}.qr-link{display:block;cursor:pointer}.qr-code-link{color:inherit;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
 .info{padding:10px;margin-bottom:10px;color:var(--muted);font-size:13px}
 .results{display:grid;gap:7px}
 .result{width:100%;text-align:left;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:10px}
@@ -250,6 +250,8 @@ let fullAssets=null, fullAssetsLoading=false;
 function pageData(n){return 'data:image/jpeg;base64,'+$('page-'+n).textContent.trim()}
 function assetByCode(code){return MAPPED_ASSETS.find(r=>r.c===code) || (fullAssets&&fullAssets.find(r=>r.c===code))}
 function bits(b64,count){const bin=atob(b64),a=new Array(count);let k=0;for(let i=0;i<bin.length&&k<count;i++){const v=bin.charCodeAt(i);for(let j=7;j>=0&&k<count;j--)a[k++]=(v>>j)&1}return a}
+function immsUrl(code){return 'https://sscc.central.inditex.grp/imms/react/work-orders-pda/inbox/search/'+encodeURIComponent(code)}
+function clickableQr(r){return '<a class="qr-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer" title="Abrir '+esc(r.c)+' en IMMS">'+qrMarkup(r)+'</a>'}
 function qrMarkup(r){const n=r.s,q=4,size=n+q*2,a=bits(r.q,n*n);let d='',k=0;for(let y=0;y<n;y++)for(let x=0;x<n;x++,k++)if(a[k])d+='M'+(x+q)+' '+(y+q)+'h1v1h-1z';return '<svg viewBox="0 0 '+size+' '+size+'"><rect width="'+size+'" height="'+size+'" fill="white"/><path d="'+d+'" fill="black"/></svg>'}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c])}
 function normNum(v){const m=String(v||'').match(/\d+/);return m?m[0]:''}
@@ -321,7 +323,7 @@ function renderAsset(key,h){
   const code=(ELEMENT_TO_ASSET[h.type]||{})[key],box=$('asset');
   if(!code){$('assetContent').innerHTML='<div class="status">Sin QR relacionado de forma inequívoca.</div>';box.classList.add('show');return}
   const r=assetByCode(code);if(!r)return;
-  $('assetContent').innerHTML='<div class="asset-grid"><div><div class="asset-title">'+esc(r.e)+'</div><div class="asset-sub">'+esc(r.l)+'</div><div class="asset-code">'+esc(r.c)+'</div></div><div class="qrbox">'+qrMarkup(r)+'</div></div>';box.classList.add('show');
+  $('assetContent').innerHTML='<div class="asset-grid"><div><div class="asset-title">'+esc(r.e)+'</div><div class="asset-sub">'+esc(r.l)+'</div><div class="asset-code">'+esc(r.c)+'</div></div><div class="qrbox">'+clickableQr(r)+'</div></div>';box.classList.add('show');
 }
 
 $('layoutForm').onsubmit=e=>{e.preventDefault();searchLayout()};
@@ -353,7 +355,7 @@ async function searchQR(){
   $('qrStatus').textContent=found.length+' coincidencia'+(found.length===1?'':'s')+'.';
   found.forEach(r=>{const b=document.createElement('button');b.type='button';b.className='result';b.innerHTML='<b>'+esc(r.e)+'</b><small>'+esc(r.l)+'</small><small>'+esc(r.c)+'</small>';b.onclick=()=>showQR(r);$('qrResults').appendChild(b)});
 }
-function showQR(r){$('qrSearchView').style.display='none';$('qrDetail').classList.add('show');$('qrEq').textContent=r.e;$('qrLine').textContent=r.l;$('qrCode').textContent=r.c;$('qrSvg').outerHTML=qrMarkup(r).replace('<svg ','<svg id="qrSvg" ')}
+function showQR(r){$('qrSearchView').style.display='none';$('qrDetail').classList.add('show');$('qrEq').textContent=r.e;$('qrLine').textContent=r.l;$('qrCode').innerHTML='<a class="qr-code-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer" title="Abrir en IMMS">'+esc(r.c)+'</a>';$('qrSvg').outerHTML=qrMarkup(r).replace('<svg ','<svg id="qrSvg" ');const svg=$('qrSvg');const a=document.createElement('a');a.className='qr-link';a.href=immsUrl(r.c);a.target='_blank';a.rel='noopener noreferrer';svg.parentNode.insertBefore(a,svg);a.appendChild(svg)}
 $('qrForm').onsubmit=e=>{e.preventDefault();searchQR()};
 $('qrBack').onclick=()=>{$('qrDetail').classList.remove('show');$('qrSearchView').style.display=''};
 
@@ -469,7 +471,7 @@ async function renderPaqQR(per,pos){
     return;
   }
   content.innerHTML='<div class="paq-qr-head">QR relacionado</div><div class="paq-qr-list">'+rows.map(r=>
-    '<div class="paq-qr-card"><div class="asset-title">'+esc(r.e)+'</div><div class="asset-sub">'+esc(r.l)+'</div><div class="asset-code">'+esc(r.c)+'</div><div class="qrbox">'+qrMarkup(r)+'</div></div>'
+    '<div class="paq-qr-card"><div class="asset-title">'+esc(r.e)+'</div><div class="asset-sub">'+esc(r.l)+'</div><div class="asset-code">'+esc(r.c)+'</div><div class="qrbox">'+clickableQr(r)+'</div></div>'
   ).join('')+'</div>';
 }
 
@@ -520,7 +522,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     </div>
     <div class="help-version">
       <strong>Versión actual</strong>
-      <p><b>Versión:</b> <span id="helpVersion">v30c</span> · <b>Actualizada:</b> 28/09/2026</p>
+      <p><b>Versión:</b> <span id="helpVersion">v31</span> · <b>Actualizada:</b> 29/09/2026</p>
       <p><b>Paquetería:</b> incluidos todos los PLCs de <b>DEMATIC</b>.</p>
     </div>
     <h3>¿Cómo actualizar si tienes una versión antigua?</h3>

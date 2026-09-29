@@ -154,6 +154,38 @@ flex:0 0 24px;appearance:none;-webkit-appearance:none;
 .check-shifts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}.check-shifts button{padding:8px 4px;border:1px solid var(--border);background:var(--panel);color:var(--text);border-radius:9px;font-size:12px}.check-shifts button.active{background:var(--blue);border-color:var(--blue);color:white}
 .check-summary{font-size:11px;color:var(--muted);margin-bottom:7px}.check-group{border:1px solid var(--border);background:var(--panel);border-radius:11px;margin:7px 0;overflow:hidden}.check-group h3{font-size:12px;margin:0;padding:8px 10px;border-bottom:1px solid var(--border)}
 .check-item{display:grid;grid-template-columns:25px 1fr auto;align-items:center;gap:7px;padding:8px 9px;border-top:1px solid var(--border)}.check-item:first-of-type{border-top:0}.check-item.done .check-main{opacity:.48;text-decoration:line-through}.check-item input{width:18px;height:18px}.check-main b{font-size:13px}.check-main small{display:block;color:var(--muted);font-size:10px;margin-top:1px}.check-map{padding:5px 7px;border:1px solid var(--border);background:var(--soft);color:var(--text);border-radius:7px;font-size:10px}.check-empty{padding:18px 10px;text-align:center;color:var(--muted);border:1px dashed var(--border);border-radius:10px}
+
+
+/* --- v35 · Temas por fabricante --- */
+body[data-theme="durkopp"]{--bg:#484d52;--panel:#60666c;--text:#f7f8f9;--muted:#d0d4d8;--border:#858c92;--blue:#aeb5bb}
+body[data-theme="durkopp"] header{background:linear-gradient(180deg,#6f767c 0%,#4c5257 100%)}
+body[data-theme="durkopp"] .tab.active{background:#c3c8cc;border-color:#d7dbde;color:#202428}
+body[data-theme="durkopp"] button:not(.tab):not(.help-close){background:#8a9298;color:#fff}
+body[data-theme="durkopp"] input,body[data-theme="durkopp"] select{background:#565c61;color:#fff;border-color:#858c92}
+
+body[data-theme="dematic"]{--bg:#0d1b2a;--panel:#13263b;--text:#f4f8fc;--muted:#9fb3c8;--border:#284765;--blue:#2388ff}
+body[data-theme="dematic"] header{background:#0d1b2a}
+
+body[data-theme="vanderlande"]{--bg:#080a0c;--panel:#14171a;--text:#f4f4f4;--muted:#9b9fa4;--border:#34393f;--blue:#4a4f55}
+body[data-theme="vanderlande"] header{background:#080a0c}
+body[data-theme="vanderlande"] .tab.active{background:#34383d;border-color:#5a6067;color:#fff}
+body[data-theme="vanderlande"] button:not(.tab):not(.help-close){background:#34383d;color:#fff}
+
+body[data-theme="tgw"]{--bg:#f3f3f1;--panel:#ffffff;--text:#151515;--muted:#666b70;--border:#d2d5d8;--blue:#e5e7e9}
+body[data-theme="tgw"] header{background:#fff}
+body[data-theme="tgw"] .tab{background:#fff;color:#202124;border-color:#d7dadd}
+body[data-theme="tgw"] .tab.active{background:#f0f1f2;border-color:#9ea3a8;color:#111}
+body[data-theme="tgw"] button:not(.tab):not(.help-close){background:#eceeef;color:#111;border:1px solid #c9cdd1}
+body[data-theme="tgw"] input,body[data-theme="tgw"] select{background:#fff;color:#111;border-color:#cdd1d5}
+body[data-theme="tgw"] .paq-filter,body[data-theme="tgw"] .paq-chipbtn,body[data-theme="tgw"] .paq-navrow button,body[data-theme="tgw"] .paq-favbtn{background:#fff;color:#111;border-color:#cdd1d5}
+
+.subtools{display:flex;justify-content:flex-end;margin:-2px 0 8px}
+.subtool-btn,.check-back{min-height:34px;padding:5px 10px;font-size:11px;border-radius:8px}
+.check-back{margin:0 0 8px}
+.construction{border:1px solid var(--border);background:var(--panel);border-radius:12px;padding:18px;margin-bottom:10px;text-align:center}
+.construction b{display:block;font-size:16px;margin-bottom:6px}.construction span{display:block;color:var(--muted);font-size:12px}
+.section-title{font-size:13px;font-weight:800;margin:12px 0 7px}
+
 </style>
 
 <link rel="manifest" href="./manifest.webmanifest">
@@ -163,12 +195,13 @@ flex:0 0 24px;appearance:none;-webkit-appearance:none;
 </head>
 <body>
 <header style="position:relative;"><div class="wrap"><h1>Buscador Saldaña00</h1>
-<div class="tabs"><button type="button" class="tab active" data-tab="layout">Plano · Cadenas / Bypass</button><button type="button" class="tab" data-tab="qr">OT · Número / QR</button><button type="button" class="tab" data-tab="paq">Paquetería</button><button type="button" class="tab" data-tab="tgw">TGW</button><button type="button" class="tab" data-tab="check">Checklist</button></div>
+<div class="tabs"><button type="button" class="tab active" data-tab="layout">PC/Durkopp</button><button type="button" class="tab" data-tab="paq">DEMATIC</button><button type="button" class="tab" data-tab="qr">Vanderlande</button><button type="button" class="tab" data-tab="tgw">TGW</button></div>
 </div></header>
 <main>
 <section id="layoutSection" class="section active">
 <form id="layoutForm" class="search"><input id="layoutQ" inputmode="numeric" pattern="[0-9]*" enterkeyhint="search" placeholder="Ej.: 229 o 922"><button type="submit">Buscar</button></form>
 <div class="types"><button type="button" class="all active" data-type="all">Todos</button><button type="button" class="chain" data-type="chain">Cadenas</button><button type="button" class="bypass" data-type="bypass">Bypass</button></div>
+<div class="subtools"><button type="button" id="checkOpen" class="subtool-btn">Checklist mantenimiento</button></div>
 <p id="layoutStatus" class="status">Cadena = “Pos. XXX” · Bypass = número dentro de círculo.</p>
 <div id="layoutHits" class="hits"></div>
 <div id="garmentRelation" class="garment-rel" style="display:none"></div>
@@ -191,8 +224,9 @@ flex:0 0 24px;appearance:none;-webkit-appearance:none;
 </section>
 
 <section id="qrSection" class="section">
-<div class="info">Esta pestaña carga la base completa solo cuando la abres, para que el buscador del plano funcione rápido en iPhone.</div>
+<div class="construction"><b>Transportes de Vanderlande por añadir · página en construcción</b><span>El buscador de QR ya está disponible en esta pestaña.</span></div>
 <div id="qrSearchView">
+<div class="section-title">Buscador de QR</div>
 <form id="qrForm" class="search"><input id="qrQ" type="search" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Equipo, línea o número"><button type="submit">Buscar</button></form>
 <p id="qrStatus" class="status">Abre esta pestaña y espera un instante mientras carga la base.</p>
 <div id="qrResults" class="results"></div>
@@ -238,6 +272,7 @@ flex:0 0 24px;appearance:none;-webkit-appearance:none;
 </section>
 
 <section id="checkSection" class="section">
+ <button type="button" id="checkBack" class="check-back">← Volver a PC/Durkopp</button>
  <div class="check-head"><div><b id="checkDay">Checklist</b><div id="checkWeek" class="muted"></div></div><input id="checkDate" type="date"></div>
  <div class="check-shifts"><button type="button" data-shift="MAÑANA">Mañana</button><button type="button" data-shift="TARDE">Tarde</button><button type="button" data-shift="NOCHE">Noche</button></div>
  <div id="checkSummary" class="check-summary"></div><div id="checkTasks"></div>
@@ -579,16 +614,31 @@ const CHECK_DAYS=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','S�
 function isoInfo(s){const d=new Date(s+'T12:00:00'),x=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));let id=x.getUTCDay();if(!id)id=7;x.setUTCDate(x.getUTCDate()+4-id);const y=new Date(Date.UTC(x.getUTCFullYear(),0,1));return{week:Math.ceil((((x-y)/86400000)+1)/7),isoDay:id,date:d}}
 function todayLocal(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())}
 function ck(d,s,t,n){return'ams-check|'+d+'|'+s+'|'+t+'|'+n}
-function openCheck(t,n){document.querySelector('.tab[data-tab="layout"]').click();$('layoutQ').value=n;mode=t;document.querySelectorAll('[data-type]').forEach(x=>x.classList.toggle('active',x.dataset.type===t));searchLayout();window.scrollTo({top:0,behavior:'smooth'})}
+function openCheck(t,n){showMainTab('layout');$('layoutQ').value=n;mode=t;document.querySelectorAll('[data-type]').forEach(x=>x.classList.toggle('active',x.dataset.type===t));searchLayout();window.scrollTo({top:0,behavior:'smooth'})}
 function checkRow(t,n,d,s){const done=localStorage.getItem(ck(d,s,t,n))==='1';let desc='';if(t==='chain')desc=garmentChainLabel(n)||('Cadena '+n);else{const r=GARMENT_RELATIONS.bypass[String(n)];desc=r?(r.from+' → '+r.to):('Bypass '+n)}const action=t==='chain'?'Revisar uniones flexibles':'Revisión / lubricación';return'<div class="check-item'+(done?' done':'')+'"><input type="checkbox" '+(done?'checked':'')+' data-check="'+t+'" data-num="'+n+'"><div class="check-main"><b>'+(t==='chain'?'Cadena ':'Bypass ')+n+'</b><small>'+esc(action)+' · '+esc(desc)+'</small></div><button type="button" class="check-map" data-open="'+t+'" data-num="'+n+'">Ver plano</button></div>'}
 function renderChecklist(){if(!$('checkDate').value)$('checkDate').value=todayLocal();const d=$('checkDate').value,i=isoInfo(d),day=CHECK_DAYS[i.date.getDay()],key=i.week+'-'+i.isoDay+'-'+checkShift;$('checkDay').textContent=day+' · '+d.split('-').reverse().join('/');$('checkWeek').textContent='Semana ISO '+i.week;document.querySelectorAll('.check-shifts button').forEach(b=>b.classList.toggle('active',b.dataset.shift===checkShift));const c=MAINT_SCHEDULE.chains[key]||[],bp=MAINT_SCHEDULE.bypass[key]||[];let h='';if(c.length)h+='<div class="check-group"><h3>Uniones flexibles · Cadenas</h3>'+c.map(n=>checkRow('chain',n,d,checkShift)).join('')+'</div>';if(bp.length)h+='<div class="check-group"><h3>Bypass · Revisión / lubricación</h3>'+bp.map(n=>checkRow('bypass',n,d,checkShift)).join('')+'</div>';if(!c.length&&!bp.length)h='<div class="check-empty">No hay tareas asignadas para este día y turno.</div>';$('checkTasks').innerHTML=h;const all=[...$('checkTasks').querySelectorAll('input[data-check]')],done=all.filter(x=>x.checked).length;$('checkSummary').textContent=all.length?(done+' de '+all.length+' completadas'):'';all.forEach(x=>x.onchange=()=>{localStorage.setItem(ck(d,checkShift,x.dataset.check,x.dataset.num),x.checked?'1':'0');renderChecklist()});$('checkTasks').querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openCheck(b.dataset.open,b.dataset.num))}
 $('checkDate').value=todayLocal();$('checkDate').onchange=renderChecklist;document.querySelectorAll('.check-shifts button').forEach(b=>b.onclick=()=>{checkShift=b.dataset.shift;localStorage.setItem('ams-check-shift',checkShift);renderChecklist()});
-document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');
-  $('layoutSection').classList.toggle('active',b.dataset.tab==='layout');$('qrSection').classList.toggle('active',b.dataset.tab==='qr');$('paqSection').classList.toggle('active',b.dataset.tab==='paq');$('tgwSection').classList.toggle('active',b.dataset.tab==='tgw');$('checkSection').classList.toggle('active',b.dataset.tab==='check');
-  if(b.dataset.tab==='qr')loadFullAssets();if(b.dataset.tab==='paq')loadPaq();if(b.dataset.tab==='tgw')loadTgw();if(b.dataset.tab==='check')renderChecklist();
-});
-
+function applyMakerTheme(tab){
+  const themes={layout:'durkopp',paq:'dematic',qr:'vanderlande',tgw:'tgw'};
+  document.body.dataset.theme=themes[tab]||'durkopp';
+}
+function showMainTab(tab){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===tab));
+  $('layoutSection').classList.toggle('active',tab==='layout');
+  $('qrSection').classList.toggle('active',tab==='qr');
+  $('paqSection').classList.toggle('active',tab==='paq');
+  $('tgwSection').classList.toggle('active',tab==='tgw');
+  $('checkSection').classList.remove('active');
+  applyMakerTheme(tab);
+  if(tab==='qr')loadFullAssets();if(tab==='paq')loadPaq();if(tab==='tgw')loadTgw();
+}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>showMainTab(b.dataset.tab));
+$('checkOpen').onclick=()=>{
+  $('layoutSection').classList.remove('active');$('qrSection').classList.remove('active');$('paqSection').classList.remove('active');$('tgwSection').classList.remove('active');$('checkSection').classList.add('active');
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab==='layout'));applyMakerTheme('layout');renderChecklist();window.scrollTo({top:0,behavior:'smooth'});
+};
+$('checkBack').onclick=()=>showMainTab('layout');
+applyMakerTheme('layout');
 $('layoutQ').value='229';searchLayout();
 </script>
 
@@ -611,7 +661,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     <div class="help-version">
       <strong>Versión actual</strong>
       <p><b>Versión:</b> <span id="helpVersion">v34c</span> · <b>Actualizada:</b> 29/09/2026</p>
-      <p><b>Paquetería:</b> incluidos todos los PLCs de <b>DEMATIC</b>.</p>
+      <p><b>DEMATIC:</b> incluidos todos los PLCs de DEMATIC.</p><p><b>Vanderlande:</b> transportes pendientes de añadir; el buscador de QR ya está operativo.</p><p><b>TGW:</b> búsqueda visual de transportes TGW.</p>
     </div>
     <h3>¿Cómo actualizar si tienes una versión antigua?</h3>
     <ol class="help-steps">
@@ -626,7 +676,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 <button id="forceUpdateBtn" class="help-update" type="button">Buscar actualización</button>
 <p id="forceUpdateMsg" class="status"></p>
 <h3>Contenido de esta versión</h3>
-    <p>Buscador visual de Paquetería con todos los PLCs de <b>DEMATIC</b>, filtro por PLC, búsquedas recientes, favoritos y navegación entre PER. Se mantienen Prenda, QR y layouts en alta resolución.</p>
+    <p>Buscador organizado por fabricante: PC/Durkopp, DEMATIC, Vanderlande y TGW. DEMATIC mantiene filtros, recientes, favoritos y navegación entre PER.</p>
     <p>Se están añadiendo progresivamente los <b>seccionadores de las cadenas de Prenda Colgada</b> para poder localizar su posición física directamente en el plano.</p>
     <p><b>Sugerencias o información que falte:</b> contacta con <b>Medina</b>.</p>
   </div>

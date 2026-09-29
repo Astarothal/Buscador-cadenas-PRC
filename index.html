@@ -321,7 +321,7 @@ function renderAsset(key,h){
   const code=(ELEMENT_TO_ASSET[h.type]||{})[key],box=$('asset');
   if(!code){$('assetContent').innerHTML='<div class="status">Sin QR relacionado de forma inequívoca.</div>';box.classList.add('show');return}
   const r=assetByCode(code);if(!r)return;
-  $('assetContent').innerHTML='<div class="asset-grid"><div><div class="asset-title">'+esc(r.e)+'</div><div class="asset-sub">'+esc(r.l)+'</div><div class="asset-code">'+esc(r.c)+'</div></div><div class="qrbox">'+qrMarkup(r)+'</div></div>';box.classList.add('show');
+  $('assetContent').innerHTML='<div class="asset-grid"><div><div class="asset-title">'+esc(r.e)+'</div><div class="asset-sub">'+esc(r.l)+'</div><div class="asset-code"><a class="qr-code-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+esc(r.c)+'</a></div></div><div class="qrbox"><a class="qr-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+qrMarkup(r)+'</a></div></div>';box.classList.add('show');
 }
 
 $('layoutForm').onsubmit=e=>{e.preventDefault();searchLayout()};
@@ -477,7 +477,7 @@ async function renderPaqQR(per,pos){
     return;
   }
   content.innerHTML='<div class="paq-qr-head">QR relacionado</div><div class="paq-qr-list">'+rows.map(r=>
-    '<div class="paq-qr-card"><div class="asset-title">'+esc(r.e)+'</div><div class="asset-sub">'+esc(r.l)+'</div><div class="asset-code">'+esc(r.c)+'</div><div class="qrbox">'+qrMarkup(r)+'</div></div>'
+    '<div class="paq-qr-card"><div class="asset-title">'+esc(r.e)+'</div><div class="asset-sub">'+esc(r.l)+'</div><div class="asset-code"><a class="qr-code-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+esc(r.c)+'</a></div><div class="qrbox"><a class="qr-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+qrMarkup(r)+'</a></div></div>'
   ).join('')+'</div>';
 }
 
@@ -528,7 +528,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     </div>
     <div class="help-version">
       <strong>Versión actual</strong>
-      <p><b>Versión:</b> <span id="helpVersion">v30c</span> · <b>Actualizada:</b> 28/09/2026</p>
+      <p><b>Versión:</b> <span id="helpVersion">v33</span> · <b>Actualizada:</b> 29/09/2026</p>
       <p><b>Paquetería:</b> incluidos todos los PLCs de <b>DEMATIC</b>.</p>
     </div>
     <h3>¿Cómo actualizar si tienes una versión antigua?</h3>

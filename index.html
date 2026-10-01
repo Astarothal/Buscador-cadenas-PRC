@@ -329,15 +329,11 @@ body[data-theme="tgw"] .viewer .head,body[data-theme="tgw"] .paq-head{background
 .auwa-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;font-size:12px;font-weight:900;letter-spacing:.02em;border-bottom:1px solid var(--border)}
 .auwa-actions{display:flex;gap:7px;flex-wrap:wrap;padding:10px 12px}
 .auwa-actions button,.auwa-actions a{min-height:36px;border:1px solid var(--border);border-radius:9px;padding:0 11px;display:inline-flex;align-items:center;justify-content:center;font:inherit;font-size:11px;font-weight:800;text-decoration:none;cursor:pointer;background:var(--panel2);color:var(--text)}
-.auwa-frame-wrap{display:none;border-top:1px solid var(--border);background:#fff}
-.auwa-frame-wrap.show{display:block}
-.auwa-frame{display:block;width:100%;height:min(62vh,620px);border:0;background:#fff}
-.auwa-note{padding:8px 12px 10px;color:var(--muted);font-size:10px;line-height:1.35}
 .auwa-pending{padding:11px 12px;color:var(--muted);font-size:11px}
 .auwa-choice{font-size:10px;color:var(--muted);padding:0 12px 4px}
 body[data-theme="vanderlande"] .auwa-panel{background:#171a1e;border-color:#343a40}
 body[data-theme="vanderlande"] .auwa-actions button,body[data-theme="vanderlande"] .auwa-actions a{background:#22262b;color:#f4f6f8;border-color:#3b4249}
-@media(max-width:620px){.auwa-frame{height:58vh}.auwa-actions{padding:8px}.auwa-actions button,.auwa-actions a{flex:1 1 auto}}
+@media(max-width:620px){.auwa-actions{padding:8px}.auwa-actions a{flex:1 1 auto}}
 
 </style>
 
@@ -640,16 +636,10 @@ function auwaLinksForAsset(r){
   return [];
 }
 function auwaBlock(links){
-  links=Array.isArray(links)?links.filter(x=>x&&x.url):[];
+  links=links||[];
   if(!links.length)return '<div class="auwa-panel"><div class="auwa-head">AUWA</div><div class="auwa-pending">Enlace AUWA pendiente de asociar para este equipo.</div></div>';
-  return links.map((x,i)=>'<div class="auwa-panel"><div class="auwa-head"><span>AUWA</span><span class="auwa-choice">'+esc(x.label||'Equipo')+'</span></div><div class="auwa-actions"><button type="button" data-auwa-toggle>Ver aquí</button><a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">Abrir AUWA ↗</a></div><div class="auwa-frame-wrap"><iframe class="auwa-frame" loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-src="'+esc(x.url)+'" title="AUWA"></iframe><div class="auwa-note">Si AUWA impide mostrarse dentro de la app, utiliza “Abrir AUWA”.</div></div></div>').join('');
+  return links.map((x,i)=>'<div class="auwa-panel"><div class="auwa-head"><span>AUWA</span><span class="auwa-choice">'+esc(x.label||'Equipo')+'</span></div><div class="auwa-actions"><a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">Mostrar equipo en AUWA ↗</a></div></div>').join('');
 }
-document.addEventListener('click',e=>{
-  const b=e.target.closest&&e.target.closest('[data-auwa-toggle]');if(!b)return;
-  const p=b.closest('.auwa-panel'),w=p&&p.querySelector('.auwa-frame-wrap'),f=w&&w.querySelector('iframe');if(!w||!f)return;
-  const open=!w.classList.contains('show');w.classList.toggle('show',open);b.textContent=open?'Ocultar AUWA':'Ver aquí';
-  if(open&&!f.src)f.src=f.dataset.src;
-});
 
 function immsUrl(code){return 'https://sscc.central.inditex.grp/imms/react/work-orders-pda/inbox/search/'+encodeURIComponent(String(code||'').trim())}
 function showQR(r){$('qrSearchView').style.display='none';$('qrDetail').classList.add('show');$('qrEq').textContent=r.e;$('qrLine').textContent=r.l;$('qrCode').innerHTML='<a class="qr-code-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+esc(r.c)+'</a>';$('qrSvg').outerHTML=qrMarkup(r).replace('<svg ','<svg id="qrSvg" ');const svg=$('qrSvg');const a=document.createElement('a');a.className='qr-link';a.href=immsUrl(r.c);a.target='_blank';a.rel='noopener noreferrer';svg.parentNode.insertBefore(a,svg);a.appendChild(svg);$('qrAuwa').innerHTML=auwaBlock(auwaLinksForAsset(r))}

@@ -323,6 +323,22 @@ body[data-theme="tgw"] .viewer .head,body[data-theme="tgw"] .paq-head{background
   .gr-drop summary{font-size:10px!important;padding:7px 8px!important}
 }
 
+
+/* v39 · AUWA integrado */
+.auwa-panel{margin-top:12px;border:1px solid var(--border);border-radius:12px;background:var(--panel);overflow:hidden}
+.auwa-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;font-size:12px;font-weight:900;letter-spacing:.02em;border-bottom:1px solid var(--border)}
+.auwa-actions{display:flex;gap:7px;flex-wrap:wrap;padding:10px 12px}
+.auwa-actions button,.auwa-actions a{min-height:36px;border:1px solid var(--border);border-radius:9px;padding:0 11px;display:inline-flex;align-items:center;justify-content:center;font:inherit;font-size:11px;font-weight:800;text-decoration:none;cursor:pointer;background:var(--panel2);color:var(--text)}
+.auwa-frame-wrap{display:none;border-top:1px solid var(--border);background:#fff}
+.auwa-frame-wrap.show{display:block}
+.auwa-frame{display:block;width:100%;height:min(62vh,620px);border:0;background:#fff}
+.auwa-note{padding:8px 12px 10px;color:var(--muted);font-size:10px;line-height:1.35}
+.auwa-pending{padding:11px 12px;color:var(--muted);font-size:11px}
+.auwa-choice{font-size:10px;color:var(--muted);padding:0 12px 4px}
+body[data-theme="vanderlande"] .auwa-panel{background:#171a1e;border-color:#343a40}
+body[data-theme="vanderlande"] .auwa-actions button,body[data-theme="vanderlande"] .auwa-actions a{background:#22262b;color:#f4f6f8;border-color:#3b4249}
+@media(max-width:620px){.auwa-frame{height:58vh}.auwa-actions{padding:8px}.auwa-actions button,.auwa-actions a{flex:1 1 auto}}
+
 </style>
 
 <link rel="manifest" href="./manifest.webmanifest">
@@ -372,6 +388,7 @@ body[data-theme="tgw"] .viewer .head,body[data-theme="tgw"] .paq-head{background
 <button type="button" id="qrBack">← Volver</button>
 <h2 id="qrEq"></h2><div id="qrLine" class="status"></div><div id="qrCode" class="qr-code"></div>
 <div class="qrbox"><svg id="qrSvg"></svg></div>
+<div id="qrAuwa"></div>
 </div>
 </section>
 
@@ -535,7 +552,7 @@ function renderAsset(key,h){
   const code=(ELEMENT_TO_ASSET[h.type]||{})[key],box=$('asset');
   if(!code){$('assetContent').innerHTML='<div class="status">Sin QR relacionado de forma inequívoca.</div>';box.classList.add('show');return}
   const r=assetByCode(code);if(!r)return;
-  $('assetContent').innerHTML='<div class="asset-grid"><div><div class="asset-title">'+esc(r.e)+'</div><div class="asset-sub">'+esc(r.l)+'</div><div class="asset-code"><a class="qr-code-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+esc(r.c)+'</a></div></div><div class="qrbox"><a class="qr-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+qrMarkup(r)+'</a></div></div>';box.classList.add('show');
+  $('assetContent').innerHTML='<div class="asset-grid"><div><div class="asset-title">'+esc(r.e)+'</div><div class="asset-sub">'+esc(r.l)+'</div><div class="asset-code"><a class="qr-code-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+esc(r.c)+'</a></div></div><div class="qrbox"><a class="qr-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+qrMarkup(r)+'</a></div></div>'+auwaBlock(auwaLinksForAsset(r));box.classList.add('show');
 }
 
 $('layoutForm').onsubmit=e=>{e.preventDefault();searchLayout()};
@@ -589,8 +606,53 @@ async function searchQR(){
   $('qrStatus').textContent=found.length+' coincidencia'+(found.length===1?'':'s')+'.';
   found.forEach(r=>{const b=document.createElement('button');b.type='button';b.className='result';b.innerHTML='<b>'+esc(r.e)+'</b><small>'+esc(r.l)+'</small><small>'+esc(r.c)+'</small>';b.onclick=()=>showQR(r);$('qrResults').appendChild(b)});
 }
+
+const AUWA_EXACT={
+  'CNX1_SWD_03_01_13_A':'https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F1/area/ACNSFG/zone/ZCNX1_PLC010/line/EQLCNX1_PER04;equipment=CNX1_SWD_03_01_13_A'
+};
+function auwaCnX1Url(per,pos){
+  const p=String(pos||'').trim().toUpperCase().replace(/[^A-Z0-9]+/g,'_').replace(/^_+|_+$/g,'');
+  const pe=String(per||'').trim().toUpperCase();
+  if(!p||!/^PER\d+$/i.test(pe))return '';
+  return 'https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F1/area/ACNSFG/zone/ZCNX1_PLC010/line/EQLCNX1_'+encodeURIComponent(pe)+';equipment=CNX1_SWD_'+encodeURIComponent(p);
+}
+function auwaLinksForPaq(h,pos){
+  if(!h||!pos)return [];
+  const plc=String(h.plc||'').toUpperCase(), p=String(pos||'').toUpperCase();
+  const eq=plc+'_SWD_'+p.replace(/[^A-Z0-9]+/g,'_').replace(/^_+|_+$/g,'');
+  if(AUWA_EXACT[eq])return [{label:(h.per||'AUWA'),url:AUWA_EXACT[eq]}];
+  if(plc==='CNX1'){
+    const u=auwaCnX1Url(h.per,p);if(u)return [{label:h.per,url:u}];
+  }
+  return [];
+}
+function auwaLinksForAsset(r){
+  if(!r)return [];
+  const eq=String(r.e||'').trim().toUpperCase();
+  if(AUWA_EXACT[eq])return [{label:'AUWA',url:AUWA_EXACT[eq]}];
+  const m=eq.match(/^CNX1_SWD_(.+)$/);
+  if(m&&typeof PAQ!=='undefined'&&PAQ&&PAQ.positions){
+    const pos=m[1].replace(/_/g,'.');
+    const arr=PAQ.positions[pos]||[];
+    const pers=[...new Set(arr.filter(x=>String(x.plc||'').toUpperCase()==='CNX1').map(x=>x.per))];
+    if(pers.length===1){const u=auwaCnX1Url(pers[0],pos);if(u)return [{label:pers[0],url:u}]}
+  }
+  return [];
+}
+function auwaBlock(links){
+  links=Array.isArray(links)?links.filter(x=>x&&x.url):[];
+  if(!links.length)return '<div class="auwa-panel"><div class="auwa-head">AUWA</div><div class="auwa-pending">Enlace AUWA pendiente de asociar para este equipo.</div></div>';
+  return links.map((x,i)=>'<div class="auwa-panel"><div class="auwa-head"><span>AUWA</span><span class="auwa-choice">'+esc(x.label||'Equipo')+'</span></div><div class="auwa-actions"><button type="button" data-auwa-toggle>Ver aquí</button><a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">Abrir AUWA ↗</a></div><div class="auwa-frame-wrap"><iframe class="auwa-frame" loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-src="'+esc(x.url)+'" title="AUWA"></iframe><div class="auwa-note">Si AUWA impide mostrarse dentro de la app, utiliza “Abrir AUWA”.</div></div></div>').join('');
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest&&e.target.closest('[data-auwa-toggle]');if(!b)return;
+  const p=b.closest('.auwa-panel'),w=p&&p.querySelector('.auwa-frame-wrap'),f=w&&w.querySelector('iframe');if(!w||!f)return;
+  const open=!w.classList.contains('show');w.classList.toggle('show',open);b.textContent=open?'Ocultar AUWA':'Ver aquí';
+  if(open&&!f.src)f.src=f.dataset.src;
+});
+
 function immsUrl(code){return 'https://sscc.central.inditex.grp/imms/react/work-orders-pda/inbox/search/'+encodeURIComponent(String(code||'').trim())}
-function showQR(r){$('qrSearchView').style.display='none';$('qrDetail').classList.add('show');$('qrEq').textContent=r.e;$('qrLine').textContent=r.l;$('qrCode').innerHTML='<a class=\"qr-code-link\" href=\"'+immsUrl(r.c)+'\" target=\"_blank\" rel=\"noopener noreferrer\">'+esc(r.c)+'</a>';$('qrSvg').outerHTML=qrMarkup(r).replace('<svg ','<svg id=\"qrSvg\" ');const svg=$('qrSvg');const a=document.createElement('a');a.className='qr-link';a.href=immsUrl(r.c);a.target='_blank';a.rel='noopener noreferrer';svg.parentNode.insertBefore(a,svg);a.appendChild(svg)}
+function showQR(r){$('qrSearchView').style.display='none';$('qrDetail').classList.add('show');$('qrEq').textContent=r.e;$('qrLine').textContent=r.l;$('qrCode').innerHTML='<a class="qr-code-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+esc(r.c)+'</a>';$('qrSvg').outerHTML=qrMarkup(r).replace('<svg ','<svg id="qrSvg" ');const svg=$('qrSvg');const a=document.createElement('a');a.className='qr-link';a.href=immsUrl(r.c);a.target='_blank';a.rel='noopener noreferrer';svg.parentNode.insertBefore(a,svg);a.appendChild(svg);$('qrAuwa').innerHTML=auwaBlock(auwaLinksForAsset(r))}
 $('qrForm').onsubmit=e=>{e.preventDefault();searchQR()};
 $('qrBack').onclick=()=>{$('qrDetail').classList.remove('show');$('qrSearchView').style.display=''};
 
@@ -707,7 +769,7 @@ async function renderPaqQR(per,pos){
   }
   content.innerHTML='<div class="paq-qr-head">QR relacionado</div><div class="paq-qr-list">'+rows.map(r=>
     '<div class="paq-qr-card"><div class="asset-title">'+esc(r.e)+'</div><div class="asset-sub">'+esc(r.l)+'</div><div class="asset-code"><a class="qr-code-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+esc(r.c)+'</a></div><div class="qrbox"><a class="qr-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+qrMarkup(r)+'</a></div></div>'
-  ).join('')+'</div>';
+  ).join('')+'</div>'+auwaBlock(auwaLinksForPaq(paqActive&&paqActive.h,pos));
 }
 
 function showPaq(h,pos,btn){if(btn){Array.from($('paqSheets').children).forEach(x=>x.classList.remove('active'));btn.classList.add('active')}paqActive={h,pos};paqZoom=pos?2.4:1.45;$('paqTitle').textContent=(h.plc||'CNX1')+' · '+h.per+' · Layout '+h.layout_sheet+'/'+h.layout_total;$('paqCtx').textContent='Página '+h.pdf_page+(pos?' · Posición '+pos:'');$('paqImg').src='./'+h.image;$('paqImg').onload=renderPaq;$('paqViewer').style.display='block';renderPaqQR(h.per,pos).catch(()=>{});updatePaqNav();updatePaqFavButton()}
@@ -763,7 +825,7 @@ async function renderTgwQR(code){
   let rows=tgwAssetMatches(code);
   if(!fullAssets){try{await loadFullAssets()}catch(e){}rows=tgwAssetMatches(code)}
   if(!rows.length){content.innerHTML='<div class="status">No se ha encontrado un QR relacionado en la base de activos.</div>';return}
-  content.innerHTML='<div class="paq-qr-head">QR relacionado</div><div class="paq-qr-list">'+rows.map(r=>'<div class="paq-qr-card"><div class="asset-title">'+esc(r.e)+'</div><div class="asset-sub">'+esc(r.l)+'</div><div class="asset-code"><a class="qr-code-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+esc(r.c)+'</a></div><div class="qrbox"><a class="qr-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+qrMarkup(r)+'</a></div></div>').join('')+'</div>';
+  content.innerHTML='<div class="paq-qr-head">QR relacionado</div><div class="paq-qr-list">'+rows.map(r=>'<div class="paq-qr-card"><div class="asset-title">'+esc(r.e)+'</div><div class="asset-sub">'+esc(r.l)+'</div><div class="asset-code"><a class="qr-code-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+esc(r.c)+'</a></div><div class="qrbox"><a class="qr-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+qrMarkup(r)+'</a></div></div>').join('')+'</div>'+auwaBlock(auwaLinksForAsset(rows[0]));
 }
 function showTgw(h,btn){
   if(btn){Array.from($('tgwResults').children).forEach(x=>x.classList.remove('active'));btn.classList.add('active')}

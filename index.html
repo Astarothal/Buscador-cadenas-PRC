@@ -335,6 +335,14 @@ body[data-theme="vanderlande"] .auwa-panel{background:#171a1e;border-color:#343a
 body[data-theme="vanderlande"] .auwa-actions button,body[data-theme="vanderlande"] .auwa-actions a{background:#22262b;color:#f4f6f8;border-color:#3b4249}
 @media(max-width:620px){.auwa-actions{padding:8px}.auwa-actions a{flex:1 1 auto}}
 
+
+/* v40 · Buscador QR instalación */
+.qr-installation-sub{
+  margin:-2px 0 10px;
+  font-size:12px;
+  color:var(--muted);
+}
+
 </style>
 
 <link rel="manifest" href="./manifest.webmanifest">
@@ -344,7 +352,7 @@ body[data-theme="vanderlande"] .auwa-actions button,body[data-theme="vanderlande
 </head>
 <body>
 <header><div class="wrap"><div class="brandbar"><div><h1>Buscador Saldaña00</h1><div class="brand-sub">Buscador técnico de mantenimiento</div></div><div class="brand-badge">Meco</div></div>
-<div class="tabs"><button type="button" class="tab active" data-tab="layout">PC/Durkopp</button><button type="button" class="tab" data-tab="paq">DEMATIC</button><button type="button" class="tab" data-tab="qr">Vanderlande</button><button type="button" class="tab" data-tab="tgw">TGW</button></div>
+<div class="tabs"><button type="button" class="tab active" data-tab="layout">PC/Durkopp</button><button type="button" class="tab" data-tab="paq">DEMATIC</button><button type="button" class="tab" data-tab="qr">QR Instalación</button><button type="button" class="tab" data-tab="tgw">TGW</button></div>
 </div></header>
 <main>
 <section id="layoutSection" class="section active">
@@ -373,11 +381,10 @@ body[data-theme="vanderlande"] .auwa-actions button,body[data-theme="vanderlande
 </section>
 
 <section id="qrSection" class="section">
-<div class="construction"><b>Transportes de Vanderlande por añadir · página en construcción</b><span>El buscador de QR ya está disponible en esta pestaña.</span></div>
 <div id="qrSearchView">
-<div class="section-title">Buscador de QR</div>
+<div class="section-title">Buscador de QR · Instalación</div><div class="qr-installation-sub">Búsqueda global de equipos y QR de la instalación.</div>
 <form id="qrForm" class="search"><input id="qrQ" type="search" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Equipo, línea o número"><button type="submit">Buscar</button></form>
-<p id="qrStatus" class="status">Abre esta pestaña y espera un instante mientras carga la base.</p>
+<p id="qrStatus" class="status">Busca cualquier QR, equipo o línea de la instalación.</p>
 <div id="qrResults" class="results"></div>
 </div>
 <div id="qrDetail" class="qr-detail">

@@ -397,7 +397,7 @@ body[data-theme="vanderlande"] .van-filterbar{grid-template-columns:minmax(160px
 <style>.chain-trace-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.beta-trace-note{font-size:13px;color:#08653d;padding:8px 0}</style><style>.mark.chain,.layout-page-mark{display:none!important}</style><style>.plane-gesture-stage{position:relative;min-width:100%;min-height:1px}.layout-page-canvas,.canvas{will-change:transform}</style><link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./favicon.png">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-</head>
+<style>.layout-page-card{overflow:visible}.layout-page-head{position:sticky;top:var(--app-header-height,80px);z-index:10;background:var(--panel);border-radius:14px 14px 0 0;flex-wrap:wrap}.page-tools{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}.page-tools button{font-size:12px;padding:7px 9px}.layout-page-crop{border-radius:0 0 14px 14px}</style><style>.page-tools button{min-height:0!important;height:auto!important;line-height:1.15;padding:3px 8px;font-size:11px;white-space:nowrap}.page-tools{gap:4px;align-items:center}.layout-page-head{padding:4px 8px;gap:5px}.layout-page-card,.viewer{scroll-margin-top:calc(var(--app-header-height,80px) + 8px)}#secBtn,#planeDimToggle{min-height:0!important;height:auto!important;line-height:1.15;padding:4px 8px}</style><style>.layout-multi-viewer{grid-template-columns:minmax(0,1fr);min-width:0;max-width:100%}.layout-page-card{min-width:0;max-width:100%}.layout-page-crop,.crop{min-width:0;width:100%;max-width:100%;box-sizing:border-box}.plane-gesture-stage{max-width:none}</style></head>
 <body>
 <header><div class="wrap"><div class="brandbar"><div><h1>Buscador Saldaña00</h1><div class="brand-sub">Buscador técnico de mantenimiento</div></div><div class="brand-badge">Meco</div></div>
 <div class="tabs"><button type="button" class="tab active" data-tab="layout">PC/Durkopp</button><button type="button" class="tab" data-tab="paq">DEMATIC</button><button type="button" class="tab" data-tab="van">Vanderlande</button><button type="button" class="tab" data-tab="qr">QR Instalación</button><button type="button" class="tab" data-tab="tgw">TGW</button></div>
@@ -409,7 +409,7 @@ body[data-theme="vanderlande"] .van-filterbar{grid-template-columns:minmax(160px
 <button type="button" id="checkOpen" class="subtool-btn layout-check">Checklist</button>
 </div>
 <p id="layoutStatus" class="status">Busca un número: se detectará automáticamente si es cadena o bypass.</p>
-<div class="beta-trace-note" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><button type="button" id="planeDimToggle" aria-pressed="true" onclick="const on=ChainHighlight.setDim(this.getAttribute('aria-pressed')!=='true');this.setAttribute('aria-pressed',String(on));this.textContent=on?'Ver plano normal':'Aclarar fondo';">Ver plano normal</button><button type="button" id="secBtn" style="display:none">Seccionador</button></div>
+<div id="sharedPlaneControls" class="beta-trace-note" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><button type="button" id="planeDimToggle" aria-pressed="true" onclick="const on=ChainHighlight.setDim(this.getAttribute('aria-pressed')!=='true');this.setAttribute('aria-pressed',String(on));this.textContent=on?'Ver plano normal':'Aclarar fondo';syncPageButtons();">Ver plano normal</button><button type="button" id="secBtn" style="display:none">Seccionador</button></div>
 <div class="status">Separa o junta dos dedos para cambiar el zoom y arrastra para desplazarte. En ordenador, doble clic o Ctrl + rueda.</div>
 <div id="garmentRelation" class="garment-rel" style="display:none"></div>
 <div id="layoutMultiViewer" class="layout-multi-viewer" style="display:none"></div>
@@ -594,10 +594,17 @@ function showLayoutMatch(index){
   layoutMatchIndex=((index%layoutMatches.length)+layoutMatches.length)%layoutMatches.length;
   selectLayout($('layoutQ').value,layoutMatches[layoutMatchIndex],null);
 }
+function syncPageButtons(){
+  document.querySelectorAll('[data-page-dim]').forEach(b=>{b.textContent=$('planeDimToggle').textContent;b.setAttribute('aria-pressed',$('planeDimToggle').getAttribute('aria-pressed'));});
+  document.querySelectorAll('[data-page-sec]').forEach(b=>{b.textContent=$('secBtn').textContent;b.classList.toggle('sec-hidden',!secVisible);});
+}
+const updateHeaderOffset=()=>document.documentElement.style.setProperty('--app-header-height',document.querySelector('header').getBoundingClientRect().height+'px');
+updateHeaderOffset();if(typeof ResizeObserver!=='undefined')new ResizeObserver(updateHeaderOffset).observe(document.querySelector('header'));
 function renderAllChainPages(key,hits){
   ChainHighlight.clear();
   const box=$('layoutMultiViewer'); if(!box)return;
   $('layoutViewer').style.display='none';
+  $('sharedPlaneControls').style.display='none';
   box.style.display='grid';
   box.innerHTML='';
   active={key:key,h:hits[0]}; zoom=1;
@@ -605,7 +612,7 @@ function renderAllChainPages(key,hits){
   const sec=type==='chain'?(GARMENT_SECCIONADORES[String(key)]||null):null;
   $('secBtn').style.display=sec?'':'none';
   $('secBtn').classList.toggle('sec-hidden',!secVisible);
-  $('secBtn').textContent=secVisible?'Ocultar seccionador':'Mostrar seccionador';
+  $('secBtn').textContent='Seccionador';
   $('layoutStatus').textContent=(type==='chain'?'Cadena ':'Bypass ')+key+' · '+new Set(hits.map(h=>h.page)).size+' páginas';
   renderAsset(key,hits[0]);
   renderGarmentRelation(key,hits[0]);
@@ -614,9 +621,15 @@ function renderAllChainPages(key,hits){
   hits.forEach(h=>{(groups[h.page]||(groups[h.page]=[])).push(h)});
   Object.keys(groups).map(Number).sort((a,b)=>a-b).forEach(pageNum=>{
     const p=LAYOUT.pages[pageNum-1], pageHits=groups[pageNum];
-    const card=document.createElement('div'); card.className='layout-page-card';
+    const card=document.createElement('div'); card.className='layout-page-card';card.dataset.page=pageNum;
     const head=document.createElement('div'); head.className='layout-page-head';
     head.innerHTML='<b>Página '+pageNum+'</b><span>'+ (traces[traceKey]?.[pageNum]?(type==='chain'?'Cadena destacada':'Bypass destacado'):'Sin trazado · marca de posición')+'</span>';
+    const tools=document.createElement('div');tools.className='page-tools';
+    const dim=document.createElement('button');dim.type='button';dim.dataset.pageDim='';
+    dim.textContent=$('planeDimToggle').textContent;dim.setAttribute('aria-pressed',$('planeDimToggle').getAttribute('aria-pressed'));
+    dim.onclick=()=>$('planeDimToggle').click();tools.appendChild(dim);
+    if(sec){const sb=document.createElement('button');sb.type='button';sb.dataset.pageSec='';sb.textContent=$('secBtn').textContent;sb.onclick=()=>$('secBtn').click();tools.appendChild(sb);}
+    head.appendChild(tools);
     const crop=document.createElement('div'); crop.className='layout-page-crop';
     const canvas=document.createElement('div'); canvas.className='layout-page-canvas';
     const img=document.createElement('img'); img.alt='Plano página '+pageNum; img.src=pageData(pageNum);
@@ -642,6 +655,7 @@ function renderAllChainPages(key,hits){
   });
 }
 function searchLayout(){
+  $('sharedPlaneControls').style.display='flex';
   ChainHighlight.clear();
   const key=normNum($('layoutQ').value);$('layoutQ').value=key;$('asset').classList.remove('show');$('garmentRelation').style.display='none';
   layoutMatches=[];layoutMatchIndex=0;secVisible=true;updateLayoutNext();
@@ -670,6 +684,10 @@ function searchLayout(){
     });
     bypassHits.sort((a,b)=>a.page-b.page);
   }
+  if(chainHits.length){const sec=GARMENT_SECCIONADORES[String(key)];
+    if(sec&&!chainHits.some(h=>h.page===sec.page))chainHits.push({type:'chain',continuation:true,page:sec.page,x0:sec.x-8,y0:sec.y-8,x1:sec.x+8,y1:sec.y+8,context:'Seccionador'});
+    chainHits.sort((a,b)=>a.page-b.page);
+  }
   layoutMatches=chainHits.length?chainHits:bypassHits;
   if(!layoutMatches.length){$('layoutStatus').textContent='No encuentro '+key+' como cadena ni como bypass.';$('layoutViewer').style.display='none';return}
   updateLayoutNext();
@@ -680,13 +698,14 @@ function searchLayout(){
   showLayoutMatch(0);
 }
 function selectLayout(key,h,b){
+  $('sharedPlaneControls').style.display='flex';
   ChainHighlight.clear();
   $('layoutMultiViewer').style.display='none';$('layoutMultiViewer').innerHTML='';
   active={key:key,h:h};zoom=h.type==='chain'?3.0:3.4;
   const sec=(h.type==='chain'?GARMENT_SECCIONADORES[String(key)]:null);
   $('secBtn').style.display=sec?'':'none';
   $('secBtn').classList.remove('sec-hidden');
-  $('secBtn').textContent=sec?'Ocultar seccionador':'Seccionador';
+  $('secBtn').textContent='Seccionador';
   $('layoutStatus').textContent=(h.type==='chain'?'Cadena ':'Bypass ')+key;
   $('layoutTitle').innerHTML='<span class="badge '+h.type+'">'+(h.type==='chain'?'CADENA':'BYPASS')+'</span> '+esc(key);
   $('layoutCtx').textContent=h.type==='chain'?(h.context||'Pos. '+key):'Número '+key+' dentro de círculo';
@@ -718,31 +737,31 @@ $('layoutNext').onclick=()=>showLayoutMatch(layoutMatchIndex+1);
 $('pageFull').onclick=()=>{PlaneGestures.set($('crop'),1);zoom=1;$('canvas').style.transform='scale(1)';$('crop').scrollLeft=0;$('crop').scrollTop=0};
 $('markerToggle').onclick=()=>{markerVisible=!markerVisible;$('mark').classList.toggle('hidden',!markerVisible)};
 $('secBtn').onclick=()=>{
-  const sec=active&&active.h.type==='chain'&&GARMENT_SECCIONADORES[String(active.key)];if(!sec)return;
+  const selected=active,sec=selected&&selected.h.type==='chain'&&GARMENT_SECCIONADORES[String(selected.key)];if(!sec)return;
+  secVisible=true;$('secBtn').textContent='Seccionador';$('secBtn').classList.remove('sec-hidden');
+  const page=LAYOUT.pages[sec.page-1];if(!page)return;
+  function focus(crop,canvas,target){
+    if(active!==selected||!canvas.isConnected)return;
+    const bw=crop.clientWidth;if(!bw)return;
+    PlaneGestures.focus(crop,sec.x/page.w,sec.y/page.w);
+    requestAnimationFrame(()=>{if(active===selected&&target.isConnected){
+      const top=window.scrollY+target.getBoundingClientRect().top-document.querySelector('header').getBoundingClientRect().height-8;
+      window.scrollTo({top:Math.max(0,top),behavior:'smooth'});
+    }});
+  }
   if($('layoutMultiViewer').style.display!=='none'){
-    secVisible=!secVisible;
-    $('secBtn').classList.toggle('sec-hidden',!secVisible);
-    $('secBtn').textContent=secVisible?'Ocultar seccionador':'Mostrar seccionador';
-    renderAllChainPages(String(active.key),layoutMatches);
-    if(!secVisible){
-      $('secBtn').classList.add('sec-hidden');$('secBtn').textContent='Mostrar seccionador';
-    }
-    return;
+    const card=$('layoutMultiViewer').querySelector('[data-page="'+sec.page+'"]');if(!card)return;
+    const crop=card.querySelector('.layout-page-crop'),canvas=card.querySelector('.layout-page-canvas'),img=canvas.querySelector('img');
+    const ready=()=>{if(active!==selected||!canvas.isConnected)return;
+      let marker=canvas.querySelector('.layout-page-sec');if(!marker){marker=document.createElement('div');marker.className='layout-page-sec';marker.textContent='S';canvas.appendChild(marker);}
+      const scale=crop.clientWidth/page.w;marker.style.left=sec.x*scale+'px';marker.style.top=sec.y*scale+'px';
+      focus(crop,canvas,card);
+    };
+    if(img.complete&&img.naturalWidth)ready();else img.addEventListener('load',ready,{once:true});return;
   }
-  if(secVisible){
-    secVisible=false;$('secmark').classList.add('hidden');$('secBtn').classList.add('sec-hidden');$('secBtn').textContent='Mostrar seccionador';return;
-  }
-  secVisible=true;$('secBtn').classList.remove('sec-hidden');$('secBtn').textContent='Ocultar seccionador';
-  const hits=LAYOUT.chains[String(active.key)]||[];
-  const idx=hits.findIndex(x=>x.page===sec.page);
-  if(idx>=0&&active.h.page!==sec.page){
-    const target=Object.assign({},hits[idx],{type:'chain'});
-    const mi=layoutMatches.findIndex(x=>x.type==='chain'&&x.page===target.page&&x.x0===target.x0&&x.y0===target.y0);
-    if(mi>=0)layoutMatchIndex=mi;
-    selectLayout(String(active.key),target,null);
-  }else renderLayout();
-  const p=LAYOUT.pages[sec.page-1],scale=$('crop').clientWidth/p.w,cx=sec.x*scale*zoom,cy=sec.y*scale*zoom;
-  setTimeout(()=>{$('crop').scrollLeft=Math.max(0,cx-$('crop').clientWidth/2);$('crop').scrollTop=Math.max(0,cy-$('crop').clientHeight/2)},30);
+  // Una búsqueda de una sola página ya contiene su seccionador.
+  const img=$('layoutImg'),canvas=$('canvas');const ready=()=>{if(active!==selected)return;$('secmark').classList.remove('hidden');focus($('crop'),canvas,$('layoutViewer'));};
+  if(img.complete&&img.naturalWidth)ready();else img.addEventListener('load',ready,{once:true});
 };
 $('minus').onclick=()=>PlaneGestures.set($('crop'),zoom-.4);
 $('plus').onclick=()=>PlaneGestures.set($('crop'),zoom+.4);
@@ -1123,7 +1142,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     </div>
     <div class="help-version">
       <strong>Versión actual</strong>
-      <p><b>Versión:</b> <span id="helpVersion">v47 · Zoom táctil</span> · <b>Actualizada:</b> 03/10/2026</p>
+      <p><b>Versión:</b> <span id="helpVersion">v50 · Seccionador corregido</span> · <b>Actualizada:</b> 03/10/2026</p>
       <p><b>DEMATIC:</b> incluidos todos los PLCs de DEMATIC.</p><p><b>Vanderlande:</b> transportes pendientes de añadir; el buscador de QR ya está operativo.</p><p><b>TGW:</b> búsqueda visual de transportes TGW.</p>
     </div>
     <h3>¿Cómo actualizar si tienes una versión antigua?</h3>

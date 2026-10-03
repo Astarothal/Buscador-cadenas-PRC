@@ -14,9 +14,12 @@ const PlaneGestures=(()=>{
   const end=e=>{b.points.delete(e.pointerId);};view.addEventListener('pointerup',end);view.addEventListener('pointercancel',end);view.addEventListener('lostpointercapture',end);
   view.addEventListener('dblclick',e=>{b.set(b.scale>1?1:3,point(e));e.preventDefault();});
   view.addEventListener('wheel',e=>{if(!e.ctrlKey)return;b.set(b.scale*Math.exp(-e.deltaY*.005),point(e));e.preventDefault();},{passive:false});
-  if(typeof ResizeObserver!=='undefined'){const observer=new ResizeObserver(()=>{if(view.clientWidth&&canvas.isConnected)size();});observer.observe(view);}
+  if(typeof ResizeObserver!=='undefined'){const observer=new ResizeObserver(()=>{if(view.clientWidth&&canvas.isConnected&&Math.abs(view.clientWidth-b.width)>.5)size();});observer.observe(view);}
   bindings.set(view,b);size();
  }
  function set(view,value){const b=bindings.get(view);if(b)b.set(value);}
- return {bind,set};
+ function focus(view,x,y){const b=bindings.get(view);if(!b)return false;
+   b.set(b.scale);view.scrollLeft=Math.max(0,x*b.width*b.scale-view.clientWidth/2);view.scrollTop=Math.max(0,y*b.width*b.scale-view.clientHeight/2);return true;
+ }
+ return {bind,set,focus};
 })();

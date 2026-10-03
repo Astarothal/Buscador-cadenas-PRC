@@ -390,11 +390,14 @@ body[data-theme="vanderlande"] .van-filterbar{grid-template-columns:minmax(160px
 
 </style>
 
-<link rel="manifest" href="./manifest.webmanifest">
-<link rel="icon" type="image/png" href="./favicon.png">
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
 
-<style>.chain-trace-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.beta-trace-note{font-size:13px;color:#08653d;padding:8px 0}</style></head>
+
+
+
+<style>.chain-trace-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.beta-trace-note{font-size:13px;color:#08653d;padding:8px 0}</style><style>.mark.chain,.layout-page-mark{display:none!important}</style><link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./favicon.png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+</head>
 <body>
 <header><div class="wrap"><div class="brandbar"><div><h1>Buscador Saldaña00</h1><div class="brand-sub">Buscador técnico de mantenimiento</div></div><div class="brand-badge">Meco</div></div>
 <div class="tabs"><button type="button" class="tab active" data-tab="layout">PC/Durkopp</button><button type="button" class="tab" data-tab="paq">DEMATIC</button><button type="button" class="tab" data-tab="van">Vanderlande</button><button type="button" class="tab" data-tab="qr">QR Instalación</button><button type="button" class="tab" data-tab="tgw">TGW</button></div>
@@ -406,6 +409,7 @@ body[data-theme="vanderlande"] .van-filterbar{grid-template-columns:minmax(160px
 <button type="button" id="checkOpen" class="subtool-btn layout-check">Checklist</button>
 </div>
 <p id="layoutStatus" class="status">Busca un número: se detectará automáticamente si es cadena o bypass.</p>
+<div class="beta-trace-note" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><button type="button" id="planeDimToggle" aria-pressed="true" onclick="const on=ChainHighlight.setDim(this.getAttribute('aria-pressed')!=='true');this.setAttribute('aria-pressed',String(on));this.textContent=on?'Ver plano normal':'Aclarar fondo';">Ver plano normal</button><label><input type="checkbox" checked onchange="ChainHighlight.setMotion(this.checked)"> Animar puntos</label></div>
 <div id="garmentRelation" class="garment-rel" style="display:none"></div>
 <div id="layoutMultiViewer" class="layout-multi-viewer" style="display:none"></div>
 <div id="layoutViewer" class="viewer">
@@ -420,9 +424,9 @@ body[data-theme="vanderlande"] .van-filterbar{grid-template-columns:minmax(160px
       <button type="button" id="plus">+</button>
     </div>
   </div>
-  <div class="beta-trace-note">El recorrido de la cadena alterna entre verde y rojo. </div>
+  
   <div id="crop" class="crop"><div id="canvas" class="canvas"><img id="layoutImg" alt="Plano"><div id="mark" class="mark"></div><div id="secmark" class="secmark hidden"></div></div></div>
-  <div class="legend">Rojo = cadena · Verde = bypass · Naranja S = seccionador</div>
+  <div class="legend">Verde vivo = cadena · Círculo verde = bypass · Naranja S = seccionador</div>
 </div>
 <div id="asset" class="asset"><div id="assetContent"></div></div>
 </section>
@@ -606,7 +610,7 @@ function renderAllChainPages(key,hits){
     const p=LAYOUT.pages[pageNum-1], pageHits=groups[pageNum];
     const card=document.createElement('div'); card.className='layout-page-card';
     const head=document.createElement('div'); head.className='layout-page-head';
-    head.innerHTML='<b>Página '+pageNum+'</b><span>'+ (CT_LINES['CT'+key]?.[pageNum]?'Recorrido verde / rojo':'Sin trazado · marca de posición')+'</span>';
+    head.innerHTML='<b>Página '+pageNum+'</b><span>'+ (CT_LINES['CT'+key]?.[pageNum]?'Cadena destacada':'Sin trazado · marca de posición')+'</span>';
     const crop=document.createElement('div'); crop.className='layout-page-crop';
     const canvas=document.createElement('div'); canvas.className='layout-page-canvas';
     const img=document.createElement('img'); img.alt='Plano página '+pageNum; img.src=pageData(pageNum);
@@ -674,7 +678,7 @@ function selectLayout(key,h,b){
 function renderLayout(){
   if(!active)return;const p=LAYOUT.pages[active.h.page-1],h=active.h,bw=$('crop').clientWidth,s=bw/p.w;
   $('canvas').style.width=bw+'px';$('canvas').style.height=(p.h*s)+'px';$('layoutImg').style.width=bw+'px';
-  const pad=h.type==='chain'?9:4,m=$('mark');m.className='mark '+h.type+(markerVisible?'':' hidden');
+  const pad=h.type==='chain'?9:4,m=$('mark');m.className='mark '+h.type+(markerVisible?'':' hidden');$('markerToggle').style.display=h.type==='chain'?'none':'';
   m.style.left=(h.x0*s-pad)+'px';m.style.top=(h.y0*s-pad)+'px';m.style.width=((h.x1-h.x0)*s+pad*2)+'px';m.style.height=((h.y1-h.y0)*s+pad*2)+'px';
   const sec=(active.h.type==='chain'?GARMENT_SECCIONADORES[String(active.key)]:null),sm=$('secmark');
   if(sec&&secVisible&&sec.page===active.h.page){sm.classList.remove('hidden');sm.style.left=(sec.x*s-9)+'px';sm.style.top=(sec.y*s-9)+'px'}else sm.classList.add('hidden');
@@ -1100,7 +1104,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     </div>
     <div class="help-version">
       <strong>Versión actual</strong>
-      <p><b>Versión:</b> <span id="helpVersion">v43 · Resaltado de cadenas</span> · <b>Actualizada:</b> 03/10/2026</p>
+      <p><b>Versión:</b> <span id="helpVersion">v45 · Cadena destacada</span> · <b>Actualizada:</b> 03/10/2026</p>
       <p><b>DEMATIC:</b> incluidos todos los PLCs de DEMATIC.</p><p><b>Vanderlande:</b> transportes pendientes de añadir; el buscador de QR ya está operativo.</p><p><b>TGW:</b> búsqueda visual de transportes TGW.</p>
     </div>
     <h3>¿Cómo actualizar si tienes una versión antigua?</h3>
@@ -1141,7 +1145,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
        const regs=await navigator.serviceWorker.getRegistrations();
        for(const r of regs){if(r.scope===new URL('./',location.href).href)await r.update()}
      }
-     if('caches' in window){const ks=await caches.keys();await Promise.all(ks.filter(k=>k.startsWith('medina-v43-')).map(k=>caches.delete(k)))}
+     if('caches' in window){const ks=await caches.keys();await Promise.all(ks.filter(k=>(k.startsWith('medina-v')||k.startsWith('saldana00-'))).map(k=>caches.delete(k)))}
      if(um)um.textContent='Comprobación terminada. Recargando…';
      setTimeout(()=>location.reload(),500);
    }catch(e){if(um)um.textContent='No se pudo forzar la actualización. Cierra y vuelve a abrir la app.';u.disabled=false}

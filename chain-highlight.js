@@ -56,6 +56,13 @@ const ChainHighlight=(()=>{
   for(const p of paths){if(!p.sign)continue;const gap=12,offset=((elapsed*14*p.sign)%gap+gap)%gap;for(let d=offset;d<p.total;d+=gap){const q=pointAt(p,d);ctx.beginPath();ctx.arc(q[0],q[1],Math.max(.7,Math.min(1.15,(p.path.width||2.16)*.52)),0,Math.PI*2);ctx.fill();}}
   ctx.globalAlpha=dimmed?.28:1;
   for(const [x0,y0,x1,y1] of trace.labelMasks||[]){ctx.drawImage(img,x0*img.naturalWidth/page.w,y0*img.naturalHeight/page.h,(x1-x0)*img.naturalWidth/page.w,(y1-y0)*img.naturalHeight/page.h,x0,y0,x1-x0,y1-y0);}
+  ctx.globalAlpha=1;
+  for(const h of entry.markers||[]){
+   const cx=(h.x0+h.x1)/2,cy=(h.y0+h.y1)/2,rx=(h.x1-h.x0)/2,ry=(h.y1-h.y0)/2;
+   ctx.save();ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);ctx.clip();
+   ctx.drawImage(img,h.x0*img.naturalWidth/page.w,h.y0*img.naturalHeight/page.h,(h.x1-h.x0)*img.naturalWidth/page.w,(h.y1-h.y0)*img.naturalHeight/page.h,h.x0,h.y0,h.x1-h.x0,h.y1-h.y0);ctx.restore();
+   ctx.strokeStyle='#00c853';ctx.lineWidth=1.6;ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);ctx.stroke();
+  }
   ctx.restore();
  }
  function tick(now){frame=null;for(const [c] of layers)if(!c.isConnected)layers.delete(c);if(!layers.size){last=0;return;}
@@ -63,10 +70,10 @@ const ChainHighlight=(()=>{
   if(!document.hidden){if(moving&&!reduced())elapsed+=delta;for(const e of layers.values())paint(e);}
   frame=requestAnimationFrame(tick);
  }
- function attach(parent,img,key,pageNum,page){for(const [c] of layers)if(c.parentNode===parent){c.remove();layers.delete(c)}
-  const trace=key&&typeof CT_LINES!=='undefined'&&CT_LINES['CT'+key]?.[pageNum];if(!trace)return false;
+ function attach(parent,img,key,pageNum,page,markers=[]){for(const [c] of layers)if(c.parentNode===parent){c.remove();layers.delete(c)}
+  const id=key&&String(key);const trace=id&&(id.startsWith('BP')?(typeof BP_LINES!=='undefined'&&BP_LINES[id]?.[pageNum]):(typeof CT_LINES!=='undefined'&&CT_LINES[id.startsWith('CT')?id:'CT'+id]?.[pageNum]));if(!trace)return false;
   const canvas=document.createElement('canvas');canvas.className='chain-trace-canvas';canvas.setAttribute('aria-hidden','true');canvas.width=img.naturalWidth||Math.round(page.w*2);canvas.height=img.naturalHeight||Math.round(page.h*2);parent.insertBefore(canvas,img.nextSibling);
-  const entry={canvas,img,trace,page,paths:routes(trace)};layers.set(canvas,entry);paint(entry);if(frame===null)frame=requestAnimationFrame(tick);return true;
+  const entry={canvas,img,trace,page,markers,paths:routes(trace)};layers.set(canvas,entry);paint(entry);if(frame===null)frame=requestAnimationFrame(tick);return true;
  }
  return {attach,clear,setDim(value){dimmed=!!value;for(const e of layers.values())paint(e);return dimmed},setMotion(value){moving=!!value},analyze:routes};
 })();

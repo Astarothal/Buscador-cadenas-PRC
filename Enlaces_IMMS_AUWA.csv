@@ -7312,7 +7312,7 @@
 215698;PLC227_TVL_POS _227;PLC227 Colectora HB2;zone;Zona POS227_PLC34 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/AINBHG/zone/ZPOS227_PLC34
 215699;PLC227_TBY_POS_526;PLC227 Colectora HB2;line;Línea BYPASS_526;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/AINBHG/zone/ZPOS227_PLC34/line/EQLBYPASS_526
 215700;PLC227_TBY_POS_523;PLC227 Colectora HB2;zone;Zona POS227_PLC34 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/AINBHG/zone/ZPOS227_PLC34
-215700;PLC227_TBY_POS_523;PLC227 Colectora HB2;zone;Zona POS222_PLC18 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS222_PLC18
+215700;PLC227_TBY_POS_523;PLC227 Colectora HB2;zona;Zona POS222_PLC222 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS222_PLC222
 215701;PLC227_TBY_HPOS_533;PLC227 Colectora HB2;line;Línea BYPASS_533;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/AINBHG/zone/ZPOS227_PLC34/line/EQLBYPASS_533
 215702;PLC227_TBY_POS_565;PLC227 Colectora HB2;line;Línea BYPASS_565;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/AINBHG/zone/ZPOS227_PLC34/line/EQLBYPASS_565
 215703;PLC227_TBY_HPOS_562;PLC227 Colectora HB2;line;Línea BYPASS_562;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/AINBHG/zone/ZPOS227_PLC34/line/EQLBYPASS_562
@@ -7378,12 +7378,12 @@
 215798;PLC211_TBY_POS_614;PLC211 Indock 03;line;Línea INDOCK3_GATE16;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/AINBHG/zone/ZPOS211_PLC26/line/EQLINDOCK3_GATE16
 215800;PLC211_TEL_POS_215;PLC211 Indock 03;line;Línea INDOCK3_GATE17;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/AINBHG/zone/ZPOS211_PLC26/line/EQLINDOCK3_GATE17
 215801;PLC211_TBY_POS_615;PLC211 Indock 03;line;Línea INDOCK3_GATE17;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/AINBHG/zone/ZPOS211_PLC26/line/EQLINDOCK3_GATE17
-215804;PLC222_TVL_POS_222;PLC222 Colectora Pre-reparto;zone;Zona POS222_PLC18 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS222_PLC18
-215805;PLC222_TBY_HPOS_933;PLC222 Colectora Pre-reparto;line;Línea BYPASS_933;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS222_PLC18/line/EQLBYPASS_933
-215806;PLC222_TBY_HPOS_931;PLC222 Colectora Pre-reparto;line;Línea BYPASS_931;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS222_PLC18/line/EQLBYPASS_931
-215807;PLC222_TBY_HPOS_929;PLC222 Colectora Pre-reparto;line;Línea BYPASS_929;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS222_PLC18/line/EQLBYPASS_929
-215808;PLC222_TBY_HPOS_519;PLC222 Colectora Pre-reparto;line;Línea BYPASS_519;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS222_PLC18/line/EQLBYPASS_519
-215811;PLC222_TBY_HPOS_566;PLC222 Colectora Pre-reparto;line;Línea BYPASS_566;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS222_PLC18/line/EQLBYPASS_566
+215804;PLC222_TVL_POS_222;PLC222 Colectora Pre-reparto;zona;Zona POS222_PLC222 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS222_PLC222
+215805;PLC222_TBY_HPOS_933;PLC222 Colectora Pre-reparto;zona;Zona POS222_PLC222 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS222_PLC222
+215806;PLC222_TBY_HPOS_931;PLC222 Colectora Pre-reparto;zona;Zona POS222_PLC222 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS222_PLC222
+215807;PLC222_TBY_HPOS_929;PLC222 Colectora Pre-reparto;zona;Zona POS222_PLC222 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS222_PLC222
+215808;PLC222_TBY_HPOS_519;PLC222 Colectora Pre-reparto;zona;Zona POS222_PLC222 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS222_PLC222
+215811;PLC222_TBY_HPOS_566;PLC222 Colectora Pre-reparto;zona;Zona POS222_PLC222 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS222_PLC222
 215818;PLC201_CUE_1;PLC201 Indock 01 Cuadro eléctrico;line;Línea POS201_PLC01_CABINET;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/AINBHG/zone/ZPOS201_PLC01/line/EQLPOS201_PLC01_CABINET
 215820;PLC206_CUE_1;PLC206 Indock 02 Cuadro eléctrico;line;Línea POS206_PLC15_CABINET;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/AINBHG/zone/ZPOS206_PLC15/line/EQLPOS206_PLC15_CABINET
 215822;PLC211_CUE_1;PLC211 Indock 03 Cuadro eléctrico;line;Línea POS211_PLC26_CABINET;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/AINBHG/zone/ZPOS211_PLC26/line/EQLPOS211_PLC26_CABINET
@@ -7405,7 +7405,7 @@
 215847;PLC238_TBY_POS_804;PLC238 Indock 05;line;Línea INDOCK5_GATE32;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/AINBHG/zone/ZPOS238_PLC56/line/EQLINDOCK5_GATE32
 215849;PLC238_TBY_HPOS_575;PLC238 Indock 05;line;Línea BYPASS_575;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/AINBHG/zone/ZPOS238_PLC56/line/EQLBYPASS_575
 215863;PLC238_CUE_1;PLC238 Indock 05 Cuadro eléctrico;line;Línea POS238_PLC56_CABINET;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/AINBHG/zone/ZPOS238_PLC56/line/EQLPOS238_PLC56_CABINET
-215865;PLC222_CUE_1;PLC222 Colectora Pre-reparto Cuadro el.;line;Línea POS222_PLC18_CABINET;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS222_PLC18/line/EQLPOS222_PLC18_CABINET
+215865;PLC222_CUE_1;PLC222 Colectora Pre-reparto Cuadro el.;zona;Zona POS222_PLC222 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS222_PLC222
 215869;PLC287_TVL_POS_287;PLC287 Colectora de salida grúas 1-6;zone;Zona POS287_PLC46 · F6;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F6/area/AWHHG/zone/ZPOS287_PLC46
 215870;PLC287_BTR_HPOS_559;PLC287 Colectora de salida grúas 1-6;line;Línea BYPASS_559;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F6/area/AWHHG/zone/ZPOS287_PLC46/line/EQLBYPASS_559
 215871;PLC287_BTR_POS_451;PLC287 Colectora de salida grúas 1-6;line;Línea HBOUT_AISLE1;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F6/area/AWHHG/zone/ZPOS287_PLC46/line/EQLHBOUT_AISLE1
@@ -7434,12 +7434,12 @@
 215908;PLC228_CUE_1;PLC228 Salida a DSA 1 Cuadro eléctrico;line;Línea POS228_269_PLC40_CABINET;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F5/area/ASORHG/zone/ZPOS228_269_PLC40/line/EQLPOS228_269_PLC40_CABINET
 215910;PLC288_CUE_1;PLC288 Colectora salida grúas 7-12 C. e;line;Línea POS288_PLC47_CABINET;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F6/area/AWHHG/zone/ZPOS288_PLC47/line/EQLPOS288_PLC47_CABINET
 215912;PLC231_CUE_1;PLC231 Salida a DSA 2 Cuadro eléctrico;line;Línea POS231_279_PLC49_CABINET;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F5/area/ASORHG/zone/ZPOS231_279_PLC49/line/EQLPOS231_279_PLC49_CABINET
-215915;PLC216_CUE_1;PLC216 Pre-reparto 01 Cuadro eléctrico;line;Línea POS216_PLC06_CABINET;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS216_PLC06/line/EQLPOS216_PLC06_CABINET
-215917;PLC217_CUE_1;PLC217 Pre-reparto 01 Cuadro eléctrico;zone;Zona POS217_PLC07 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS217_PLC07
-215919;PLC219_CUE_1;PLC219 Pre-reparto 02 Cuadro eléctrico;line;Línea POS219_PLC16_CABINET;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS219_PLC16/line/EQLPOS219_PLC16_CABINET
-215921;PLC220_CUE_1;PLC220 Pre-reparto 02 Cuadro eléctrico;line;Línea POS220_PLC17_CABINET;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS220_PLC17/line/EQLPOS220_PLC17_CABINET
-215923;PLC223_CUE_1;PLC223 Pre-reparto 03 Cuadro eléctrico;line;Línea POS223_PLC27_CABINET;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS223_PLC27/line/EQLPOS223_PLC27_CABINET
-215925;PLC224_CUE_1;PLC224 Pre-reparto 03 Cuadro eléctrico;line;Línea POS224_PLC28_CABINET;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS224_PLC28/line/EQLPOS224_PLC28_CABINET
+215915;PLC216_CUE_1;PLC216 Pre-reparto 01 Cuadro eléctrico;zona;Zona POS216_PLC216 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS216_PLC216
+215917;PLC217_CUE_1;PLC217 Pre-reparto 01 Cuadro eléctrico;zona;Zona POS217_PLC217 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS217_PLC217
+215919;PLC219_CUE_1;PLC219 Pre-reparto 02 Cuadro eléctrico;zona;Zona POS219_PLC219 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS219_PLC219
+215921;PLC220_CUE_1;PLC220 Pre-reparto 02 Cuadro eléctrico;zona;Zona POS220_PLC220 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS220_PLC220
+215923;PLC223_CUE_1;PLC223 Pre-reparto 03 Cuadro eléctrico;zone;Zona POS223_PLC223 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS223_PLC223
+215925;PLC224_CUE_1;PLC224 Pre-reparto 03 Cuadro eléctrico;zona;Zona POS224_PLC224 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS224_PLC224
 215927;PLC232_CUE_1;PLC232 Pre-reparto 04 Cuadro eléctrico;line;Línea POS232_PLC54_CABINET;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS232_PLC54/line/EQLPOS232_PLC54_CABINET
 215929;PLC239_CUE_1;PLC239 Pre-reparto 05 Cuadro eléctrico;line;Línea POS239_240_PLC57_CABINET;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS239_240_PLC57/line/EQLPOS239_240_PLC57_CABINET
 215931;PLC218_CUE_1;PLC218 Exportación 01 Cuadro eléctrico;line;Línea POS218_PLC09_CABINET;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/APACHG/zone/ZPOS218_PLC09/line/EQLPOS218_PLC09_CABINET
@@ -7457,26 +7457,26 @@
 215952;PLC225_TBY_HPOS_991;PLC225 Exportación 03;line;Línea BYPASS_991;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/APACHG/zone/ZPOS225_PLC32/line/EQLBYPASS_991
 215953;PLC225_TBY_HPOS_568;PLC225 Exportación 03;line;Línea BYPASS_568;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/APACHG/zone/ZPOS225_PLC32/line/EQLBYPASS_568
 215954;PLC225_TBY_HPOS_992;PLC225 Exportación 03;line;Línea BYPASS_992;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/APACHG/zone/ZPOS225_PLC32/line/EQLBYPASS_992
-215958;PLC216_TVL_POS_216;PLC216 Pre-reparto 01;zone;Zona POS216_PLC06 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS216_PLC06
-215959;PLC216_TBY_HPOS_915;PLC216 Pre-reparto 01;line;Línea BYPASS_916;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS216_PLC06/line/EQLBYPASS_916
-215960;PLC216_TBY_HPOS_930;PLC216 Pre-reparto 01;line;Línea BYPASS_930;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS216_PLC06/line/EQLBYPASS_930
-215961;PLC216_RFID_POS_216_01;PLC216 Pre-reparto 01;equipment;Equipo POS216_RFID;"https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS216_PLC06/line/EQLPOS216_PLC06_CABINET;equipment=POS216_RFID"
-215974;PLC216_TVL_POS_217;PLC217 Pre-reparto 01;zone;Zona POS217_PLC07 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS217_PLC07
-215975;PLC217_TBY_HPOS_986;PLC217 Pre-reparto 01;line;Línea BYPASS_986;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS217_PLC07/line/EQLBYPASS_986
-215976;PLC217_TBY_HPOS_908;PLC217 Pre-reparto 01;line;Línea BYPASS_908;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS217_PLC07/line/EQLBYPASS_908
-215979;PLC219_TVL_POS_219;PLC219 Pre-reparto 02;zone;Zona POS219_PLC16 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS219_PLC16
-215980;PLC219_TBY_HPOS_918;PLC219 Pre-reparto 02;line;Línea BYPASS_918;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS219_PLC16/line/EQLBYPASS_918
-215981;PLC219_TBY_HPOS_916;PLC219 Pre-reparto 02;line;Línea BYPASS_916;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS219_PLC16/line/EQLBYPASS_916
-215995;PLC220_TVL_POS_220;PLC220 Pre-reparto 02;zone;Zona POS220_PLC17 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS220_PLC17
-215996;PLC220_TBY_HPOS_932;PLC220 Pre-reparto 02;line;Línea BYPASS_932;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS220_PLC17/line/EQLBYPASS_932
-215997;PLC220_TBY_HPOS_917;PLC220 Pre-reparto 02;line;Línea BYPASS_917;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS220_PLC17/line/EQLBYPASS_917
-216000;PLC223_TVL_POS_223;PLC223 Pre-reparto 03;zone;Zona POS223_PLC27 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS223_PLC27
-216001;PLC223_TBY_HPOS_919;PLC223 Pre-reparto 03;line;Línea BYPASS_919;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS223_PLC27/line/EQLBYPASS_919
-216002;PLC223_TBY_HPOS_539;PLC223 Pre-reparto 03;line;Línea BYPASS_539;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS223_PLC27/line/EQLBYPASS_539
-216016;PLC224_TVL_POS_224;PLC224 Pre-reparto 03;zone;Zona POS224_PLC28 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS224_PLC28
-216017;PLC224_TBY_HPOS_920;PLC224 Pre-reparto 03;line;Línea BYPASS_920;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS224_PLC28/line/EQLBYPASS_920
-216018;PLC224_TBY_HPOS_527;PLC224 Pre-reparto 03;line;Línea BYPASS_527;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS224_PLC28/line/EQLBYPASS_527
-216019;PLC224_TBY_HPOS_934;PLC224 Pre-reparto 03;line;Línea BYPASS_934;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS224_PLC28/line/EQLBYPASS_934
+215958;PLC216_TVL_POS_216;PLC216 Pre-reparto 01;zona;Zona POS216_PLC216 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS216_PLC216
+215959;PLC216_TBY_HPOS_915;PLC216 Pre-reparto 01;zona;Zona POS216_PLC216 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS216_PLC216
+215960;PLC216_TBY_HPOS_930;PLC216 Pre-reparto 01;zona;Zona POS216_PLC216 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS216_PLC216
+215961;PLC216_RFID_POS_216_01;PLC216 Pre-reparto 01;zona;Zona POS216_PLC216 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS216_PLC216
+215974;PLC216_TVL_POS_217;PLC217 Pre-reparto 01;zona;Zona POS217_PLC217 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS217_PLC217
+215975;PLC217_TBY_HPOS_986;PLC217 Pre-reparto 01;zona;Zona POS217_PLC217 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS217_PLC217
+215976;PLC217_TBY_HPOS_908;PLC217 Pre-reparto 01;zona;Zona POS217_PLC217 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS217_PLC217
+215979;PLC219_TVL_POS_219;PLC219 Pre-reparto 02;zona;Zona POS219_PLC219 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS219_PLC219
+215980;PLC219_TBY_HPOS_918;PLC219 Pre-reparto 02;zona;Zona POS219_PLC219 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS219_PLC219
+215981;PLC219_TBY_HPOS_916;PLC219 Pre-reparto 02;zona;Zona POS219_PLC219 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS219_PLC219
+215995;PLC220_TVL_POS_220;PLC220 Pre-reparto 02;zona;Zona POS220_PLC220 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS220_PLC220
+215996;PLC220_TBY_HPOS_932;PLC220 Pre-reparto 02;zona;Zona POS220_PLC220 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS220_PLC220
+215997;PLC220_TBY_HPOS_917;PLC220 Pre-reparto 02;zona;Zona POS220_PLC220 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS220_PLC220
+216000;PLC223_TVL_POS_223;PLC223 Pre-reparto 03;zone;Zona POS223_PLC223 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS223_PLC223
+216001;PLC223_TBY_HPOS_919;PLC223 Pre-reparto 03;zone;Zona POS223_PLC223 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS223_PLC223
+216002;PLC223_TBY_HPOS_539;PLC223 Pre-reparto 03;zone;Zona POS223_PLC223 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS223_PLC223
+216016;PLC224_TVL_POS_224;PLC224 Pre-reparto 03;zona;Zona POS224_PLC224 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS224_PLC224
+216017;PLC224_TBY_HPOS_920;PLC224 Pre-reparto 03;zona;Zona POS224_PLC224 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS224_PLC224
+216018;PLC224_TBY_HPOS_527;PLC224 Pre-reparto 03;zona;Zona POS224_PLC224 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS224_PLC224
+216019;PLC224_TBY_HPOS_934;PLC224 Pre-reparto 03;zona;Zona POS224_PLC224 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS224_PLC224
 216023;PLC232_TVL_POS_232;PLC232 Pre-reparto 04;zone;Zona POS232_PLC54 · F4;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS232_PLC54
 216024;PLC232_TBY_HPOS_534;PLC232 Pre-reparto 04;line;Línea BYPASS_534;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS232_PLC54/line/EQLBYPASS_534
 216026;PLC232_TBY_HPOS_540;PLC232 Pre-reparto 04;line;Línea BYPASS_540;https://auwa.cloud.inditex.com/warehouse/MEWH/floor/F4/area/ASQBHG/zone/ZPOS232_PLC54/line/EQLBYPASS_540

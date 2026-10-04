@@ -400,11 +400,11 @@ body[data-theme="vanderlande"] .van-filterbar{grid-template-columns:minmax(160px
 <style>.layout-page-card{overflow:visible}.layout-page-head{position:sticky;top:var(--app-header-height,80px);z-index:10;background:var(--panel);border-radius:14px 14px 0 0;flex-wrap:wrap}.page-tools{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}.page-tools button{font-size:12px;padding:7px 9px}.layout-page-crop{border-radius:0 0 14px 14px}</style><style>.page-tools button{min-height:0!important;height:auto!important;line-height:1.15;padding:3px 8px;font-size:11px;white-space:nowrap}.page-tools{gap:4px;align-items:center}.layout-page-head{padding:4px 8px;gap:5px}.layout-page-card,.viewer{scroll-margin-top:calc(var(--app-header-height,80px) + 8px)}#secBtn,#planeDimToggle{min-height:0!important;height:auto!important;line-height:1.15;padding:4px 8px}</style><style>.layout-multi-viewer{grid-template-columns:minmax(0,1fr);min-width:0;max-width:100%}.layout-page-card{min-width:0;max-width:100%}.layout-page-crop,.crop{min-width:0;width:100%;max-width:100%;box-sizing:border-box}.plane-gesture-stage{max-width:none}</style><link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./favicon.png">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-<style>.layout-page-cabinet{position:absolute;width:20px;height:20px;border-radius:4px;background:#1364c7;color:white;border:2px solid white;box-shadow:0 0 0 1px #1364c7;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;pointer-events:none}#cabinetBtn{min-height:0!important;height:auto!important;line-height:1.15;padding:4px 8px}</style></head>
+<style>.layout-page-cabinet{position:absolute;width:20px;height:20px;border-radius:4px;background:#1364c7;color:white;border:2px solid white;box-shadow:0 0 0 1px #1364c7;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;pointer-events:none}#cabinetBtn{min-height:0!important;height:auto!important;line-height:1.15;padding:4px 8px}</style><style>header.auwa-compact .brandbar,header.auwa-compact .tabs{display:none}#stickyAuwaBar:not([hidden]){display:flex;align-items:center;gap:8px;min-width:0}#stickyAuwaLabel{font-size:12px;font-weight:800;white-space:nowrap}#stickyAuwaLink{display:inline-block;background:#1565c0;color:#fff;text-decoration:none;border-radius:9px;padding:7px 11px;font-size:13px;font-weight:800;white-space:nowrap}#stickyAuwaSelect{min-width:0;max-width:45%;flex:1;height:30px;font-size:12px;padding:3px 5px}#stickyAuwaTabs{min-height:0;height:auto;line-height:1.15;padding:6px;font-size:11px;margin-left:auto;white-space:nowrap}@media(max-width:420px){#stickyAuwaLabel{display:none}#stickyAuwaLink{padding:7px 8px;font-size:12px}#stickyAuwaSelect{max-width:42%}}</style></head>
 <body>
 <header><div class="wrap"><div class="brandbar"><div><h1>Buscador Saldaña00</h1><div class="brand-sub">Buscador técnico de mantenimiento</div></div><div class="brand-badge">Meco</div></div>
 <div class="tabs"><button type="button" class="tab active" data-tab="layout">PC/Durkopp</button><button type="button" class="tab" data-tab="paq">DEMATIC</button><button type="button" class="tab" data-tab="van">Vanderlande</button><button type="button" class="tab" data-tab="qr">QR Instalación</button><button type="button" class="tab" data-tab="tgw">TGW</button></div>
-</div></header>
+<div id="stickyAuwaBar" hidden><span id="stickyAuwaLabel">AUWA</span><select id="stickyAuwaSelect" aria-label="Elegir destino AUWA" hidden></select><a id="stickyAuwaLink" target="_blank" rel="noopener noreferrer">Abrir AUWA ↗</a><button type="button" id="stickyAuwaTabs">Pestañas ↑</button></div></div></header>
 <main>
 <section id="layoutSection" class="section active">
 <div class="layout-search-row">
@@ -1182,7 +1182,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     </div>
     <div class="help-version">
       <strong>Versión actual</strong>
-      <p><b>Versión:</b> <span id="helpVersion">v54 · Equivalencias AUWA</span> · <b>Actualizada:</b> 03/10/2026</p>
+      <p><b>Versión:</b> <span id="helpVersion">v57 · Zonas AUWA confirmadas</span> · <b>Actualizada:</b> 03/10/2026</p>
       <p><b>DEMATIC:</b> incluidos todos los PLCs de DEMATIC.</p><p><b>Vanderlande:</b> transportes pendientes de añadir; el buscador de QR ya está operativo.</p><p><b>TGW:</b> búsqueda visual de transportes TGW.</p>
     </div>
     <h3>¿Cómo actualizar si tienes una versión antigua?</h3>
@@ -1229,6 +1229,36 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
    }catch(e){if(um)um.textContent='No se pudo forzar la actualización. Cierra y vuelve a abrir la app.';u.disabled=false}
  });
 
+})();
+</script>
+<script>
+(()=>{
+ const header=document.querySelector('header'),bar=document.getElementById('stickyAuwaBar'),select=document.getElementById('stickyAuwaSelect'),link=document.getElementById('stickyAuwaLink'),label=document.getElementById('stickyAuwaLabel');
+ let scheduled=false,signature='',selection='';
+ function destinations(section){const unique=new Map();
+   section.querySelectorAll('.auwa-actions a[href]').forEach(a=>{
+     const url=a.getAttribute('href');if(!url||unique.has(url))return;
+     const panel=a.closest('.auwa-panel'),title=panel&&panel.querySelector('.auwa-choice');
+     const card=a.closest('.paq-qr-card'),equipment=card&&card.querySelector('.asset-title');
+     const text=(equipment?equipment.textContent+' · ':'')+(title?title.textContent:'AUWA');
+     unique.set(url,{url,label:text.trim()});
+   });return [...unique.values()];
+ }
+ function refresh(){scheduled=false;const section=document.querySelector('.section.active'),items=section?destinations(section):[];
+   const next=(section?section.id:'')+'|'+items.map(x=>x.url+'|'+x.label).join('||');
+   if(next!==signature){signature=next;select.replaceChildren();items.forEach(item=>{const o=document.createElement('option');o.value=item.url;o.textContent=item.label;select.appendChild(o);});
+     if(!items.some(x=>x.url===selection))selection=items.length?items[0].url:'';select.value=selection;
+   }
+   const compact=window.scrollY>180&&items.length>0;header.classList.toggle('auwa-compact',compact);bar.hidden=!compact;
+   if(!compact)return;
+   select.hidden=items.length<2;link.href=selection;label.textContent=items.length===1?'AUWA · '+items[0].label:'AUWA';
+ }
+ function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(refresh);}
+ select.addEventListener('change',()=>{selection=select.value;link.href=selection;});
+ document.getElementById('stickyAuwaTabs').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+ window.addEventListener('scroll',schedule,{passive:true});window.addEventListener('resize',schedule,{passive:true});
+ new MutationObserver(schedule).observe(document.querySelector('main'),{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
+ refresh();
 })();
 </script>
 </body></html>

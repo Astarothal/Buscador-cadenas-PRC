@@ -953,10 +953,52 @@ body[data-theme] .paq-head{background:#fafaf9!important}
 }
 
 </style>
+<style>
+
+/* v61 · Vanderlande en construcción */
+.van-construction{
+  margin:0 0 16px;
+  padding:14px 16px;
+  background:#fff;
+  border:1px solid #d8d8d5;
+  border-left:3px solid #171717;
+}
+.van-construction-kicker{
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.12em;
+  color:#777774;
+  margin-bottom:5px;
+}
+.van-construction-title{
+  font-size:17px;
+  font-weight:600;
+  letter-spacing:-.02em;
+  color:#171717;
+  margin-bottom:5px;
+}
+.van-construction-text{
+  font-size:11px;
+  line-height:1.5;
+  color:#70706d;
+  max-width:720px;
+}
+@media(max-width:620px){
+  .van-construction{padding:12px 13px;margin-bottom:12px}
+  .van-construction-title{font-size:15px}
+}
+
+</style>
 </head>
 <body>
 <header><div class="wrap"><div class="brandbar"><div><h1>Grupo 5</h1><div class="brand-sub">Herramienta técnica de mantenimiento</div></div><div class="brand-badge">Meco</div></div>
-<div class="tabs"><button type="button" class="tab active" data-tab="layout">PC/Durkopp</button><button type="button" class="tab" data-tab="paq">DEMATIC</button><button type="button" class="tab" data-tab="van">Vanderlande</button><button type="button" class="tab" data-tab="qr">QR Instalación</button><button type="button" class="tab" data-tab="tgw">TGW</button></div>
+<div class="tabs">
+<button type="button" class="tab active" data-tab="layout">PC/Durkopp</button>
+<button type="button" class="tab" data-tab="paq">DEMATIC</button>
+<button type="button" class="tab" data-tab="tgw">TGW</button>
+<button type="button" class="tab" data-tab="van">Vanderlande</button>
+<button type="button" class="tab" data-tab="qr">QR Instalación</button>
+</div>
 <div id="stickyAuwaBar" hidden><span id="stickyAuwaLabel">AUWA</span><select id="stickyAuwaSelect" aria-label="Elegir destino AUWA" hidden></select><a id="stickyAuwaLink" target="_blank" rel="noopener noreferrer">Abrir AUWA ↗</a><button type="button" id="stickyAuwaTabs">Pestañas ↑</button></div></div></header>
 <main>
 <section id="layoutSection" class="section active">
@@ -990,6 +1032,11 @@ body[data-theme] .paq-head{background:#fafaf9!important}
 
 
 <section id="vanSection" class="section">
+<div class="van-construction">
+  <div class="van-construction-kicker">VANDERLANDE</div>
+  <div class="van-construction-title">Sección en construcción</div>
+  <div class="van-construction-text">El buscador y los planos actuales son una versión provisional. Se irán incorporando más zonas, equipos y relaciones.</div>
+</div>
 <div class="info">Busca un equipo Vanderlande por código completo o por una parte. Ej.: <b>TR01.01.01</b>, <b>CR40.15.01</b>, <b>LCC13</b> o <b>301CC15</b>.</div>
 <form id="vanForm" class="search"><input id="vanQ" type="search" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Ej.: CR40.15.01"><button type="submit">Buscar</button></form>
 <div class="paq-compactbar van-filterbar">

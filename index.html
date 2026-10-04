@@ -400,7 +400,118 @@ body[data-theme="vanderlande"] .van-filterbar{grid-template-columns:minmax(160px
 <style>.layout-page-card{overflow:visible}.layout-page-head{position:sticky;top:var(--app-header-height,80px);z-index:10;background:var(--panel);border-radius:14px 14px 0 0;flex-wrap:wrap}.page-tools{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}.page-tools button{font-size:12px;padding:7px 9px}.layout-page-crop{border-radius:0 0 14px 14px}</style><style>.page-tools button{min-height:0!important;height:auto!important;line-height:1.15;padding:3px 8px;font-size:11px;white-space:nowrap}.page-tools{gap:4px;align-items:center}.layout-page-head{padding:4px 8px;gap:5px}.layout-page-card,.viewer{scroll-margin-top:calc(var(--app-header-height,80px) + 8px)}#secBtn,#planeDimToggle{min-height:0!important;height:auto!important;line-height:1.15;padding:4px 8px}</style><style>.layout-multi-viewer{grid-template-columns:minmax(0,1fr);min-width:0;max-width:100%}.layout-page-card{min-width:0;max-width:100%}.layout-page-crop,.crop{min-width:0;width:100%;max-width:100%;box-sizing:border-box}.plane-gesture-stage{max-width:none}</style><link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./favicon.png">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-<style>.layout-page-cabinet{position:absolute;width:20px;height:20px;border-radius:4px;background:#1364c7;color:white;border:2px solid white;box-shadow:0 0 0 1px #1364c7;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;pointer-events:none}#cabinetBtn{min-height:0!important;height:auto!important;line-height:1.15;padding:4px 8px}</style><style>header.auwa-compact .brandbar,header.auwa-compact .tabs{display:none}#stickyAuwaBar:not([hidden]){display:flex;align-items:center;gap:8px;min-width:0}#stickyAuwaLabel{font-size:12px;font-weight:800;white-space:nowrap}#stickyAuwaLink{display:inline-block;background:#1565c0;color:#fff;text-decoration:none;border-radius:9px;padding:7px 11px;font-size:13px;font-weight:800;white-space:nowrap}#stickyAuwaSelect{min-width:0;max-width:45%;flex:1;height:30px;font-size:12px;padding:3px 5px}#stickyAuwaTabs{min-height:0;height:auto;line-height:1.15;padding:6px;font-size:11px;margin-left:auto;white-space:nowrap}@media(max-width:420px){#stickyAuwaLabel{display:none}#stickyAuwaLink{padding:7px 8px;font-size:12px}#stickyAuwaSelect{max-width:42%}}</style></head>
+<style>.layout-page-cabinet{position:absolute;width:20px;height:20px;border-radius:4px;background:#1364c7;color:white;border:2px solid white;box-shadow:0 0 0 1px #1364c7;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;pointer-events:none}#cabinetBtn{min-height:0!important;height:auto!important;line-height:1.15;padding:4px 8px}</style><style>header.auwa-compact .brandbar,header.auwa-compact .tabs{display:none}#stickyAuwaBar:not([hidden]){display:flex;align-items:center;gap:8px;min-width:0}#stickyAuwaLabel{font-size:12px;font-weight:800;white-space:nowrap}#stickyAuwaLink{display:inline-block;background:#1565c0;color:#fff;text-decoration:none;border-radius:9px;padding:7px 11px;font-size:13px;font-weight:800;white-space:nowrap}#stickyAuwaSelect{min-width:0;max-width:45%;flex:1;height:30px;font-size:12px;padding:3px 5px}#stickyAuwaTabs{min-height:0;height:auto;line-height:1.15;padding:6px;font-size:11px;margin-left:auto;white-space:nowrap}@media(max-width:420px){#stickyAuwaLabel{display:none}#stickyAuwaLink{padding:7px 8px;font-size:12px}#stickyAuwaSelect{max-width:42%}}</style>
+<style id="v58-minimal-inditex">
+/* v58 · Rediseño visual limpio / corporativo */
+:root{
+  --bg:#f5f5f3!important;
+  --panel:#ffffff!important;
+  --panel2:#f7f7f5!important;
+  --text:#151515!important;
+  --muted:#6f6f6a!important;
+  --border:#deded9!important;
+  --blue:#111111!important;
+  --red:#c83232!important;
+  --green:#238455!important;
+  --shadow:0 1px 2px rgba(0,0,0,.025),0 8px 26px rgba(0,0,0,.035);
+}
+html,body{background:var(--bg)!important;color:var(--text)!important}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif!important;letter-spacing:-.006em}
+header{
+  background:rgba(250,250,248,.96)!important;
+  border-bottom:1px solid #e4e4df!important;
+  padding:calc(11px + env(safe-area-inset-top)) 14px 10px!important;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  transition:padding .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+header.auwa-compact{padding:calc(7px + env(safe-area-inset-top)) 14px 7px!important;box-shadow:0 8px 22px rgba(0,0,0,.055)}
+.wrap,main{max-width:1120px!important}
+main{padding:18px 14px 30px!important}
+.brandbar{display:flex;align-items:flex-end!important;justify-content:space-between!important;margin:0 0 12px!important}
+.brandbar h1,h1{font-size:20px!important;font-weight:650!important;letter-spacing:-.035em!important;margin:0!important}
+.brand-sub{font-size:11px!important;text-transform:uppercase;letter-spacing:.09em!important;color:#8a8a84!important;margin-top:4px}
+.brand-badge{background:#111!important;color:#fff!important;border:0!important;border-radius:3px!important;font-size:10px!important;letter-spacing:.08em!important;text-transform:uppercase;padding:5px 7px!important}
+.tabs{display:flex!important;gap:0!important;border-bottom:1px solid #dcdcd7!important;overflow-x:auto!important;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  flex:0 0 auto!important;background:transparent!important;color:#777771!important;border:0!important;border-bottom:2px solid transparent!important;
+  border-radius:0!important;min-height:37px!important;padding:0 15px!important;font-size:11px!important;font-weight:650!important;letter-spacing:.035em!important;text-transform:uppercase;
+}
+.tab.active{background:transparent!important;color:#111!important;border-color:#111!important}
+button{border-radius:5px!important;min-height:40px!important;font-weight:650!important;box-shadow:none!important;transition:background .14s ease,border-color .14s ease,color .14s ease,opacity .14s ease,transform .08s ease}
+button:active{transform:translateY(1px)}
+.search{gap:7px!important;margin-bottom:10px!important}
+input,select{
+  background:#fff!important;color:#111!important;border:1px solid #d7d7d2!important;border-radius:5px!important;box-shadow:none!important;
+  min-height:40px!important;font-size:14px!important;padding:8px 11px!important;outline:none!important
+}
+input:focus,select:focus{border-color:#111!important;box-shadow:0 0 0 1px #111!important}
+.search button,.layout-check{background:#111!important;color:#fff!important;border:1px solid #111!important}
+.layout-search-row{gap:7px!important;margin:0 0 8px!important}
+.layout-search-row .layout-search{background:transparent!important;padding:0!important}
+.layout-search-row .layout-check{min-height:40px!important}
+.status,.ctx,.paq-note,.asset-sub,.qr-installation-sub{color:#777771!important;font-size:12px!important}
+.info,.construction{background:#fff!important;color:#666660!important;border:1px solid #dfdfda!important;border-radius:6px!important;box-shadow:none!important}
+.viewer,.paq-viewer,.asset,.qr-detail,.info,.layout-page-card,.garment-rel{
+  background:#fff!important;border:1px solid #deded9!important;border-radius:7px!important;box-shadow:var(--shadow)!important
+}
+.head,.paq-head,.layout-page-head{background:#fbfbfa!important;border-color:#e4e4df!important}
+.layout-page-head{border-radius:7px 7px 0 0!important}
+.layout-page-crop{border-radius:0 0 7px 7px!important}
+.badge{border-radius:3px!important;font-size:9px!important;letter-spacing:.075em!important;text-transform:uppercase;padding:3px 6px!important}
+.badge.chain{border-color:#111!important;color:#111!important}.badge.bypass{border-color:#238455!important;color:#238455!important}
+.controls,.paq-controls{gap:4px!important}
+.controls button,.paq-controls button,.page-tools button,#sharedPlaneControls button,.subtool-btn{
+  background:#f4f4f1!important;color:#222!important;border:1px solid #d9d9d4!important;border-radius:4px!important;
+}
+.controls button:hover,.paq-controls button:hover,.page-tools button:hover,#sharedPlaneControls button:hover{background:#ecece8!important;border-color:#c8c8c1!important}
+#sharedPlaneControls{padding:0!important;margin:0 0 6px!important;background:transparent!important;border:0!important}
+.beta-trace-note{font-size:11px!important;color:#777771!important}
+.crop,.paq-crop,.layout-page-crop{background:#fff!important;border:0!important}
+.legend{border-top:1px solid #ecece8!important;background:#fbfbfa!important;padding:7px 10px!important;font-size:10px!important}
+.asset{padding:14px!important}.asset-title{font-size:15px!important;font-weight:650!important}.asset-code{font-size:26px!important;letter-spacing:-.03em!important}
+.qrbox{border:1px solid #ecece8!important;border-radius:5px!important}
+.auwa-panel{border-radius:6px!important;border-color:#deded9!important;background:#fafaf8!important;box-shadow:none!important}
+.auwa-head{background:#f3f3f0!important;color:#111!important;border-color:#deded9!important;font-size:10px!important;text-transform:uppercase;letter-spacing:.08em!important}
+.auwa-actions a,.auwa-actions button{background:#111!important;color:#fff!important;border-color:#111!important;border-radius:4px!important}
+.result,.paq-qr-card{background:#fff!important;border-color:#deded9!important;border-radius:6px!important;box-shadow:none!important}
+.result:hover{border-color:#aaa!important;background:#fbfbf9!important}
+.gr-drop{border-radius:5px!important;border-color:#deded9!important;background:#fff!important}.gr-drop summary{font-weight:650!important}
+.gr-bp{background:#f4f4f1!important;color:#222!important;border:1px solid #d9d9d4!important;border-radius:4px!important;min-height:32px!important}
+.layout-page-card{margin-bottom:3px!important}
+.layout-multi-viewer{gap:12px!important}
+.layout-page-head b{font-weight:650!important;color:#111!important}
+.layout-page-head span{color:#777771!important;font-size:10px!important}
+#stickyAuwaBar{width:100%}
+#stickyAuwaLink{background:#111!important;color:#fff!important;border-radius:4px!important;padding:7px 12px!important;font-size:11px!important;text-transform:uppercase;letter-spacing:.045em!important}
+#stickyAuwaTabs{background:transparent!important;color:#444!important;border:1px solid #d7d7d2!important;border-radius:4px!important}
+#stickyAuwaSelect{height:32px!important;min-height:32px!important;border-radius:4px!important;font-size:11px!important}
+#stickyAuwaLabel{font-size:10px!important;text-transform:uppercase;letter-spacing:.08em!important;color:#666!important}
+.help-fab{background:#fff!important;color:#111!important;border:1px solid #d7d7d2!important;border-radius:50%!important;box-shadow:0 2px 8px rgba(0,0,0,.06)!important}
+.section-title{font-size:16px!important;font-weight:650!important;letter-spacing:-.02em!important;margin-bottom:4px!important}
+.paq-sheetbar button{background:#fff!important;color:#444!important;border-color:#d8d8d3!important;border-radius:4px!important;min-height:34px!important}
+.paq-sheetbar button.active{background:#111!important;color:#fff!important;border-color:#111!important}
+.layout-page-sec{background:#d47b12!important;color:#fff!important;border:2px solid #fff!important;box-shadow:0 0 0 1px #b66b10!important}
+.layout-page-cabinet{background:#30343a!important;border-radius:3px!important;box-shadow:0 0 0 1px #30343a!important}
+/* Neutraliza temas de fabricante: solo pequeños acentos, no fondos completos */
+body[data-theme="durkopp"],body[data-theme="dematic"],body[data-theme="vanderlande"],body[data-theme="tgw"]{background:var(--bg)!important;color:var(--text)!important}
+body[data-theme="durkopp"] header,body[data-theme="dematic"] header,body[data-theme="vanderlande"] header,body[data-theme="tgw"] header{background:rgba(250,250,248,.96)!important}
+body[data-theme="durkopp"] .tab,body[data-theme="dematic"] .tab,body[data-theme="vanderlande"] .tab,body[data-theme="tgw"] .tab{background:transparent!important;color:#777771!important;border-color:transparent!important}
+body[data-theme="durkopp"] .tab.active,body[data-theme="dematic"] .tab.active,body[data-theme="vanderlande"] .tab.active,body[data-theme="tgw"] .tab.active{background:transparent!important;color:#111!important;border-bottom-color:#111!important}
+body[data-theme="durkopp"] input,body[data-theme="dematic"] input,body[data-theme="vanderlande"] input,body[data-theme="tgw"] input{background:#fff!important;color:#111!important;border-color:#d7d7d2!important}
+body[data-theme="durkopp"] button:not(.tab):not(.help-close),body[data-theme="dematic"] button:not(.tab):not(.help-close),body[data-theme="vanderlande"] button:not(.tab):not(.help-close),body[data-theme="tgw"] button:not(.tab):not(.help-close){background:#f4f4f1;color:#222;border:1px solid #d9d9d4}
+body[data-theme="durkopp"] .search button,body[data-theme="dematic"] .search button,body[data-theme="vanderlande"] .search button,body[data-theme="tgw"] .search button{background:#111!important;color:#fff!important;border-color:#111!important}
+body[data-theme="vanderlande"] .auwa-panel{background:#fafaf8!important;border-color:#deded9!important}
+body[data-theme="vanderlande"] .auwa-actions a{background:#111!important;color:#fff!important;border-color:#111!important}
+@media(max-width:620px){
+  header{padding-left:9px!important;padding-right:9px!important}.brandbar{margin-bottom:9px!important}
+  main{padding:11px 9px 24px!important}.tabs{gap:0!important}.tab{padding:0 10px!important;min-height:34px!important;font-size:9px!important}
+  .layout-search-row{gap:5px!important}.layout-search-row .layout-check{font-size:10px!important;padding:0 8px!important}
+  .layout-page-head{padding:5px 7px!important}.page-tools{gap:3px!important}.page-tools button{font-size:9px!important;padding:3px 6px!important}
+}
+</style>
+
+</head>
 <body>
 <header><div class="wrap"><div class="brandbar"><div><h1>Buscador Saldaña00</h1><div class="brand-sub">Buscador técnico de mantenimiento</div></div><div class="brand-badge">Meco</div></div>
 <div class="tabs"><button type="button" class="tab active" data-tab="layout">PC/Durkopp</button><button type="button" class="tab" data-tab="paq">DEMATIC</button><button type="button" class="tab" data-tab="van">Vanderlande</button><button type="button" class="tab" data-tab="qr">QR Instalación</button><button type="button" class="tab" data-tab="tgw">TGW</button></div>
@@ -677,7 +788,13 @@ function renderAllChainPages(key,hits){
         canvas.appendChild(m);
       });
       ChainHighlight.attach(canvas,img,traceKey,pageNum,p,type==='bypass'?(LAYOUT.bypasses[String(key)]||[]).filter(q=>q.page===pageNum):[]);
-      PlaneGestures.bind(crop,canvas,1);
+      const focusHit=pageHits.find(h=>!h.continuation)||pageHits[0];
+      const searchZoom=type==='chain'?2.7:3.2;
+      PlaneGestures.bind(crop,canvas,searchZoom);
+      if(focusHit){
+        const fx=((focusHit.x0+focusHit.x1)/2)/p.w,fy=((focusHit.y0+focusHit.y1)/2)/p.w;
+        requestAnimationFrame(()=>PlaneGestures.focus(crop,fx,fy));
+      }
       if(type==='chain'){renderSectionMarkers(canvas,key,pageNum,bw);renderCabinetMarkers(canvas,key,pageNum,bw);}
 
     };
@@ -1234,7 +1351,8 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 <script>
 (()=>{
  const header=document.querySelector('header'),bar=document.getElementById('stickyAuwaBar'),select=document.getElementById('stickyAuwaSelect'),link=document.getElementById('stickyAuwaLink'),label=document.getElementById('stickyAuwaLabel');
- let scheduled=false,signature='',selection='';
+ let scheduled=false,signature='',selection='',compactState=false;
+ const ENTER_COMPACT=230,EXIT_COMPACT=90;
  function destinations(section){const unique=new Map();
    section.querySelectorAll('.auwa-actions a[href]').forEach(a=>{
      const url=a.getAttribute('href');if(!url||unique.has(url))return;
@@ -1249,7 +1367,15 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
    if(next!==signature){signature=next;select.replaceChildren();items.forEach(item=>{const o=document.createElement('option');o.value=item.url;o.textContent=item.label;select.appendChild(o);});
      if(!items.some(x=>x.url===selection))selection=items.length?items[0].url:'';select.value=selection;
    }
-   const compact=window.scrollY>180&&items.length>0;header.classList.toggle('auwa-compact',compact);bar.hidden=!compact;
+   if(!items.length)compactState=false;
+   else if(!compactState&&window.scrollY>=ENTER_COMPACT)compactState=true;
+   else if(compactState&&window.scrollY<=EXIT_COMPACT)compactState=false;
+   const compact=compactState&&items.length>0;
+   if(header.classList.contains('auwa-compact')!==compact){
+     document.documentElement.style.overflowAnchor='none';
+     header.classList.toggle('auwa-compact',compact);bar.hidden=!compact;
+     requestAnimationFrame(()=>{document.documentElement.style.overflowAnchor='';updateHeaderOffset();});
+   }else bar.hidden=!compact;
    if(!compact)return;
    select.hidden=items.length<2;link.href=selection;label.textContent=items.length===1?'AUWA · '+items[0].label:'AUWA';
  }

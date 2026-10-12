@@ -999,6 +999,39 @@ body[data-theme] .paq-head{background:#fafaf9!important}
 .van-mark{position:absolute!important;z-index:30!important;border:2px solid #d40000!important;border-radius:2px!important;background:transparent!important;box-shadow:none!important;pointer-events:none!important;min-width:12px;min-height:12px;animation:none!important}
 .van-mark::before,.van-mark::after{display:none!important;content:none!important}
 </style>
+
+<style id="v69-teams-report-style">
+/* v69 · Reportes de problemas y mejoras a Medina por Microsoft Teams */
+.report-fab{
+  position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:1250;
+  min-height:42px!important;height:42px;padding:0 14px!important;border:0!important;border-radius:999px!important;
+  background:#6264a7!important;color:#fff!important;font:700 12px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+  box-shadow:0 6px 18px rgba(0,0,0,.22)!important;display:flex;align-items:center;gap:7px;cursor:pointer;
+}
+.report-fab::before{content:"✉";font-size:15px;line-height:1}
+.report-fab.pending::after{content:"";width:8px;height:8px;border-radius:50%;background:#ffd335;box-shadow:0 0 0 2px #6264a7;position:absolute;right:5px;top:4px}
+.report-modal{display:none;position:fixed;inset:0;z-index:1400;background:#0009;padding:18px;overflow:auto}
+.report-card{max-width:560px;margin:5vh auto;background:#fff;color:#172033;border-radius:16px;padding:18px;border:1px solid #e3e8ef;box-shadow:0 24px 70px rgba(0,0,0,.32)}
+.report-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.report-head h2{margin:0;font-size:20px}.report-close{width:38px;height:38px;min-height:38px!important;padding:0!important;border:0!important;border-radius:10px!important;background:#eef2f7!important;color:#172033!important;font-size:23px!important}
+.report-context{background:#f4f5fb;border:1px solid #dedff0;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.45;margin-bottom:12px;color:#454766}
+.report-grid{display:grid;gap:10px}.report-label{display:grid;gap:5px;font-size:12px;font-weight:700;color:#3b4351}
+.report-label select,.report-label textarea{width:100%;border:1px solid #cfd6df;border-radius:10px;background:#fff;color:#172033;font:400 15px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;padding:10px 11px}
+.report-label select{min-height:44px}.report-label textarea{min-height:120px;resize:vertical}
+.report-actions{display:flex;gap:8px;margin-top:12px}.report-actions button{flex:1;min-height:44px!important;border-radius:10px!important;font-size:13px!important}
+.report-cancel{background:#eef2f7!important;color:#273142!important}.report-send{background:#6264a7!important;color:#fff!important}
+.report-status{min-height:18px;margin:9px 0 0;font-size:11px;line-height:1.4;color:#666}
+.van-report-link{margin-top:10px!important;min-height:36px!important;height:auto!important;padding:8px 12px!important;border:1px solid #8b7100!important;border-radius:9px!important;background:#5a4900!important;color:#fff!important;font-size:11px!important;font-weight:800!important}
+@media(max-width:600px){.report-fab{right:9px;bottom:calc(9px + env(safe-area-inset-bottom));height:40px;min-height:40px!important;padding:0 12px!important}.report-card{margin:2vh auto;padding:16px}.report-actions{flex-direction:column}}
+</style>
+
+
+<style id="v70-missing-report-style">
+.missing-report-wrap{margin:8px 0 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.missing-report-btn{min-height:42px;padding:0 14px;border:1px solid #d6a700!important;border-radius:10px!important;background:#ffcf00!important;color:#392d00!important;font-size:12px!important;font-weight:800!important;box-shadow:0 2px 8px rgba(0,0,0,.10)!important}
+.missing-report-btn:active{transform:translateY(1px)}
+.missing-report-note{font-size:10px;color:var(--muted)}
+</style>
 </head>
 <body>
 <header><div class="wrap"><div class="brandbar"><div><h1>Grupo 5</h1><div class="brand-sub">Herramienta técnica de mantenimiento</div></div><div class="brand-badge">Meco</div></div>
@@ -1042,10 +1075,11 @@ body[data-theme] .paq-head{background:#fafaf9!important}
 
 
 <section id="vanSection" class="section">
-<div class="van-construction" role="status" aria-live="polite">
+<div class="van-construction" role="region" aria-label="Aviso Vanderlande">
   <div class="van-construction-kicker">VANDERLANDE · AVISO IMPORTANTE</div>
   <div class="van-construction-title">Sección en construcción · ayúdanos a mejorarla</div>
   <div class="van-construction-text">La búsqueda usa ahora la base global de QR para localizar los transportes reales de Vanderlande y seguimos ampliando planos y posiciones. Por favor, todos los problemas y mejoras han de reportarse a Medina. Esto es un programa para todos y nos tiene que ayudar y servir como herramienta.</div>
+  <button type="button" class="van-report-link report-open">Reportar problema o mejora a Medina</button>
 </div>
 <div class="info">Busca el transporte real o su QR. Ej.: <b>DPL1_BF_40_01_01</b>, <b>PLM3_LRC_14_01_03</b>, <b>CRR4_ARP_32_22_10</b> o <b>208285</b>.</div>
 <form id="vanForm" class="search"><input id="vanQ" type="search" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Ej.: DPL1_BF_40_01_01 o 208285"><button type="submit">Buscar</button></form>
@@ -1300,6 +1334,7 @@ function renderAllChainPages(key,hits){
   });
 }
 function searchLayout(){
+  if(window.hideMissingReport)hideMissingReport('layoutStatus');
   seccionadorIndex=-1;armariosVisible=false;armarioIndex=-1;$('cabinetBtn').style.display='none';
   document.querySelectorAll('.layout-page-cabinet').forEach(m=>m.remove());
   $('sharedPlaneControls').style.display='flex';
@@ -1335,7 +1370,7 @@ function searchLayout(){
     if(!chainHits.some(h=>h.page===sec.page))chainHits.push({type:'chain',continuation:true,page:sec.page,x0:sec.x-8,y0:sec.y-8,x1:sec.x+8,y1:sec.y+8,context:'Seccionador'});
   }chainHits.sort((a,b)=>a.page-b.page);}
   layoutMatches=chainHits.length?chainHits:bypassHits;
-  if(!layoutMatches.length){$('layoutStatus').textContent='No encuentro '+key+' como cadena ni como bypass.';$('layoutViewer').style.display='none';return}
+  if(!layoutMatches.length){$('layoutStatus').textContent='No encuentro '+key+' como cadena ni como bypass.';$('layoutViewer').style.display='none';if(window.showMissingReport)showMissingReport('layoutStatus',key);return}
   updateLayoutNext();
   if(layoutMatches.length>1){
     renderAllChainPages(key,layoutMatches);
@@ -1457,8 +1492,10 @@ async function loadFullAssets(){
 }
 async function searchQR(){
   await loadFullAssets();const q=$('qrQ').value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().trim();$('qrResults').innerHTML='';
+  if(window.hideMissingReport)hideMissingReport('qrStatus');
   if(!q)return;const terms=q.split(/\s+/),found=[];for(const r of fullAssets){if(terms.every(t=>r.n.includes(t))){found.push(r);if(found.length>=50)break}}
   $('qrStatus').textContent=found.length+' coincidencia'+(found.length===1?'':'s')+'.';
+  if(!found.length&&window.showMissingReport)showMissingReport('qrStatus',$('qrQ').value.trim());
   found.forEach(r=>{const b=document.createElement('button');b.type='button';b.className='result';b.innerHTML='<b>'+esc(r.e)+'</b><small>'+esc(r.l)+'</small><small>'+esc(r.c)+'</small>';b.onclick=()=>showQR(r);$('qrResults').appendChild(b)});
 }
 
@@ -1523,6 +1560,7 @@ function updatePaqNav(){if(!paqActive)return;const h=paqActive.h,pers=paqOrdered
 
 async function searchPaq(){
   await loadPaq();if(!PAQ)return;
+  if(window.hideMissingReport)hideMissingReport('paqStatus');
   const raw=normPaq($('paqQ').value),q=compactPaq(raw);if(q)paqAddHistory(raw);
   $('paqResults').innerHTML='';$('paqSheets').innerHTML='';$('paqViewer').style.display='none';
   if(!q){$('paqStatus').textContent='Escribe parte de un PER o de una posición.';return}
@@ -1553,7 +1591,7 @@ async function searchPaq(){
     }
   }
 
-  if(!hits.length){$('paqStatus').textContent='No encuentro coincidencias para '+raw+'.';return}
+  if(!hits.length){$('paqStatus').textContent='No encuentro coincidencias para '+raw+'.';if(window.showMissingReport)showMissingReport('paqStatus',raw);return}
   hits.sort((a,b)=>{
     const ac=a.position?compactPaq(a.position):compactPaq(a.per),bc=b.position?compactPaq(b.position):compactPaq(b.per);
     const ae=ac===q?0:ac.startsWith(q)?1:2,be=bc===q?0:bc.startsWith(q)?1:2;
@@ -1630,11 +1668,12 @@ function loadTgw(){
 }
 async function searchTgw(){
   await loadTgw();
+  if(window.hideMissingReport)hideMissingReport('tgwStatus');
   const raw=normTgw($('tgwQ').value),q=compactTgw(raw),box=$('tgwResults');box.innerHTML='';$('tgwViewer').style.display='none';$('tgwQr').style.display='none';
   if(!q){$('tgwStatus').textContent='Escribe un transporte, por ejemplo F001.1440.';return}
   let hits=TGW.entries.filter(e=>compactTgw(e.code).includes(q)||compactTgw(e.root).includes(q));
   hits.sort((a,b)=>{const ac=compactTgw(a.root),bc=compactTgw(b.root);const ae=ac===q?0:ac.startsWith(q)?1:2,be=bc===q?0:bc.startsWith(q)?1:2;return ae-be||a.root.localeCompare(b.root,undefined,{numeric:true})||a.page-b.page});
-  if(!hits.length){$('tgwStatus').textContent='No encuentro coincidencias para '+raw+'.';return}
+  if(!hits.length){$('tgwStatus').textContent='No encuentro coincidencias para '+raw+'.';if(window.showMissingReport)showMissingReport('tgwStatus',raw);return}
   $('tgwStatus').textContent=hits.length+' coincidencia'+(hits.length===1?'':'s')+' para '+raw+'.';
   if(hits.length>1)hits.slice(0,80).forEach(h=>{const b=document.createElement('button');b.type='button';b.className='result';b.innerHTML='<b>'+esc(h.code)+'</b><small>TGW · Página '+h.page+'</small>';b.onclick=()=>showTgw(h,b);box.appendChild(b)});
   showTgw(hits[0],null);
@@ -1732,8 +1771,8 @@ function vanApplyZoom(){$('vanCanvas').style.transform='scale('+vanZoom+')';setT
 function renderVanQrAsset(r){const box=$('vanQr'),content=$('vanQrContent');box.style.display='none';content.innerHTML='';if(!r)return;content.innerHTML='<div class="asset-title">Transporte Vanderlande</div><div class="asset-grid" style="margin-top:8px"><div><div class="asset-title">'+esc(r.e)+'</div><div class="asset-sub">'+esc(r.l)+'</div><div class="asset-code"><a class="qr-code-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">QR '+esc(r.c)+'</a></div></div><div class="qrbox"><a class="qr-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+qrMarkup(r)+'</a></div></div>';box.style.display='block'}
 async function renderVanQr(code){const box=$('vanQr');box.style.display='none';if(!code)return;try{await loadFullAssets();const q=vanCompact(code),r=(fullAssets||[]).find(x=>vanCompact(x.e)===q)||null;if(r)renderVanQrAsset(r)}catch(e){}}
 function vanQrHit(asset){const p=vanQrParts(asset),plc=vanAssetPlc(asset),lcc=vanAssetLcc(asset),exact=!!vanAssetExact(asset);return {kind:'qr',asset,code:asset.e,qr:asset.c,line:asset.l,plc,lcc,area:p.area,type:p.type,exact}}
-function renderVanResults(uniq,raw){const box=$('vanResults');box.innerHTML='';if(!uniq.length){$('vanStatus').textContent='Sin coincidencias Vanderlande'+(raw?' para “'+raw+'”':'')+'.';$('vanViewer').style.display='none';$('vanQr').style.display='none';if($('vanMark'))$('vanMark').style.display='none';return}$('vanStatus').textContent=uniq.length+(uniq.length===1?' coincidencia':' coincidencias')+' en la base QR Vanderlande.';box.innerHTML=uniq.map((h,i)=>{if(h.kind==='qr')return '<button type="button" class="van-hit" data-i="'+i+'"><span class="van-hit-main"><span class="van-hit-code">'+esc(h.code)+'</span><span class="van-hit-sub">'+esc(h.line)+'</span><span class="van-hit-qr">QR '+esc(h.qr)+'</span><span class="van-hit-position '+(h.exact?'van-exact':'van-pending')+'">'+(h.exact?'Posición exacta disponible':(h.lcc?'Plano identificado · posición pendiente':'Plano exacto pendiente'))+'</span></span><span class="van-badge">'+esc(h.area)+'</span></button>';return '<button type="button" class="van-hit" data-i="'+i+'"><span class="van-hit-main"><span class="van-hit-code">'+esc(h.code)+'</span><span class="van-hit-sub">PLC'+h.plc+' · LCC'+String(h.lcc).padStart(2,'0')+'</span></span><span class="van-badge">'+esc(vanArea(h.plc))+'</span></button>'}).join('');box.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{const h=uniq[Number(b.dataset.i)];if(h.kind==='qr')vanOpen(h.plc,h.lcc,h.code,h.asset);else vanOpen(h.plc,h.lcc,h.code,null)});if(uniq.length===1){const h=uniq[0];if(h.kind==='qr')vanOpen(h.plc,h.lcc,h.code,h.asset);else vanOpen(h.plc,h.lcc,h.code,null)}}
-async function searchVanderlande(){const raw=String($('vanQ').value||'').trim().toUpperCase(),q=vanCompact(raw),plcFilter=$('vanPlcSelect').value,box=$('vanResults');box.innerHTML='';$('vanQr').style.display='none';if($('vanMark'))$('vanMark').style.display='none';if(!q){$('vanStatus').textContent='Busca un transporte Vanderlande o su número de QR.';$('vanViewer').style.display='none';return}$('vanStatus').textContent='Buscando en la base QR…';await loadFullAssets();const qrHits=[];for(const r of(fullAssets||[])){if(!vanIsQrTransport(r))continue;const plc=vanAssetPlc(r);if(plcFilter&&plc!==plcFilter)continue;const hay=vanCompact((r.e||'')+' '+(r.l||'')+' '+(r.c||''));if(hay.includes(q)){qrHits.push(vanQrHit(r));if(qrHits.length>=80)break}}if(qrHits.length){renderVanResults(qrHits,raw);return}let legacy=VANDERLANDE_INDEX.filter(x=>{if(plcFilter&&x.plc!==plcFilter)return false;return vanCompact(x.code).includes(q)||vanCompact(x.tag||'').includes(q)}).slice(0,50);renderVanResults(legacy,raw)}
+function renderVanResults(uniq,raw){const box=$('vanResults');box.innerHTML='';if(window.hideMissingReport)hideMissingReport('vanStatus');if(!uniq.length){$('vanStatus').textContent='Sin coincidencias Vanderlande'+(raw?' para “'+raw+'”':'')+'.';$('vanViewer').style.display='none';$('vanQr').style.display='none';if($('vanMark'))$('vanMark').style.display='none';if(window.showMissingReport&&raw)showMissingReport('vanStatus',raw);return}$('vanStatus').textContent=uniq.length+(uniq.length===1?' coincidencia':' coincidencias')+' en la base QR Vanderlande.';box.innerHTML=uniq.map((h,i)=>{if(h.kind==='qr')return '<button type="button" class="van-hit" data-i="'+i+'"><span class="van-hit-main"><span class="van-hit-code">'+esc(h.code)+'</span><span class="van-hit-sub">'+esc(h.line)+'</span><span class="van-hit-qr">QR '+esc(h.qr)+'</span><span class="van-hit-position '+(h.exact?'van-exact':'van-pending')+'">'+(h.exact?'Posición exacta disponible':(h.lcc?'Plano identificado · posición pendiente':'Plano exacto pendiente'))+'</span></span><span class="van-badge">'+esc(h.area)+'</span></button>';return '<button type="button" class="van-hit" data-i="'+i+'"><span class="van-hit-main"><span class="van-hit-code">'+esc(h.code)+'</span><span class="van-hit-sub">PLC'+h.plc+' · LCC'+String(h.lcc).padStart(2,'0')+'</span></span><span class="van-badge">'+esc(vanArea(h.plc))+'</span></button>'}).join('');box.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{const h=uniq[Number(b.dataset.i)];if(h.kind==='qr')vanOpen(h.plc,h.lcc,h.code,h.asset);else vanOpen(h.plc,h.lcc,h.code,null)});if(uniq.length===1){const h=uniq[0];if(h.kind==='qr')vanOpen(h.plc,h.lcc,h.code,h.asset);else vanOpen(h.plc,h.lcc,h.code,null)}}
+async function searchVanderlande(){if(window.hideMissingReport)hideMissingReport('vanStatus');const raw=String($('vanQ').value||'').trim().toUpperCase(),q=vanCompact(raw),plcFilter=$('vanPlcSelect').value,box=$('vanResults');box.innerHTML='';$('vanQr').style.display='none';if($('vanMark'))$('vanMark').style.display='none';if(!q){$('vanStatus').textContent='Busca un transporte Vanderlande o su número de QR.';$('vanViewer').style.display='none';return}$('vanStatus').textContent='Buscando en la base QR…';await loadFullAssets();const qrHits=[];for(const r of(fullAssets||[])){if(!vanIsQrTransport(r))continue;const plc=vanAssetPlc(r);if(plcFilter&&plc!==plcFilter)continue;const hay=vanCompact((r.e||'')+' '+(r.l||'')+' '+(r.c||''));if(hay.includes(q)){qrHits.push(vanQrHit(r));if(qrHits.length>=80)break}}if(qrHits.length){renderVanResults(qrHits,raw);return}let legacy=VANDERLANDE_INDEX.filter(x=>{if(plcFilter&&x.plc!==plcFilter)return false;return vanCompact(x.code).includes(q)||vanCompact(x.tag||'').includes(q)}).slice(0,50);renderVanResults(legacy,raw)}
 $('vanForm').onsubmit=e=>{e.preventDefault();searchVanderlande()};$('vanPlcSelect').onchange=()=>{if($('vanQ').value.trim())searchVanderlande()};$('vanPage').onclick=()=>{vanZoom=1;$('vanCanvas').style.transform='scale(1)';$('vanCrop').scrollLeft=0;$('vanCrop').scrollTop=0;vanRenderMark()};$('vanMinus').onclick=()=>{vanZoom=Math.max(1,vanZoom-.35);vanApplyZoom()};$('vanPlus').onclick=()=>{vanZoom=Math.min(4.8,vanZoom+.35);vanApplyZoom()};
 
 const CHECK_DAYS=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];let checkShift=localStorage.getItem('ams-check-shift')||'MAÑANA';
@@ -1783,6 +1822,30 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 </script>
 
 
+<button id="reportBtn" class="report-fab" type="button" aria-label="Reportar problema o mejora a Medina" title="Reportar por Teams">Reportar</button>
+<div id="reportModal" class="report-modal" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
+  <div class="report-card">
+    <div class="report-head">
+      <h2 id="reportTitle">Reportar a Medina</h2>
+      <button id="reportClose" class="report-close" type="button" aria-label="Cerrar">×</button>
+    </div>
+    <div id="reportContext" class="report-context"></div>
+    <div class="report-grid">
+      <label class="report-label">Tipo
+        <select id="reportType"><option value="Problema">Problema</option><option value="Mejora / sugerencia">Mejora / sugerencia</option><option value="Información que falta">Información que falta</option></select>
+      </label>
+      <label class="report-label">Descripción
+        <textarea id="reportDescription" placeholder="Describe brevemente qué ocurre o qué mejorarías…"></textarea>
+      </label>
+    </div>
+    <div class="report-actions">
+      <button id="reportCancel" class="report-cancel" type="button">Cancelar</button>
+      <button id="reportSend" class="report-send" type="button">Abrir Teams</button>
+    </div>
+    <p id="reportStatus" class="report-status"></p>
+  </div>
+</div>
+
 <button id="helpBtn" class="help-fab" type="button" aria-label="Ayuda" title="Ayuda">?</button>
 <div id="helpModal" class="help-modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
   <div class="help-card">
@@ -1792,7 +1855,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     </div>
     <div class="help-version">
       <strong>Versión actual</strong>
-      <p><b>Versión:</b> <span id="helpVersion">v68 · modo sin conexión</span> · <b>Actualizada:</b> 06/10/2026</p>
+      <p><b>Versión:</b> <span id="helpVersion">v70 · reportar búsquedas sin resultado</span> · <b>Actualizada:</b> 12/10/2026</p>
       <p><b>DEMATIC:</b> incluidos todos los PLCs de DEMATIC.</p><p><b>Vanderlande:</b> transportes pendientes de añadir; el buscador de QR ya está operativo.</p><p><b>TGW:</b> búsqueda visual de transportes TGW.</p>
     </div>
     <h3>¿Cómo actualizar si tienes una versión antigua?</h3>
@@ -1811,7 +1874,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 <h3>Contenido de esta versión</h3>
     <p>Buscador organizado por fabricante: PC/Durkopp, DEMATIC, Vanderlande y TGW. DEMATIC mantiene filtros, recientes, favoritos y navegación entre PER.</p>
     <p>Se están añadiendo progresivamente los <b>seccionadores de las cadenas de Prenda Colgada</b> para poder localizar su posición física directamente en el plano.</p>
-    <p><b>Sugerencias o información que falte:</b> contacta con <b>Medina</b>.</p>
+    <p><b>Problemas, mejoras o información que falte:</b> usa el botón <b>Reportar</b>. Se abrirá un chat de Teams con Medina y el contexto de la búsqueda ya preparado.</p>
   </div>
 </div>
 
@@ -1843,6 +1906,129 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 
 })();
 </script>
+
+<script id="v69-teams-report-script">
+(function(){
+  const TEAMS_USER='Albertomsa@ext.inditex.com';
+  const VERSION='v70';
+  const DRAFT_KEY='amsReportDraftV1';
+  const modal=document.getElementById('reportModal');
+  const openMain=document.getElementById('reportBtn');
+  const closeBtn=document.getElementById('reportClose');
+  const cancelBtn=document.getElementById('reportCancel');
+  const sendBtn=document.getElementById('reportSend');
+  const typeEl=document.getElementById('reportType');
+  const descEl=document.getElementById('reportDescription');
+  const ctxEl=document.getElementById('reportContext');
+  const statusEl=document.getElementById('reportStatus');
+  if(!modal||!openMain||!closeBtn||!cancelBtn||!sendBtn||!typeEl||!descEl||!ctxEl)return;
+
+  const labels={layout:'PC/Durkopp',paq:'DEMATIC',tgw:'TGW',van:'Vanderlande',qr:'QR Instalación'};
+  const queryIds={layout:'layoutQ',paq:'paqQ',tgw:'tgwQ',van:'vanQ',qr:'qrQ'};
+  const detailIds={layout:['layoutTitle','layoutCtx'],paq:['paqTitle','paqCtx'],tgw:['tgwTitle','tgwCtx'],van:['vanTitle','vanCtx'],qr:[]};
+
+  function clean(s){return String(s||'').replace(/\s+/g,' ').trim();}
+  function currentContext(){
+    const check=document.getElementById('checkSection');
+    if(check&&check.classList.contains('active')) return {key:'check',section:'Checklist',query:'',detail:''};
+    const active=document.querySelector('.tab.active');
+    const key=active&&active.dataset?active.dataset.tab:'layout';
+    const q=document.getElementById(queryIds[key]);
+    const detail=(detailIds[key]||[]).map(id=>clean(document.getElementById(id)?.textContent)).filter(Boolean).join(' · ');
+    return {key,section:labels[key]||key,query:clean(q&&q.value),detail:clean(detail)};
+  }
+  function renderContext(c){
+    const bits=['Sección: '+c.section];
+    if(c.query)bits.push('Búsqueda: '+c.query);
+    if(c.detail)bits.push('Vista: '+c.detail);
+    ctxEl.textContent=bits.join(' · ');
+  }
+  function loadDraft(){
+    try{return JSON.parse(localStorage.getItem(DRAFT_KEY)||'null')}catch(e){return null}
+  }
+  function saveDraft(payload){try{localStorage.setItem(DRAFT_KEY,JSON.stringify(payload));openMain.classList.add('pending')}catch(e){}}
+  function clearDraft(){try{localStorage.removeItem(DRAFT_KEY);openMain.classList.remove('pending')}catch(e){}}
+  function updatePending(){if(loadDraft())openMain.classList.add('pending');else openMain.classList.remove('pending')}
+  function openReport(){
+    const c=currentContext();renderContext(c);statusEl.textContent='';
+    const d=loadDraft();
+    if(d&&d.description){
+      typeEl.value=d.type||'Problema';descEl.value=d.description;
+      statusEl.textContent='Hay un reporte pendiente guardado en este dispositivo.';
+    }else descEl.value='';
+    modal.style.display='block';document.body.style.overflow='hidden';setTimeout(()=>descEl.focus(),80);
+  }
+  function closeReport(){modal.style.display='none';document.body.style.overflow='';}
+  window.openTeamsReport=function(options){
+    options=options||{};
+    openReport();
+    if(options.type)typeEl.value=options.type;
+    if(typeof options.description==='string')descEl.value=options.description;
+    if(options.status)statusEl.textContent=options.status;
+  };
+  function buildMessage(c,type,description){
+    const lines=['Buscador AMS · Reporte','Tipo: '+type,'Versión: '+VERSION,'Sección: '+c.section];
+    if(c.query)lines.push('Búsqueda: '+c.query);
+    if(c.detail)lines.push('Vista: '+c.detail);
+    lines.push('','Descripción:',description);
+    return lines.join('\n');
+  }
+  document.querySelectorAll('.report-open').forEach(b=>b.addEventListener('click',openReport));
+  openMain.addEventListener('click',openReport);
+  closeBtn.addEventListener('click',closeReport);cancelBtn.addEventListener('click',closeReport);
+  modal.addEventListener('click',e=>{if(e.target===modal)closeReport()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.style.display==='block')closeReport()});
+  sendBtn.addEventListener('click',function(){
+    const description=descEl.value.trim();
+    const c=currentContext();
+    if(!description){statusEl.textContent='Escribe una breve descripción antes de abrir Teams.';descEl.focus();return;}
+    const payload={type:typeEl.value,description,context:c,createdAt:new Date().toISOString()};
+    if(!navigator.onLine){
+      saveDraft(payload);statusEl.textContent='Sin conexión. El reporte queda guardado en este dispositivo. Cuando tengas red, abre Reportar y pulsa «Abrir Teams».';return;
+    }
+    const message=buildMessage(c,typeEl.value,description);
+    const url='https://teams.microsoft.com/l/chat/0/0?users='+encodeURIComponent(TEAMS_USER)+'&message='+encodeURIComponent(message);
+    clearDraft();
+    statusEl.textContent='Abriendo el chat de Teams con Medina…';
+    const w=window.open(url,'_blank','noopener');
+    if(!w)window.location.href=url;
+  });
+  window.addEventListener('online',()=>{if(loadDraft())statusEl.textContent='Ya hay conexión. Puedes enviar el reporte pendiente por Teams.'});
+  updatePending();
+})();
+</script>
+
+<script id="v70-missing-report-script">
+(function(){
+  function removeFor(statusId){
+    const old=document.querySelector('.missing-report-wrap[data-status="'+statusId+'"]');
+    if(old)old.remove();
+  }
+  window.hideMissingReport=function(statusId){removeFor(statusId)};
+  window.showMissingReport=function(statusId,query){
+    removeFor(statusId);
+    const status=document.getElementById(statusId);
+    if(!status||!String(query||'').trim())return;
+    const wrap=document.createElement('div');
+    wrap.className='missing-report-wrap';wrap.dataset.status=statusId;
+    const btn=document.createElement('button');
+    btn.type='button';btn.className='missing-report-btn';btn.textContent='Reportar falta en Teams';
+    const note=document.createElement('span');
+    note.className='missing-report-note';note.textContent='Se enviará a Medina como información que falta.';
+    btn.onclick=()=>{
+      const q=String(query||'').trim();
+      if(typeof window.openTeamsReport==='function')window.openTeamsReport({
+        type:'Información que falta',
+        description:'No se encuentra en el buscador: '+q,
+        status:'Reporte preparado como «Información que falta». Revisa el texto y abre Teams.'
+      });
+      else document.getElementById('reportBtn')?.click();
+    };
+    wrap.append(btn,note);status.insertAdjacentElement('afterend',wrap);
+  };
+})();
+</script>
+
 <script>
 (()=>{
  const header=document.querySelector('header'),bar=document.getElementById('stickyAuwaBar'),select=document.getElementById('stickyAuwaSelect'),link=document.getElementById('stickyAuwaLink'),label=document.getElementById('stickyAuwaLabel');

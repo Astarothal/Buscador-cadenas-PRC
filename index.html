@@ -1032,19 +1032,88 @@ body[data-theme] .paq-head{background:#fafaf9!important}
 .missing-report-btn:active{transform:translateY(1px)}
 .missing-report-note{font-size:10px;color:var(--muted)}
 </style>
+
+<style id="v71-unified-styles">
+/* Grupo 5 · v71 BETA: búsqueda unificada */
+.v71-nav{display:flex;gap:7px;margin-top:9px}
+.v71-nav-button{flex:1;min-height:38px!important;border:1px solid #d9d9d4!important;border-radius:8px!important;background:#fff!important;color:#333!important;font-size:12px!important;font-weight:650!important;box-shadow:none!important;padding:5px 8px!important}
+.v71-nav-button.active{background:#222!important;color:white!important;border-color:#222!important}
+#unifiedSection{padding-top:4px}
+.v71-intro{padding:8px 0 14px}
+.v71-intro h2{margin:6px 0;font-size:21px;line-height:1.3;letter-spacing:-.035em;color:#222}
+.v71-intro p{font-size:12px;color:#676767;margin:0}
+.v71-beta{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.11em;background:#272727;color:#fff;border-radius:4px;padding:5px 7px}
+.v71-form{margin-bottom:14px}
+.v71-label{display:block;color:#3a3a39;font-size:12px;font-weight:650;margin-bottom:7px}
+.v71-query-row{display:flex;gap:8px}
+#v71Query{flex:1;width:100%;min-width:0;border:1px solid #cfcfca;background:#fff;color:#181818;border-radius:8px;min-height:48px;padding:12px;font-size:15px}
+.v71-query-row button{flex:0 0 auto;min-height:48px;background:#1d1d1d!important;color:#fff!important;border:1px solid #1d1d1d!important;border-radius:8px;padding:0 16px;font-size:13px;font-weight:700}
+.v71-filters{margin:0 0 10px;padding:0;border:0;min-width:0}
+.v71-filters legend{font-size:11px;font-weight:700;color:#646460;margin-bottom:8px}
+.v71-filter-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.v71-filter-row button{min-width:0;min-height:42px!important;background:#fff!important;color:#363633!important;border:1px solid #d1d1cd!important;border-radius:8px!important;font-size:11px!important;font-weight:650!important;padding:5px!important;box-shadow:none!important;white-space:normal;line-height:1.18}
+.v71-filter-row button.selected{background:#212121!important;color:#fff!important;border-color:#212121!important}
+.v71-result-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:7px;border-top:1px solid #e8e8e5}
+#v71Status{font-size:12px;color:#656561;margin:8px 0 12px}
+#v71Clear{font-size:11px;min-height:30px;background:#fff!important;color:#444!important;border:1px solid #ddd!important;border-radius:6px;padding:4px 8px}
+.v71-results{display:grid;gap:12px}
+.v71-group{border:1px solid #e0e0dc;background:#fff;border-radius:12px;padding:10px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.v71-group-heading{display:flex;justify-content:space-between;align-items:center;margin:0 0 7px;gap:8px}
+.v71-group-heading h3{margin:0;font-size:14px;font-weight:750;letter-spacing:-.015em;color:#1a1a1a}
+.v71-count{font-size:11px;color:#777}
+.v71-hit{display:flex!important;align-items:center;justify-content:space-between;gap:10px;width:100%;margin:5px 0!important;padding:11px 12px!important;min-height:58px!important;background:#f7f7f4!important;color:#202020!important;text-align:left!important;border:1px solid #e9e9e3!important;border-radius:8px!important;box-shadow:none!important;letter-spacing:normal!important}
+.v71-hit:hover,.v71-hit:focus-visible{border-color:#888!important;background:#f0f0eb!important}
+.v71-hit b{display:block;font-size:12px;line-height:1.3;overflow-wrap:anywhere}
+.v71-hit small{display:block;margin-top:3px;color:#71716c;font-size:10px;line-height:1.4;font-weight:450}
+.v71-hit-arrow{color:#6a6a65;font-size:19px;font-weight:450}
+.v71-more{display:block;font-size:11px;color:#6e6e69;margin:8px 2px 1px}
+.v71-empty{border:1px dashed #cfcfc9;background:#fff;border-radius:10px;padding:18px 14px;font-size:13px;color:#565650;line-height:1.5}
+.v71-footnote{font-size:11px;color:#85857d;margin:16px 2px}
+.v71-detail-bar{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:0 0 12px;padding:6px 0 12px;border-bottom:1px solid #ddd}
+.v71-detail-bar[hidden]{display:none!important}
+.v71-back{min-height:39px!important;padding:0 12px!important;border:1px solid #d8d8d4!important;border-radius:7px!important;background:#fff!important;color:#272727!important;font-size:12px!important;font-weight:750!important;box-shadow:none!important}
+#v71DetailTag{font-size:11px;font-weight:650;color:#666;text-align:right}
+/* Las búsquedas locales siguen existiendo internamente, pero solo hay una entrada de búsqueda visible. */
+body.v71-detail #layoutForm,body.v71-detail #paqForm,body.v71-detail #tgwForm,body.v71-detail #vanForm,body.v71-detail #qrForm,body.v71-detail .layout-search-row,body.v71-detail #paqSection > .info,body.v71-detail #vanSection > .info,body.v71-detail #tgwSection > .info{display:none!important}
+body.v71-detail #vanSection .van-construction{display:block}
+body.v71-detail #qrSearchView{display:none!important}
+/* Solo mostramos el historial específico de paquetería si se navega por un layout */
+body.v71-detail #paqSection > .paq-compactbar{display:none!important}
+body.v71-detail #vanSection > .van-filterbar{display:none!important}
+@media (max-width:580px){.v71-filter-row{grid-template-columns:repeat(2,minmax(0,1fr))}.v71-intro h2{font-size:19px}.v71-nav-button{font-size:11px!important}}
+</style>
 </head>
 <body>
 <header><div class="wrap"><div class="brandbar"><div><h1>Grupo 5</h1><div class="brand-sub">Herramienta técnica de mantenimiento</div></div><div class="brand-badge">Meco</div></div>
-<div class="tabs">
-<button type="button" class="tab active" data-tab="layout">PC/Durkopp</button>
-<button type="button" class="tab" data-tab="paq">DEMATIC</button>
-<button type="button" class="tab" data-tab="tgw">TGW</button>
-<button type="button" class="tab" data-tab="van">Vanderlande</button>
-<button type="button" class="tab" data-tab="qr">QR Instalación</button>
+<div class="v71-nav" aria-label="Navegación principal">
+<button type="button" id="v71Home" class="v71-nav-button active" aria-current="page">Buscador</button>
+<button type="button" id="v71Checklist" class="v71-nav-button">Checklist</button>
+<button type="button" id="v71Help" class="v71-nav-button">Ayuda</button>
 </div>
 <div id="stickyAuwaBar" hidden><span id="stickyAuwaLabel">AUWA</span><select id="stickyAuwaSelect" aria-label="Elegir destino AUWA" hidden></select><a id="stickyAuwaLink" target="_blank" rel="noopener noreferrer">Abrir AUWA ↗</a><button type="button" id="stickyAuwaTabs">Pestañas ↑</button></div></div></header>
 <main>
-<section id="layoutSection" class="section active">
+<section id="unifiedSection" class="section active" aria-label="Buscador unificado">
+  <div class="v71-intro"><span class="v71-beta">BETA v71</span><h2>Buscar en toda la instalación</h2><p>Una sola búsqueda de cadenas, bypass, transportes, planos, PLC y QR.</p></div>
+  <form id="v71Form" class="v71-form" autocomplete="off">
+    <label for="v71Query" class="v71-label">Código, posición o número de QR</label>
+    <div class="v71-query-row"><input type="search" id="v71Query" enterkeyhint="search" autocapitalize="characters" spellcheck="false" placeholder="Ej.: 229, EMP1, 208285, F001.1440" aria-describedby="v71Status"><button type="submit">Buscar</button></div>
+  </form>
+  <fieldset class="v71-filters"><legend>Zona de trabajo</legend>
+    <div class="v71-filter-row" role="group" aria-label="Filtrar por instalación">
+      <button type="button" data-filter="all" class="selected" aria-pressed="true">Todos</button>
+      <button type="button" data-filter="garment" aria-pressed="false">Prenda colgada</button>
+      <button type="button" data-filter="parcel" aria-pressed="false">Paquetería</button>
+      <button type="button" data-filter="multi" aria-pressed="false">Multi TGW</button>
+    </div>
+  </fieldset>
+  <div class="v71-result-head"><p id="v71Status" role="status" aria-live="polite">Escribe una referencia o un código para comenzar.</p><button type="button" id="v71Clear" hidden>Limpiar</button></div>
+  <div id="v71Results" class="v71-results" aria-live="off"></div>
+  <p class="v71-footnote">Los resultados incluyen los planos disponibles y los QR de la instalación. Las herramientas siguen funcionando sin conexión tras la descarga inicial de los recursos.</p>
+</section>
+<div id="v71DetailBar" class="v71-detail-bar" hidden>
+  <button type="button" id="v71Return" class="v71-back">← Volver a resultados</button><span id="v71DetailTag"></span>
+</div>
+<section id="layoutSection" class="section">
 <div class="layout-search-row">
 <form id="layoutForm" class="search layout-search"><input id="layoutQ" inputmode="numeric" pattern="[0-9]*" enterkeyhint="search" maxlength="4" placeholder="229 / 922"><button type="submit">Buscar</button></form>
 <button type="button" id="checkOpen" class="subtool-btn layout-check">Checklist</button>
@@ -1805,7 +1874,7 @@ $('checkOpen').onclick=()=>{
 };
 $('checkBack').onclick=()=>showMainTab('layout');
 applyMakerTheme('layout');
-$('layoutQ').value='229';searchLayout();
+$('layoutQ').value='';
 </script>
 
 <script>
@@ -1855,7 +1924,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     </div>
     <div class="help-version">
       <strong>Versión actual</strong>
-      <p><b>Versión:</b> <span id="helpVersion">v70 · reportar búsquedas sin resultado</span> · <b>Actualizada:</b> 12/10/2026</p>
+      <p><b>Versión:</b> <span id="helpVersion">v71 BETA · buscador por zonas</span> · <b>Actualizada:</b> 13/10/2026</p>
       <p><b>DEMATIC:</b> incluidos todos los PLCs de DEMATIC.</p><p><b>Vanderlande:</b> transportes pendientes de añadir; el buscador de QR ya está operativo.</p><p><b>TGW:</b> búsqueda visual de transportes TGW.</p>
     </div>
     <h3>¿Cómo actualizar si tienes una versión antigua?</h3>
@@ -1910,7 +1979,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 <script id="v69-teams-report-script">
 (function(){
   const TEAMS_USER='Albertomsa@ext.inditex.com';
-  const VERSION='v70';
+  const VERSION='v71 BETA';
   const DRAFT_KEY='amsReportDraftV1';
   const modal=document.getElementById('reportModal');
   const openMain=document.getElementById('reportBtn');
@@ -1929,6 +1998,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 
   function clean(s){return String(s||'').replace(/\s+/g,' ').trim();}
   function currentContext(){
+    if(typeof window.v71GetReportContext==='function'){const ctx=window.v71GetReportContext();if(ctx)return ctx;}
     const check=document.getElementById('checkSection');
     if(check&&check.classList.contains('active')) return {key:'check',section:'Checklist',query:'',detail:''};
     const active=document.querySelector('.tab.active');
@@ -2068,4 +2138,5 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
  refresh();
 })();
 </script>
+<script src="./unified-search.js"></script>
 </body></html>

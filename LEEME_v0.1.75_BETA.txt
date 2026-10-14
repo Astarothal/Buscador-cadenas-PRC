@@ -1,0 +1,17 @@
+GRUPO 5 - v0.1.75 BETA - CLA 1 a CLA 6
+Fecha: 14/10/2026
+
+Cambios:
+- Las búsquedas CLA 1-6 abren los pockets 451-456 directamente en el plano P05.
+  Se evita entrar primero en la página auxiliar de seccionadores (fallo detectado en CLA 2).
+- Los acumuladores 801-806 tienen dos trazados verdes sobre los ramales paralelos
+  visibles en el plano P05; dejan de depender de la línea central aproximada.
+- Acumuladores y pockets se representan con el mismo motor BP/CT que los bypass/cadenas.
+- Centrado y zoom inicial ajustados para los 12 resultados CLA.
+
+IMPORTANTE: trazados digitales sobre el plano escaneado, todavía pendientes de
+validación física/visual por personal de mantenimiento. No se añaden uniones dudosas.
+
+Para actualizar v0.1.74 completa, sustituir index.html, unified-search.js,
+bp-lines.js y sw.js. Subir todos los ficheros con la misma estructura,
+recargar y comprobar que el rótulo muestra v0.1.75.

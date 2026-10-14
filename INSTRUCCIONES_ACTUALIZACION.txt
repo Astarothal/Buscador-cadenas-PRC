@@ -1,87 +1,19 @@
-Buscador Saldaña00 — Icono profesional
+v0.1.75 BETA - BUSQUEDA CLA Y RECORRIDOS DE ACUMULADORES
 
-Se ha integrado el nuevo diseño en:
-- Icono PWA 512x512
-- Icono PWA 192x192
-- Icono iPhone 180x180
-- Favicon 32x32
+GRUPO 5 - v0.1.75 BETA - CLA 1 a CLA 6
+Fecha: 14/10/2026
 
-Se mantiene la versión HD del mapa de Prenda y la búsqueda/QR de Paquetería.
+Cambios:
+- Las búsquedas CLA 1-6 abren los pockets 451-456 directamente en el plano P05.
+  Se evita entrar primero en la página auxiliar de seccionadores (fallo detectado en CLA 2).
+- Los acumuladores 801-806 tienen dos trazados verdes sobre los ramales paralelos
+  visibles en el plano P05; dejan de depender de la línea central aproximada.
+- Acumuladores y pockets se representan con el mismo motor BP/CT que los bypass/cadenas.
+- Centrado y zoom inicial ajustados para los 12 resultados CLA.
 
-PARA GITHUB
-Sustituye:
-- index.html
-- sw.js
-- manifest.webmanifest
-- apple-touch-icon.png
-- icon-512.png
-Y añade:
-- icon-192.png
-- favicon.png
+IMPORTANTE: trazados digitales sobre el plano escaneado, todavía pendientes de
+validación física/visual por personal de mantenimiento. No se añaden uniones dudosas.
 
-Después espera a que GitHub Pages termine el despliegue.
-
-IPHONE
-Para que iOS cambie el icono:
-1. Elimina Buscador Saldaña00 de la pantalla de inicio.
-2. Abre la web actualizada en Safari.
-3. Compartir > Añadir a pantalla de inicio.
-
-
-ACTUALIZACIÓN CNX2 — 20/09/2026
-- Añadidos 30 layouts CNX2: GEN (4) + PER01 a PER26.
-- Paquetería combina CNX1 y CNX2 e identifica el PLC en los resultados.
-- Se mantienen las búsquedas parciales por PER y posición.
-- 147 posiciones eléctricas distintas indexadas en CNX2.
-- Caché PWA actualizado a v5-cnx2.
-
-
-ACTUALIZACIÓN DPL2 — 20/09/2026
-- Añadido DPL2 a Paquetería.
-- 8 layouts: CPC + PER01 a PER07.
-- 41 posiciones eléctricas distintas indexadas.
-- Planos WebP HD (2620 px de ancho).
-- Total actual: 55 layouts entre CNX1, CNX2 y DPL2.
-- Caché PWA: v6-dpl2.
-
-
-ACTUALIZACIÓN EMP1
-- Añadido PLC EMP1 (planos DEMATIC identificados internamente como EMP).
-- Layouts añadidos: 31.
-- Posiciones eléctricas distintas indexadas: 145.
-- Planos en WebP HD y búsqueda visual por PER/posición.
-- Caché PWA: v7-emp1.
-
-
-ACTUALIZACIÓN EMP2 — 20/09/2026 18:55
-- Añadido EMP2 desde 4 partes PDF.
-- Layouts LYT añadidos: 31.
-- Posiciones eléctricas distintas indexadas: 161.
-- Planos WebP HD y marcado visual.
-- Ayuda actualizada con EMP2 y fecha de despliegue.
-- Caché PWA: v9-emp2.
-
-
-ACTUALIZACIÓN EMP3 — 20/09/2026 19:22
-- Añadido PLC EMP3.
-- Layouts LYT añadidos: 10.
-- Posiciones eléctricas distintas indexadas: 42.
-- Planos WebP HD con marcado visual.
-- Ayuda actualizada con EMP3 y fecha de versión.
-- Caché PWA: v12-emp3.
-
-
-ACTUALIZACIÓN ENT1 — 20/09/2026 19:26
-- Añadido PLC ENT1 desde 2 partes PDF.
-- Layouts LYT añadidos: 22.
-- Posiciones eléctricas distintas indexadas: 116.
-- Caché PWA: v13-ent1.
-
-
-ACTUALIZACIÓN ENT2 — 20/09/2026 19:40
-- Añadido PLC ENT2 desde 2 partes PDF.
-- Layouts LYT añadidos: 25.
-- Posiciones eléctricas distintas indexadas: 112.
-- Planos WebP HD con marcado visual.
-- Ayuda actualizada con ENT2.
-- Caché PWA: v14-ent2.
+Para actualizar v0.1.74 completa, sustituir index.html, unified-search.js,
+bp-lines.js y sw.js. Subir todos los ficheros con la misma estructura,
+recargar y comprobar que el rótulo muestra v0.1.75.

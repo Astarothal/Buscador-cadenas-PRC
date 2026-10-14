@@ -1,4 +1,4 @@
-/* Grupo 5 · v0.1.72 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
+/* Grupo 5 · v0.1.73 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
 (() => {
   'use strict';
   const el = (id) => document.getElementById(id);
@@ -31,15 +31,31 @@
   const hit=(group,title,subtitle,details,open,rank=2)=>({group,title,subtitle,details,open,rank});
   // v0.1.71 · Búsqueda rápida de clasificadores Durkopp: CLA 1–6 e indocks 1–5.
   // Página 5 del layout PRC, con pockets 451–456 y acumuladores 801–806.
-  // Centros de acumuladores verificados visualmente en el plano original (1800 × 1273 píxeles).
+  // Pockets se visualizan como cadenas CT; acumuladores como números de bypass, con círculo verde.
+  // Centros de acumuladores contrastados en el propio plano original (1800 × 1273 píxeles).
   const CLA_DATA = [
     {n:1,chain:'451',acc:'801',plc:'PLC252',x:1635,y:148},
     {n:2,chain:'452',acc:'802',plc:'PLC253',x:1377,y:148},
     {n:3,chain:'453',acc:'803',plc:'PLC259',x:1078,y:169},
     {n:4,chain:'454',acc:'804',plc:'PLC260',x:819,y:169},
-    {n:5,chain:'455',acc:'805',plc:'PLC455',x:470,y:211},
-    {n:6,chain:'456',acc:'806',plc:'PLC456',x:225,y:211}
+    {n:5,chain:'455',acc:'805',plc:'',x:467,y:211},
+    {n:6,chain:'456',acc:'806',plc:'',x:225,y:211}
   ];
+  // v0.1.73 · Reutiliza el índice y visor originales de bypass para los acumuladores.
+  // No altera el trazado de las cadenas de pockets, ni asigna un QR inexistente.
+  const CLA_ACC_INDEX = new Map(CLA_DATA.map(item=>[item.acc,item]));
+  for(const item of CLA_DATA){
+    const page=LAYOUT.pages[4];
+    if(!page)continue;
+    const scaleX=page.w/1800,scaleY=page.h/1273,r=14;
+    LAYOUT.bypasses[item.acc]=[{
+      type:'bypass',page:5,
+      x0:(item.x-r)*scaleX,y0:(item.y-r)*scaleY,
+      x1:(item.x+r)*scaleX,y1:(item.y+r)*scaleY,
+      context:'Acumulador '+item.acc+' · CLA '+item.n,
+      accumulator:true,cla:item.n
+    }];
+  }
   const INDOCK_DATA = [
     {n:1,chain:'216'},
     {n:2,chain:'219'},
@@ -51,8 +67,6 @@
     if(['CLA','CLAS','CLASIFICADOR','CLASIFICADORES'].includes(q))return CLA_DATA;
     const m=q.match(/^(?:CLA|CLAS|CLASIFICADOR|CLASIFICADORES)0?([1-6])$/);
     if(m)return [CLA_DATA[Number(m[1])-1]];
-    // El número de acumulador también permite localizar el clasificador relacionado.
-    if(/^80[1-6]$/.test(q))return [CLA_DATA[Number(q)-801]];
     return null;
   }
   function indockIndex(q){
@@ -62,19 +76,10 @@
     return null;
   }
   function showClaAccumulator(item){
-    const p=LAYOUT.pages[4];
-    if(!p)return;
-    // Transformamos las coordenadas del JPG (1800x1273) a las del plano PDF.
-    const cx=item.x*p.w/1800,cy=item.y*p.h/1273;
-    const r=13*p.w/1800;
-    const h={type:'accum',page:5,x0:cx-r,y0:cy-r,x1:cx+r,y1:cy+r,context:'Acumulador '+item.acc+' · CLA '+item.n};
+    // Usa exactamente el mismo flujo que los bypass habituales: LAYOUT.bypasses,
+    // searchLayout(), marcador verde, página y zoom centrados.
     el('layoutQ').value=item.acc;
-    layoutMatches=[];layoutMatchIndex=0;updateLayoutNext();
-    selectLayout(item.acc,h,null);
-    el('layoutTitle').innerHTML='<span class="badge accum">ACUMULADOR</span> '+item.acc;
-    el('layoutCtx').textContent='CLA '+item.n+' · '+item.plc+' · página 5 · círculo del acumulador marcado en ámbar';
-    el('layoutStatus').textContent='Clasificador '+item.n+' · Acumulador '+item.acc;
-    el('asset').classList.remove('show'); // No inventamos ningún QR para el acumulador.
+    searchLayout();
   }
   function searchCla(raw,q,items){
     const found=claIndex(q);if(!found)return false;
@@ -83,11 +88,11 @@
       if(!LAYOUT.chains[item.chain]?.length)continue;
       const rank=-100+item.n*2;
       items.push(hit('garment','Cadena de pockets '+item.chain,
-        'Durkopp · CLA '+item.n,'Clasificador '+item.n+' · '+item.plc+' · plano P05',()=>{
+        'Durkopp · CLA '+item.n,'Clasificador '+item.n+(item.plc?' · '+item.plc:'')+' · plano P05',()=>{
           el('layoutQ').value=item.chain;searchLayout();
         },rank));
       items.push(hit('garment','Acumulador '+item.acc,
-        'Durkopp · CLA '+item.n,'Clasificador '+item.n+' · círculo marcado en plano P05',()=>{
+        'Durkopp · CLA '+item.n,'Clasificador '+item.n+' · marcador verde de bypass · plano P05',()=>{
           showClaAccumulator(item);
         },rank+1));
     }
@@ -188,7 +193,10 @@
       },0));
     }
     if(LAYOUT.bypasses[key]?.length){
-      items.push(hit('garment','Bypass '+key,'Durkopp · Prenda colgada',LAYOUT.bypasses[key].length+' posiciones en planos',()=>{
+      const acc=CLA_ACC_INDEX.get(key);
+      items.push(hit('garment',acc?'Acumulador '+key:'Bypass '+key,
+        acc?'Durkopp · CLA '+acc.n:'Durkopp · Prenda colgada',
+        acc?'Clasificador '+acc.n+' · plano P05':LAYOUT.bypasses[key].length+' posiciones en planos',()=>{
         el('layoutQ').value=key;
         if(LAYOUT.chains[key]?.length){
           layoutMatches=LAYOUT.bypasses[key].map(h=>({...h,type:'bypass'}));
@@ -443,7 +451,7 @@
   window.v71GetReportContext=()=>{
     if(el('checkSection').classList.contains('active'))return {key:'check',section:'Checklist',query:'',detail:''};
     if(opened)return opened;
-    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v0.1.72 BETA'};
+    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v0.1.73 BETA'};
   };
   el('v71Form').addEventListener('submit',event=>{event.preventDefault();search()});
   el('v71Clear').addEventListener('click',()=>{el('v71Query').value='';search();el('v71Query').focus()});

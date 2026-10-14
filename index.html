@@ -1034,7 +1034,7 @@ body[data-theme] .paq-head{background:#fafaf9!important}
 </style>
 
 <style id="v71-unified-styles">
-/* Grupo 5 · v0.1.72 BETA: búsqueda unificada */
+/* Grupo 5 · v0.1.73 BETA: búsqueda unificada */
 .v71-nav{display:flex;gap:7px;margin-top:9px}
 .v71-nav-button{flex:1;min-height:38px!important;border:1px solid #d9d9d4!important;border-radius:8px!important;background:#fff!important;color:#333!important;font-size:12px!important;font-weight:650!important;box-shadow:none!important;padding:5px 8px!important}
 .v71-nav-button.active{background:#222!important;color:white!important;border-color:#222!important}
@@ -1082,11 +1082,7 @@ body.v71-detail #paqSection > .paq-compactbar{display:none!important}
 body.v71-detail #vanSection > .van-filterbar{display:none!important}
 @media (max-width:580px){.v71-filter-row{grid-template-columns:repeat(2,minmax(0,1fr))}.v71-intro h2{font-size:19px}.v71-nav-button{font-size:11px!important}}
 </style>
-<style id="v72-cla-accum-style">
-/* Marcador ámbar propio para acumuladores; no confundir con un bypass. */
-.mark.accum{border:3px solid #e59e00!important;border-radius:50%!important;background:rgba(255,207,53,.15)!important;box-shadow:0 0 0 2px #fff,0 0 0 5px rgba(229,158,0,.25)!important;z-index:7}
-.badge.accum{border:1px solid #c88d00;color:#946700}
-</style>
+
 </head>
 <body>
 <header><div class="wrap"><div class="brandbar"><div><h1>Grupo 5</h1><div class="brand-sub">Herramienta técnica de mantenimiento</div></div><div class="brand-badge">Meco</div></div>
@@ -1463,9 +1459,9 @@ function selectLayout(key,h,b){
   $('secBtn').classList.remove('sec-hidden');
   $('secBtn').textContent='Seccionador';
   syncPageButtons();
-  $('layoutStatus').textContent=(h.type==='chain'?'Cadena ':'Bypass ')+key;
-  $('layoutTitle').innerHTML='<span class="badge '+h.type+'">'+(h.type==='chain'?'CADENA':'BYPASS')+'</span> '+esc(key);
-  $('layoutCtx').textContent=h.type==='chain'?(h.context||'Pos. '+key):'Número '+key+' dentro de círculo';
+  $('layoutStatus').textContent=(h.accumulator?'Acumulador ':h.type==='chain'?'Cadena ':'Bypass ')+key;
+  $('layoutTitle').innerHTML='<span class="badge '+h.type+'">'+(h.accumulator?'ACUMULADOR':h.type==='chain'?'CADENA':'BYPASS')+'</span> '+esc(key);
+  $('layoutCtx').textContent=h.accumulator?'CLA '+h.cla+' · página '+h.page+' · número resaltado como bypass':h.type==='chain'?(h.context||'Pos. '+key):'Número '+key+' dentro de círculo';
   $('layoutImg').src=pageData(h.page);$('layoutImg').onload=renderLayout;$('layoutViewer').style.display='block';renderAsset(key,h);renderGarmentRelation(key,h);
 }
 function renderLayout(){
@@ -1486,7 +1482,9 @@ function renderLayout(){
 function applyZoom(){$('canvas').style.transform='scale('+zoom+')';centerMark()}
 function centerMark(){if(!active)return;const p=LAYOUT.pages[active.h.page-1],h=active.h,s=$('crop').clientWidth/p.w;const cx=((h.x0+h.x1)/2)*s*zoom,cy=((h.y0+h.y1)/2)*s*zoom;$('crop').scrollLeft=Math.max(0,cx-$('crop').clientWidth/2);$('crop').scrollTop=Math.max(0,cy-$('crop').clientHeight/2)}
 function renderAsset(key,h){
-  const code=(ELEMENT_TO_ASSET[h.type]||{})[key],box=$('asset');
+  const box=$('asset');
+  if(h.accumulator){box.classList.remove('show');return;} // No asignar un QR de bypass por accidente.
+  const code=(ELEMENT_TO_ASSET[h.type]||{})[key];
   if(!code){$('assetContent').innerHTML='<div class="status">Sin QR relacionado de forma inequívoca.</div>';box.classList.add('show');return}
   const r=assetByCode(code);if(!r)return;
   $('assetContent').innerHTML='<div class="asset-grid"><div><div class="asset-title">'+esc(r.e)+'</div><div class="asset-sub">'+esc(r.l)+'</div><div class="asset-code"><a class="qr-code-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+esc(r.c)+'</a></div></div><div class="qrbox"><a class="qr-link" href="'+immsUrl(r.c)+'" target="_blank" rel="noopener noreferrer">'+qrMarkup(r)+'</a></div></div>'+auwaBlock(auwaLinksForAsset(r));box.classList.add('show');
@@ -1929,7 +1927,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     </div>
     <div class="help-version">
       <strong>Versión actual</strong>
-      <p><b>Versión:</b> <span id="helpVersion">v0.1.72 BETA · alias Prenda colgada / CLA / INDOCK</span> · <b>Actualizada:</b> 13/10/2026</p>
+      <p><b>Versión:</b> <span id="helpVersion">v0.1.73 BETA · CLA 1–6 corregidos / alias / INDOCK</span> · <b>Actualizada:</b> 14/10/2026</p>
       <p><b>DEMATIC:</b> incluidos todos los PLCs de DEMATIC.</p><p><b>Vanderlande:</b> transportes pendientes de añadir; el buscador de QR ya está operativo.</p><p><b>TGW:</b> búsqueda visual de transportes TGW.</p>
     </div>
     <h3>¿Cómo actualizar si tienes una versión antigua?</h3>
@@ -1984,7 +1982,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 <script id="v69-teams-report-script">
 (function(){
   const TEAMS_USER='Albertomsa@ext.inditex.com';
-  const VERSION='v0.1.72 BETA';
+  const VERSION='v0.1.73 BETA';
   const DRAFT_KEY='amsReportDraftV1';
   const modal=document.getElementById('reportModal');
   const openMain=document.getElementById('reportBtn');

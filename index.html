@@ -1034,7 +1034,7 @@ body[data-theme] .paq-head{background:#fafaf9!important}
 </style>
 
 <style id="v71-unified-styles">
-/* Grupo 5 · v0.1.73 BETA: búsqueda unificada */
+/* Grupo 5 · v0.1.75 BETA: búsqueda unificada */
 .v71-nav{display:flex;gap:7px;margin-top:9px}
 .v71-nav-button{flex:1;min-height:38px!important;border:1px solid #d9d9d4!important;border-radius:8px!important;background:#fff!important;color:#333!important;font-size:12px!important;font-weight:650!important;box-shadow:none!important;padding:5px 8px!important}
 .v71-nav-button.active{background:#222!important;color:white!important;border-color:#222!important}
@@ -1392,10 +1392,16 @@ function renderAllChainPages(key,hits){
       });
       ChainHighlight.attach(canvas,img,traceKey,pageNum,p,type==='bypass'?(LAYOUT.bypasses[String(key)]||[]).filter(q=>q.page===pageNum):[]);
       const focusHit=pageHits.find(h=>!h.continuation)||pageHits[0];
-      const searchZoom=type==='chain'?2.7:3.2;
+      const tracePoints=traces[traceKey]?.[pageNum]?.boundsPoints||[];
+      const isPocket=/^45[1-6]$/.test(String(key)) && type==='chain';
+      const searchZoom=isPocket?2.25:(type==='chain'?2.7:3.2);
       PlaneGestures.bind(crop,canvas,searchZoom);
       if(focusHit){
-        const fx=((focusHit.x0+focusHit.x1)/2)/p.w,fy=((focusHit.y0+focusHit.y1)/2)/p.w;
+        // PlaneGestures.focus uses normalized coordinates relative to the drawing WIDTH for both axes.
+        // Derive the viewport center from the green route so CLA 2 isn't framed at just its upper label.
+        const xs=tracePoints.map(v=>v[0]),ys=tracePoints.map(v=>v[1]);
+        const fx=(isPocket&&xs.length?(Math.min(...xs)+Math.max(...xs))/2:(focusHit.x0+focusHit.x1)/2)/p.w;
+        const fy=(isPocket&&ys.length?(Math.min(...ys)+Math.max(...ys))/2:(focusHit.y0+focusHit.y1)/2)/p.w;
         requestAnimationFrame(()=>PlaneGestures.focus(crop,fx,fy));
       }
       if(type==='chain'){renderSectionMarkers(canvas,key,pageNum,bw);renderCabinetMarkers(canvas,key,pageNum,bw);}
@@ -1453,7 +1459,7 @@ function selectLayout(key,h,b){
   $('sharedPlaneControls').style.display='flex';
   ChainHighlight.clear();
   $('layoutMultiViewer').style.display='none';$('layoutMultiViewer').innerHTML='';
-  active={key:key,h:h};zoom=h.type==='chain'?3.0:3.4;
+  active={key:key,h:h};zoom=h.accumulator?1.35:h.claPocket?1.6:h.type==='chain'?3.0:3.4;
   const sec=(h.type==='chain'?GARMENT_SECCIONADORES[String(key)]:null);
   $('secBtn').style.display=sec?'':'none';
   $('secBtn').classList.remove('sec-hidden');
@@ -1461,7 +1467,7 @@ function selectLayout(key,h,b){
   syncPageButtons();
   $('layoutStatus').textContent=(h.accumulator?'Acumulador ':h.type==='chain'?'Cadena ':'Bypass ')+key;
   $('layoutTitle').innerHTML='<span class="badge '+h.type+'">'+(h.accumulator?'ACUMULADOR':h.type==='chain'?'CADENA':'BYPASS')+'</span> '+esc(key);
-  $('layoutCtx').textContent=h.accumulator?'CLA '+h.cla+' · página '+h.page+' · número resaltado como bypass':h.type==='chain'?(h.context||'Pos. '+key):'Número '+key+' dentro de círculo';
+  $('layoutCtx').textContent=h.accumulator?'CLA '+h.cla+' · página '+h.page+' · recorrido resaltado en verde':h.type==='chain'?(h.context||'Pos. '+key):'Número '+key+' dentro de círculo';
   $('layoutImg').src=pageData(h.page);$('layoutImg').onload=renderLayout;$('layoutViewer').style.display='block';renderAsset(key,h);renderGarmentRelation(key,h);
 }
 function renderLayout(){
@@ -1480,7 +1486,10 @@ function renderLayout(){
   PlaneGestures.bind($('crop'),$('canvas'),zoom,z=>{zoom=z});
 }
 function applyZoom(){$('canvas').style.transform='scale('+zoom+')';centerMark()}
-function centerMark(){if(!active)return;const p=LAYOUT.pages[active.h.page-1],h=active.h,s=$('crop').clientWidth/p.w;const cx=((h.x0+h.x1)/2)*s*zoom,cy=((h.y0+h.y1)/2)*s*zoom;$('crop').scrollLeft=Math.max(0,cx-$('crop').clientWidth/2);$('crop').scrollTop=Math.max(0,cy-$('crop').clientHeight/2)}
+function centerMark(){if(!active)return;const p=LAYOUT.pages[active.h.page-1],h=active.h,s=$('crop').clientWidth/p.w;const tracePts=h.accumulator?(BP_LINES['BP'+active.key]?.[h.page]?.boundsPoints||[]):h.claPocket?(CT_LINES['CT'+active.key]?.[h.page]?.boundsPoints||[]):[];
+ const xs=tracePts.map(v=>v[0]),ys=tracePts.map(v=>v[1]);
+ const cx=(xs.length?(Math.min(...xs)+Math.max(...xs))/2:(h.x0+h.x1)/2)*s*zoom;
+ const cy=(ys.length?(Math.min(...ys)+Math.max(...ys))/2:(h.y0+h.y1)/2)*s*zoom;$('crop').scrollLeft=Math.max(0,cx-$('crop').clientWidth/2);$('crop').scrollTop=Math.max(0,cy-$('crop').clientHeight/2)}
 function renderAsset(key,h){
   const box=$('asset');
   if(h.accumulator){box.classList.remove('show');return;} // No asignar un QR de bypass por accidente.
@@ -1927,7 +1936,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     </div>
     <div class="help-version">
       <strong>Versión actual</strong>
-      <p><b>Versión:</b> <span id="helpVersion">v0.1.73 BETA · CLA 1–6 corregidos / alias / INDOCK</span> · <b>Actualizada:</b> 14/10/2026</p>
+      <p><b>Versión:</b> <span id="helpVersion">v0.1.75 BETA · recorridos acumuladores / CLA 2 / alias</span> · <b>Actualizada:</b> 14/10/2026</p>
       <p><b>DEMATIC:</b> incluidos todos los PLCs de DEMATIC.</p><p><b>Vanderlande:</b> transportes pendientes de añadir; el buscador de QR ya está operativo.</p><p><b>TGW:</b> búsqueda visual de transportes TGW.</p>
     </div>
     <h3>¿Cómo actualizar si tienes una versión antigua?</h3>
@@ -1982,7 +1991,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 <script id="v69-teams-report-script">
 (function(){
   const TEAMS_USER='Albertomsa@ext.inditex.com';
-  const VERSION='v0.1.73 BETA';
+  const VERSION='v0.1.75 BETA';
   const DRAFT_KEY='amsReportDraftV1';
   const modal=document.getElementById('reportModal');
   const openMain=document.getElementById('reportBtn');

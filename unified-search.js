@@ -1,4 +1,4 @@
-/* Grupo 5 · v0.1.73 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
+/* Grupo 5 · v0.1.75 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
 (() => {
   'use strict';
   const el = (id) => document.getElementById(id);
@@ -31,7 +31,7 @@
   const hit=(group,title,subtitle,details,open,rank=2)=>({group,title,subtitle,details,open,rank});
   // v0.1.71 · Búsqueda rápida de clasificadores Durkopp: CLA 1–6 e indocks 1–5.
   // Página 5 del layout PRC, con pockets 451–456 y acumuladores 801–806.
-  // Pockets se visualizan como cadenas CT; acumuladores como números de bypass, con círculo verde.
+  // Pockets se visualizan como cadenas CT; acumuladores como trazados verdes de bypass BP.
   // Centros de acumuladores contrastados en el propio plano original (1800 × 1273 píxeles).
   const CLA_DATA = [
     {n:1,chain:'451',acc:'801',plc:'PLC252',x:1635,y:148},
@@ -41,7 +41,7 @@
     {n:5,chain:'455',acc:'805',plc:'',x:467,y:211},
     {n:6,chain:'456',acc:'806',plc:'',x:225,y:211}
   ];
-  // v0.1.73 · Reutiliza el índice y visor originales de bypass para los acumuladores.
+  // v0.1.74 · Los acumuladores tienen trazados BP801–BP806 en el plano 5, no solo marcadores.
   // No altera el trazado de las cadenas de pockets, ni asigna un QR inexistente.
   const CLA_ACC_INDEX = new Map(CLA_DATA.map(item=>[item.acc,item]));
   for(const item of CLA_DATA){
@@ -89,10 +89,15 @@
       const rank=-100+item.n*2;
       items.push(hit('garment','Cadena de pockets '+item.chain,
         'Durkopp · CLA '+item.n,'Clasificador '+item.n+(item.plc?' · '+item.plc:'')+' · plano P05',()=>{
-          el('layoutQ').value=item.chain;searchLayout();
+          // Los números 451-456 también tienen referencias auxiliares en otras páginas.
+          // En una búsqueda CLA se debe abrir directamente el trazado de pockets de P05.
+          el('layoutQ').value=item.chain;
+          const pocketHit=(LAYOUT.chains[item.chain]||[]).find(h=>h.page===5);
+          if(pocketHit)selectLayout(item.chain,{...pocketHit,type:'chain',claPocket:true},null);
+          else searchLayout();
         },rank));
       items.push(hit('garment','Acumulador '+item.acc,
-        'Durkopp · CLA '+item.n,'Clasificador '+item.n+' · marcador verde de bypass · plano P05',()=>{
+        'Durkopp · CLA '+item.n,'Clasificador '+item.n+' · trazado de dos ramales · plano P05',()=>{
           showClaAccumulator(item);
         },rank+1));
     }
@@ -451,7 +456,7 @@
   window.v71GetReportContext=()=>{
     if(el('checkSection').classList.contains('active'))return {key:'check',section:'Checklist',query:'',detail:''};
     if(opened)return opened;
-    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v0.1.73 BETA'};
+    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v0.1.75 BETA'};
   };
   el('v71Form').addEventListener('submit',event=>{event.preventDefault();search()});
   el('v71Clear').addEventListener('click',()=>{el('v71Query').value='';search();el('v71Query').focus()});

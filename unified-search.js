@@ -1,4 +1,4 @@
-/* Grupo 5 · v71 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
+/* Grupo 5 · v0.1.72 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
 (() => {
   'use strict';
   const el = (id) => document.getElementById(id);
@@ -29,6 +29,156 @@
   }
   const allows=(group)=>filter==='all'||group===filter;
   const hit=(group,title,subtitle,details,open,rank=2)=>({group,title,subtitle,details,open,rank});
+  // v0.1.71 · Búsqueda rápida de clasificadores Durkopp: CLA 1–6 e indocks 1–5.
+  // Página 5 del layout PRC, con pockets 451–456 y acumuladores 801–806.
+  // Centros de acumuladores verificados visualmente en el plano original (1800 × 1273 píxeles).
+  const CLA_DATA = [
+    {n:1,chain:'451',acc:'801',plc:'PLC252',x:1635,y:148},
+    {n:2,chain:'452',acc:'802',plc:'PLC253',x:1377,y:148},
+    {n:3,chain:'453',acc:'803',plc:'PLC259',x:1078,y:169},
+    {n:4,chain:'454',acc:'804',plc:'PLC260',x:819,y:169},
+    {n:5,chain:'455',acc:'805',plc:'PLC455',x:470,y:211},
+    {n:6,chain:'456',acc:'806',plc:'PLC456',x:225,y:211}
+  ];
+  const INDOCK_DATA = [
+    {n:1,chain:'216'},
+    {n:2,chain:'219'},
+    {n:3,chain:'223'},
+    {n:4,chain:'232'},
+    {n:5,chain:'238'}
+  ];
+  function claIndex(q){
+    if(['CLA','CLAS','CLASIFICADOR','CLASIFICADORES'].includes(q))return CLA_DATA;
+    const m=q.match(/^(?:CLA|CLAS|CLASIFICADOR|CLASIFICADORES)0?([1-6])$/);
+    if(m)return [CLA_DATA[Number(m[1])-1]];
+    // El número de acumulador también permite localizar el clasificador relacionado.
+    if(/^80[1-6]$/.test(q))return [CLA_DATA[Number(q)-801]];
+    return null;
+  }
+  function indockIndex(q){
+    if(['INDOCK','INDOCKS','INDOC','INDOCS'].includes(q))return INDOCK_DATA;
+    const m=q.match(/^(?:INDOCK|INDOC)0?([1-5])$/);
+    if(m)return [INDOCK_DATA[Number(m[1])-1]];
+    return null;
+  }
+  function showClaAccumulator(item){
+    const p=LAYOUT.pages[4];
+    if(!p)return;
+    // Transformamos las coordenadas del JPG (1800x1273) a las del plano PDF.
+    const cx=item.x*p.w/1800,cy=item.y*p.h/1273;
+    const r=13*p.w/1800;
+    const h={type:'accum',page:5,x0:cx-r,y0:cy-r,x1:cx+r,y1:cy+r,context:'Acumulador '+item.acc+' · CLA '+item.n};
+    el('layoutQ').value=item.acc;
+    layoutMatches=[];layoutMatchIndex=0;updateLayoutNext();
+    selectLayout(item.acc,h,null);
+    el('layoutTitle').innerHTML='<span class="badge accum">ACUMULADOR</span> '+item.acc;
+    el('layoutCtx').textContent='CLA '+item.n+' · '+item.plc+' · página 5 · círculo del acumulador marcado en ámbar';
+    el('layoutStatus').textContent='Clasificador '+item.n+' · Acumulador '+item.acc;
+    el('asset').classList.remove('show'); // No inventamos ningún QR para el acumulador.
+  }
+  function searchCla(raw,q,items){
+    const found=claIndex(q);if(!found)return false;
+    if(!allows('garment'))return true;
+    for(const item of found){
+      if(!LAYOUT.chains[item.chain]?.length)continue;
+      const rank=-100+item.n*2;
+      items.push(hit('garment','Cadena de pockets '+item.chain,
+        'Durkopp · CLA '+item.n,'Clasificador '+item.n+' · '+item.plc+' · plano P05',()=>{
+          el('layoutQ').value=item.chain;searchLayout();
+        },rank));
+      items.push(hit('garment','Acumulador '+item.acc,
+        'Durkopp · CLA '+item.n,'Clasificador '+item.n+' · círculo marcado en plano P05',()=>{
+          showClaAccumulator(item);
+        },rank+1));
+    }
+    return true;
+  }
+  function searchIndock(raw,q,items){
+    const found=indockIndex(q);if(!found)return false;
+    if(!allows('garment'))return true;
+    for(const item of found){
+      if(!LAYOUT.chains[item.chain]?.length)continue;
+      items.push(hit('garment','Indock '+item.n+' · Cadena '+item.chain,
+        'Durkopp · Prenda colgada','Indock '+item.n+' · cadena asociada '+item.chain,()=>{
+          el('layoutQ').value=item.chain;searchLayout();
+        },-70+item.n));
+    }
+    return true;
+  }
+  // v0.1.72 · Alias de Prenda colgada a partir del nombre real de cada cadena.
+  // No cambiamos números ni localizaciones: usamos GARMENT_RELATIONS.chains y LAYOUT.chains.
+  // Una descripción ambigua se resuelve como varios resultados, nunca como una cadena arbitraria.
+  const GARMENT_ALIAS_INDEX = (()=>{
+    const index=new Map();
+    const register=(phrase,chain)=>{
+      const key=compact(phrase);
+      if(key.length<3)return;
+      if(!index.has(key))index.set(key,new Set());
+      index.get(key).add(chain);
+    };
+    const numbers=s=>String(s).replace(/\bII\b/g,'2').replace(/\bI\b/g,'1');
+    const expanded=s=>numbers(String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase()
+      .replace(/\bENTR\./g,'ENTRADA').replace(/\bSAL\./g,'SALIDA'));
+    const chainNames=GARMENT_RELATIONS.chains||{};
+    for(const [chain,name] of Object.entries(chainNames)){
+      if(!LAYOUT.chains[chain]?.length)continue; // descarta minicarros que no son cadenas indexadas
+      const title=expanded(name);
+      register(name,chain);
+      register(title,chain);
+      if(title.startsWith('CADENA '))register(title.slice(7),chain);
+      if(title.includes('PICKING'))register(title.replace(/PICKING/g,'PICK'),chain);
+      if(/\bPICK\b/.test(title))register(title.replace(/\bPICK\b/g,'PICKING'),chain);
+      if(title.includes('PRE-REPARTOS'))register(title.replace('PRE-REPARTOS','PRE REPARTOS'),chain);
+      // Zonas compartidas: buscar STOCK 1, SPLITTER 1, PACKING 1 o EXPORT 1 muestra todas sus cadenas.
+      for(const category of ['STOCK','SPLITTER','PACKING','EXPORT','GIB']){
+        const re=new RegExp('\\b'+category+'[\\s-]*(\\d+)\\b');
+        const match=title.match(re);
+        if(match){
+          register(category+' '+match[1],chain);
+          register(category+' '+match[1].padStart(2,'0'),chain);
+          register(category,chain);
+        }
+      }
+      // Pick 1 puede referirse a Picking Pre-1 o a Salida Pick I; se devuelven ambas.
+      const pre=title.match(/^PICKING PRE[- ]*(\d+)$/);
+      if(pre){register('PRE '+pre[1],chain);register('PICK '+pre[1],chain);register('PICKING '+pre[1],chain)}
+      const exit=title.match(/^SALIDA PICK[- ]*(\d+)$/);
+      if(exit){register('PICK '+exit[1],chain);register('PICKING '+exit[1],chain)}
+      if(/^PRE[- ]*\d+$/.test(title))register(title,chain);
+      const docks=title.match(/\bMUELLES?\s+(\d+)\s+Y\s+(\d+)\b/);
+      if(docks){for(const number of [docks[1],docks[2]]){
+        register('MUELLE '+number,chain);register('MUELLES '+number,chain);
+      }}
+      // Una colectora sirve a dos CLA: el nombre específico debe apuntar a la misma cadena.
+      const collectors=title.match(/^COLECTORA CLA\s*(\d+)\s+Y\s+CLA\s*(\d+)$/);
+      if(collectors){for(const number of [collectors[1],collectors[2]])register('COLECTORA CLA '+number,chain)}
+      const silo=title.match(/^LOOP (ENTRADA|SALIDA) SILO FASE (\d+)$/);
+      if(silo){register('SILO FASE '+silo[2],chain);register('LOOP SILO FASE '+silo[2],chain)}
+      // Nombres sin dirección cuando no pueden confundirse con un código numérico puro.
+      const area=title.match(/^(?:REPARTO|SALIDA|ENTRADA|PICKING|EVACUACION|COLECTORA) (.+)$/);
+      if(area && !/^(?:STOCK|SPLITTER|CLA|PACKING|EXPORT|GIB)\b/.test(area[1]))register(area[1],chain);
+    }
+    // Evita que una búsqueda "CLA 1" desvíe al técnico desde los pockets/acumuladores.
+    // El motor CLA se ejecuta primero; aquí solo son alias de nombres como "colectora CLA 1".
+    return index;
+  })();
+  function searchGarmentAlias(raw,q,items){
+    const aliasKey=compact(String(raw).toUpperCase().replace(/\bENTR\./g,'ENTRADA').replace(/\bSAL\./g,'SALIDA').replace(/\bII\b/g,'2').replace(/\bI\b/g,'1'));
+    const chains=GARMENT_ALIAS_INDEX.get(aliasKey);
+    if(!chains)return false;
+    if(!allows('garment'))return true;
+    const names=GARMENT_RELATIONS.chains||{};
+    for(const chain of chains){
+      if(!LAYOUT.chains[chain]?.length)continue;
+      const label=names[chain]||('Cadena '+chain);
+      items.push(hit('garment',label+' · Cadena '+chain,
+        'Durkopp · Prenda colgada',
+        'Cadena '+chain+' · '+LAYOUT.chains[chain].length+' posiciones en planos',()=>{
+          el('layoutQ').value=chain;searchLayout();
+        },-60));
+    }
+    return true;
+  }
   function searchDurkopp(raw,q,items){
     if(!allows('garment')||!/^[0-9]{1,4}$/.test(raw))return;
     const key=String(Number(raw));
@@ -222,6 +372,54 @@
     if(!q){el('v71Status').textContent='Escribe una referencia, PLC o QR para comenzar.';el('v71Results').replaceChildren();return;}
     el('v71Status').textContent='Buscando en '+FILTER_LABEL[filter].toLowerCase()+'…';
     const items=[];
+    // Una búsqueda CLA se resuelve con su pareja pockets/acumulador, evitando ruido QR.
+    if(searchCla(raw,q,items)){
+      if(!allows('garment')){
+        const area=el('v71Results');area.replaceChildren();
+        const note=document.createElement('div');note.className='v71-empty';
+        note.textContent='Los clasificadores CLA están en Prenda colgada. Cambia a ese filtro o a Todos.';
+        const change=document.createElement('button');change.type='button';change.className='v71-more';
+        change.textContent='Ver en Prenda colgada';
+        change.onclick=()=>document.querySelector('.v71-filter-row [data-filter="garment"]').click();
+        area.append(note,change);
+        el('v71Status').textContent='Este clasificador pertenece a Prenda colgada.';
+      }else{
+        currentItems=items;render(items,raw);
+      }
+      return;
+    }
+    if(searchIndock(raw,q,items)){
+      if(!allows('garment')){
+        const area=el('v71Results');area.replaceChildren();
+        const note=document.createElement('div');note.className='v71-empty';
+        note.textContent='Los indocks están en Prenda colgada. Cambia a ese filtro o a Todos.';
+        const change=document.createElement('button');change.type='button';change.className='v71-more';
+        change.textContent='Ver en Prenda colgada';
+        change.onclick=()=>document.querySelector('.v71-filter-row [data-filter="garment"]').click();
+        area.append(note,change);
+        el('v71Status').textContent='Este indock pertenece a Prenda colgada.';
+      }else{
+        currentItems=items;render(items,raw);
+      }
+      return;
+    }
+    // Los alias semánticos se consultan antes de QR y transportes de otras zonas.
+    // Se conservan las búsquedas de números, CLA e INDOCK sin modificaciones.
+    if(searchGarmentAlias(raw,q,items)){
+      if(!allows('garment')){
+        const area=el('v71Results');area.replaceChildren();
+        const note=document.createElement('div');note.className='v71-empty';
+        note.textContent='Este nombre de cadena pertenece a Prenda colgada. Cambia a ese filtro o a Todos.';
+        const change=document.createElement('button');change.type='button';change.className='v71-more';
+        change.textContent='Ver en Prenda colgada';
+        change.onclick=()=>document.querySelector('.v71-filter-row [data-filter="garment"]').click();
+        area.append(note,change);
+        el('v71Status').textContent='Este elemento pertenece a Prenda colgada.';
+      }else{
+        currentItems=items;render(items,raw);
+      }
+      return;
+    }
     searchDurkopp(raw,q,items);
     searchDematic(raw,q,items);
     searchTgwIndex(q,items);
@@ -245,7 +443,7 @@
   window.v71GetReportContext=()=>{
     if(el('checkSection').classList.contains('active'))return {key:'check',section:'Checklist',query:'',detail:''};
     if(opened)return opened;
-    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v71 BETA'};
+    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v0.1.72 BETA'};
   };
   el('v71Form').addEventListener('submit',event=>{event.preventDefault();search()});
   el('v71Clear').addEventListener('click',()=>{el('v71Query').value='';search();el('v71Query').focus()});

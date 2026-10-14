@@ -1034,7 +1034,7 @@ body[data-theme] .paq-head{background:#fafaf9!important}
 </style>
 
 <style id="v71-unified-styles">
-/* Grupo 5 · v71 BETA: búsqueda unificada */
+/* Grupo 5 · v0.1.72 BETA: búsqueda unificada */
 .v71-nav{display:flex;gap:7px;margin-top:9px}
 .v71-nav-button{flex:1;min-height:38px!important;border:1px solid #d9d9d4!important;border-radius:8px!important;background:#fff!important;color:#333!important;font-size:12px!important;font-weight:650!important;box-shadow:none!important;padding:5px 8px!important}
 .v71-nav-button.active{background:#222!important;color:white!important;border-color:#222!important}
@@ -1082,6 +1082,11 @@ body.v71-detail #paqSection > .paq-compactbar{display:none!important}
 body.v71-detail #vanSection > .van-filterbar{display:none!important}
 @media (max-width:580px){.v71-filter-row{grid-template-columns:repeat(2,minmax(0,1fr))}.v71-intro h2{font-size:19px}.v71-nav-button{font-size:11px!important}}
 </style>
+<style id="v72-cla-accum-style">
+/* Marcador ámbar propio para acumuladores; no confundir con un bypass. */
+.mark.accum{border:3px solid #e59e00!important;border-radius:50%!important;background:rgba(255,207,53,.15)!important;box-shadow:0 0 0 2px #fff,0 0 0 5px rgba(229,158,0,.25)!important;z-index:7}
+.badge.accum{border:1px solid #c88d00;color:#946700}
+</style>
 </head>
 <body>
 <header><div class="wrap"><div class="brandbar"><div><h1>Grupo 5</h1><div class="brand-sub">Herramienta técnica de mantenimiento</div></div><div class="brand-badge">Meco</div></div>
@@ -1093,10 +1098,10 @@ body.v71-detail #vanSection > .van-filterbar{display:none!important}
 <div id="stickyAuwaBar" hidden><span id="stickyAuwaLabel">AUWA</span><select id="stickyAuwaSelect" aria-label="Elegir destino AUWA" hidden></select><a id="stickyAuwaLink" target="_blank" rel="noopener noreferrer">Abrir AUWA ↗</a><button type="button" id="stickyAuwaTabs">Pestañas ↑</button></div></div></header>
 <main>
 <section id="unifiedSection" class="section active" aria-label="Buscador unificado">
-  <div class="v71-intro"><span class="v71-beta">BETA v71</span><h2>Buscar en toda la instalación</h2><p>Una sola búsqueda de cadenas, bypass, transportes, planos, PLC y QR.</p></div>
+  <div class="v71-intro"><span class="v71-beta">BETA v0.1.72</span><h2>Buscar en toda la instalación</h2><p>Una sola búsqueda de cadenas, bypass, transportes, planos, PLC y QR.</p></div>
   <form id="v71Form" class="v71-form" autocomplete="off">
     <label for="v71Query" class="v71-label">Código, posición o número de QR</label>
-    <div class="v71-query-row"><input type="search" id="v71Query" enterkeyhint="search" autocapitalize="characters" spellcheck="false" placeholder="Ej.: 229, EMP1, 208285, F001.1440" aria-describedby="v71Status"><button type="submit">Buscar</button></div>
+    <div class="v71-query-row"><input type="search" id="v71Query" enterkeyhint="search" autocapitalize="characters" spellcheck="false" placeholder="Ej.: Splitter 1, CLA 1, INDOCK 1, 229" aria-describedby="v71Status"><button type="submit">Buscar</button></div>
   </form>
   <fieldset class="v71-filters"><legend>Zona de trabajo</legend>
     <div class="v71-filter-row" role="group" aria-label="Filtrar por instalación">
@@ -1924,7 +1929,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     </div>
     <div class="help-version">
       <strong>Versión actual</strong>
-      <p><b>Versión:</b> <span id="helpVersion">v71 BETA · buscador por zonas</span> · <b>Actualizada:</b> 13/10/2026</p>
+      <p><b>Versión:</b> <span id="helpVersion">v0.1.72 BETA · alias Prenda colgada / CLA / INDOCK</span> · <b>Actualizada:</b> 13/10/2026</p>
       <p><b>DEMATIC:</b> incluidos todos los PLCs de DEMATIC.</p><p><b>Vanderlande:</b> transportes pendientes de añadir; el buscador de QR ya está operativo.</p><p><b>TGW:</b> búsqueda visual de transportes TGW.</p>
     </div>
     <h3>¿Cómo actualizar si tienes una versión antigua?</h3>
@@ -1979,7 +1984,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 <script id="v69-teams-report-script">
 (function(){
   const TEAMS_USER='Albertomsa@ext.inditex.com';
-  const VERSION='v71 BETA';
+  const VERSION='v0.1.72 BETA';
   const DRAFT_KEY='amsReportDraftV1';
   const modal=document.getElementById('reportModal');
   const openMain=document.getElementById('reportBtn');

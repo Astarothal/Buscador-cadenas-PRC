@@ -1,4 +1,4 @@
-/* Grupo 5 · v0.1.75 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
+/* Grupo 5 · v0.1.76 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
 (() => {
   'use strict';
   const el = (id) => document.getElementById(id);
@@ -248,18 +248,16 @@
       }
     }
   }
-  function searchTgwIndex(q,items){
+  function searchTgwIndex(raw,q,items,matched){
     if(!allows('multi'))return;
-    const seen=new Set();
-    for(const e of TGW.entries){
-      const c=compact(e.code),root=compact(e.root);
-      if(!c.includes(q)&&!root.includes(q))continue;
-      const k=e.code+'|'+e.page;
-      if(seen.has(k))continue;seen.add(k);
-      items.push(hit('multi',e.code,'TGW · Multishuttle','Plano TGW · Página '+e.page,()=>{
-        el('tgwQ').value=activeQuery;
-        showTgw(e,null);
-      },Math.min(score(e.code,q),score(e.root,q))));
+    // Un resultado por transporte real, aunque tenga dos páginas en el plano.
+    for(const {group,rank} of tgwSearchGroups(raw)){
+      matched.add(group.key);
+      items.push(hit('multi',group.key,'TGW · Multishuttle',
+        'Plano TGW · '+tgwPageLabel(group),()=>{
+          el('tgwQ').value=group.key;
+          showTgw(group.entries[0],null);
+        },rank));
     }
   }
   function searchVanIndex(q,items){
@@ -276,7 +274,7 @@
       },score(h.code,q)));
     }
   }
-  function searchQRAssets(raw,q,items){
+  function searchQRAssets(raw,q,items,tgwMatched){
     const source=fullAssets||MAPPED_ASSETS;
     const numericShort=/^\d{1,3}$/.test(raw.trim());
     for(const r of source){
@@ -284,12 +282,26 @@
       const group=classifyAsset(r);
       if(!allows(group))continue;
       let rank=5;
-      if(compact(id)===q||compact(code)===q)rank=0;
+      const canonicalQr=group==='multi'?tgwCanonicalRef(code):null;
+      const canonicalQuery=group==='multi'?tgwCanonicalRef(raw):null;
+      if((canonicalQr&&canonicalQuery&&canonicalQr===canonicalQuery)||compact(id)===q||compact(code)===q)rank=0;
       else if(numericShort)continue; // Evita mostrar códigos QR no relacionados con una cadena de 3 cifras.
       else if(compact(id).startsWith(q)||compact(code).startsWith(q))rank=1;
       else if(compact(id).includes(q)||compact(code).includes(q))rank=2;
       else if(compact(line).includes(q))rank=3;
       if(rank>3)continue;
+      if(group==='multi'&&canonicalQr&&TGW_GROUPS.has(canonicalQr)){
+        // Un único resultado TGW para el código del plano y su(s) QR.
+        if(tgwMatched.has(canonicalQr))continue;
+        tgwMatched.add(canonicalQr);
+        const related=TGW_GROUPS.get(canonicalQr);
+        items.push(hit('multi',canonicalQr,'TGW · Multishuttle',
+          'Plano TGW · '+tgwPageLabel(related)+' · QR '+id,()=>{
+            el('tgwQ').value=canonicalQr;
+            showTgw(related.entries[0],null);
+          },rank));
+        continue;
+      }
       // Los transportes Vanderlande con QR se abren en su visor específico si tienen PLC asociado.
       if(group==='parcel'&&vanIsQrTransport(r)){
         const v=vanQrHit(r);
@@ -435,12 +447,13 @@
     }
     searchDurkopp(raw,q,items);
     searchDematic(raw,q,items);
-    searchTgwIndex(q,items);
+    const tgwMatched=new Set();
+    searchTgwIndex(raw,q,items,tgwMatched);
     searchVanIndex(q,items);
     if(q.length>=2){
       try{await loadFullAssets()}catch(err){console.warn('Búsqueda limitada a base QR ligera',err)}
       if(my!==serial)return;
-      searchQRAssets(raw,q,items);
+      searchQRAssets(raw,q,items,tgwMatched);
     }
     if(my!==serial)return;
     currentItems=items;render(items,raw);
@@ -456,7 +469,7 @@
   window.v71GetReportContext=()=>{
     if(el('checkSection').classList.contains('active'))return {key:'check',section:'Checklist',query:'',detail:''};
     if(opened)return opened;
-    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v0.1.75 BETA'};
+    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v0.1.76 BETA'};
   };
   el('v71Form').addEventListener('submit',event=>{event.preventDefault();search()});
   el('v71Clear').addEventListener('click',()=>{el('v71Query').value='';search();el('v71Query').focus()});

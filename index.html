@@ -1033,8 +1033,9 @@ body[data-theme] .paq-head{background:#fafaf9!important}
 .missing-report-note{font-size:10px;color:var(--muted)}
 </style>
 
+<style>.tgw-page-choices{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.tgw-page-choices[hidden]{display:none}.tgw-page-choices button{font-size:12px;border:1px solid #9ca3af;background:transparent;border-radius:6px;padding:5px 10px;color:inherit}.tgw-page-choices button.selected{border-color:#00825f;background:#e3f4ed;color:#114c39}</style>
 <style id="v71-unified-styles">
-/* Grupo 5 · v0.1.75 BETA: búsqueda unificada */
+/* Grupo 5 · v0.1.76 BETA: búsqueda unificada */
 .v71-nav{display:flex;gap:7px;margin-top:9px}
 .v71-nav-button{flex:1;min-height:38px!important;border:1px solid #d9d9d4!important;border-radius:8px!important;background:#fff!important;color:#333!important;font-size:12px!important;font-weight:650!important;box-shadow:none!important;padding:5px 8px!important}
 .v71-nav-button.active{background:#222!important;color:white!important;border-color:#222!important}
@@ -1094,7 +1095,7 @@ body.v71-detail #vanSection > .van-filterbar{display:none!important}
 <div id="stickyAuwaBar" hidden><span id="stickyAuwaLabel">AUWA</span><select id="stickyAuwaSelect" aria-label="Elegir destino AUWA" hidden></select><a id="stickyAuwaLink" target="_blank" rel="noopener noreferrer">Abrir AUWA ↗</a><button type="button" id="stickyAuwaTabs">Pestañas ↑</button></div></div></header>
 <main>
 <section id="unifiedSection" class="section active" aria-label="Buscador unificado">
-  <div class="v71-intro"><span class="v71-beta">BETA v0.1.72</span><h2>Buscar en toda la instalación</h2><p>Una sola búsqueda de cadenas, bypass, transportes, planos, PLC y QR.</p></div>
+  <div class="v71-intro"><span class="v71-beta">BETA v0.1.76</span><h2>Buscar en toda la instalación</h2><p>Una sola búsqueda de cadenas, bypass, transportes, planos, PLC y QR.</p></div>
   <form id="v71Form" class="v71-form" autocomplete="off">
     <label for="v71Query" class="v71-label">Código, posición o número de QR</label>
     <div class="v71-query-row"><input type="search" id="v71Query" enterkeyhint="search" autocapitalize="characters" spellcheck="false" placeholder="Ej.: Splitter 1, CLA 1, INDOCK 1, 229" aria-describedby="v71Status"><button type="submit">Buscar</button></div>
@@ -1206,12 +1207,12 @@ body.v71-detail #vanSection > .van-filterbar{display:none!important}
 
 
 <section id="tgwSection" class="section">
-<div class="info">Busca un transporte TGW por su código completo o por una parte. Ej.: <b>F001.1440</b> o <b>1440</b>.</div>
+<div class="info">Busca un transporte TGW por su código completo o por una parte. Ej.: <b>F003.1199.5</b>, <b>F003_KCC_1199_05</b> o <b>1199</b>.</div>
 <form id="tgwForm" class="search"><input id="tgwQ" type="search" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Ej.: F001.1440"><button type="submit">Buscar</button></form>
 <p id="tgwStatus" class="status">Búsqueda visual en los layouts TGW cargados.</p>
 <div id="tgwResults" class="results"></div>
 <div id="tgwViewer" class="paq-viewer" style="display:none"><div class="paq-head"><div id="tgwTitle" class="paq-title"></div><div id="tgwCtx" class="paq-note"></div>
-<div class="paq-controls"><button type="button" id="tgwZone">Zona</button><button type="button" id="tgwPage">Página</button><button type="button" id="tgwMinus">−</button><button type="button" id="tgwPlus">+</button></div></div>
+<div class="paq-controls"><button type="button" id="tgwZone">Zona</button><button type="button" id="tgwPage">Página</button><button type="button" id="tgwMinus">−</button><button type="button" id="tgwPlus">+</button></div><div id="tgwPageChoices" class="tgw-page-choices" hidden></div></div>
 <div id="tgwCrop" class="paq-crop"><div id="tgwCanvas" class="paq-canvas"><img id="tgwImg" alt="Layout TGW"><div id="tgwMark" class="paq-mark" style="display:none"></div></div></div></div>
 <div id="tgwQr" class="asset" style="display:none;margin-top:10px"><div id="tgwQrContent"></div></div>
 </section>
@@ -1742,6 +1743,39 @@ const TGW_EMBEDDED={"source":"LAYOUT 1.pdf","pages":[{"page":1,"w":1191.0,"h":84
 let TGW=TGW_EMBEDDED,tgwActive=null,tgwZoom=1.6;
 function normTgw(s){return String(s||'').trim().toUpperCase().replace(/\s+/g,'')}
 function compactTgw(s){return normTgw(s).replace(/[^A-Z0-9]/g,'')}
+
+// TGW: F003_KCC_1199_05 y F003.1199.5 indican la misma posición.
+// El tipo KCC/KRC/BC se conserva en cada ficha QR para no perder el identificador técnico.
+function tgwCanonicalRef(input){
+  const v=normTgw(input).replace(/\s/g,'');
+  let m=v.match(/^(F\d{3})[._-][A-Z][A-Z0-9]{1,5}[._-](\d{3,4})(?:[._-](\d{1,2}))?$/);
+  if(!m)m=v.match(/^(F\d{3})[._-](\d{3,4})(?:[._-](\d{1,2}))?$/);
+  return m?m[1]+'.'+m[2]+(m[3]!=null?'.'+String(Number(m[3])):''):null;
+}
+const TGW_GROUPS=(()=>{
+  const map=new Map();
+  for(const entry of TGW.entries){
+    const key=tgwCanonicalRef(entry.code)||entry.code;
+    if(!map.has(key))map.set(key,{key,entries:[],pages:[]});
+    const group=map.get(key);group.entries.push(entry);
+    if(!group.pages.includes(entry.page))group.pages.push(entry.page);
+  }
+  for(const group of map.values())group.pages.sort((a,b)=>a-b);
+  return map;
+})();
+function tgwPageLabel(group){return group.pages.length>1?'Páginas '+group.pages.join(', '):'Página '+group.pages[0]}
+function tgwSearchGroups(input){
+  const raw=normTgw(input),query=compactTgw(raw),canonical=tgwCanonicalRef(raw),found=[];
+  if(!query)return found;
+  for(const group of TGW_GROUPS.values()){
+    const e=group.entries[0],name=compactTgw(group.key),root=compactTgw(e.root);
+    if((canonical&&group.key===canonical)||name.includes(query)||root.includes(query)){
+      const rank=canonical&&group.key===canonical?0:name===query?0:name.startsWith(query)?1:2;
+      found.push({group,rank});
+    }
+  }
+  return found.sort((a,b)=>a.rank-b.rank||a.group.key.localeCompare(b.group.key,undefined,{numeric:true}));
+}
 function tgwPageSrc(n){return './tgw_hq/page_'+String(n).padStart(2,'0')+'.webp'}
 function loadTgw(){
   $('tgwStatus').textContent=(new Set(TGW.entries.map(x=>x.root))).size+' transportes TGW disponibles en '+TGW.pages.length+' páginas · planos HQ.';
@@ -1750,32 +1784,29 @@ function loadTgw(){
 async function searchTgw(){
   await loadTgw();
   if(window.hideMissingReport)hideMissingReport('tgwStatus');
-  const raw=normTgw($('tgwQ').value),q=compactTgw(raw),box=$('tgwResults');box.innerHTML='';$('tgwViewer').style.display='none';$('tgwQr').style.display='none';
-  if(!q){$('tgwStatus').textContent='Escribe un transporte, por ejemplo F001.1440.';return}
-  let hits=TGW.entries.filter(e=>compactTgw(e.code).includes(q)||compactTgw(e.root).includes(q));
-  hits.sort((a,b)=>{const ac=compactTgw(a.root),bc=compactTgw(b.root);const ae=ac===q?0:ac.startsWith(q)?1:2,be=bc===q?0:bc.startsWith(q)?1:2;return ae-be||a.root.localeCompare(b.root,undefined,{numeric:true})||a.page-b.page});
+  const raw=normTgw($('tgwQ').value),box=$('tgwResults');box.replaceChildren();$('tgwViewer').style.display='none';$('tgwQr').style.display='none';
+  if(!raw){$('tgwStatus').textContent='Escribe un transporte, por ejemplo F001.1440.';return}
+  const hits=tgwSearchGroups(raw);
   if(!hits.length){$('tgwStatus').textContent='No encuentro coincidencias para '+raw+'.';if(window.showMissingReport)showMissingReport('tgwStatus',raw);return}
-  $('tgwStatus').textContent=hits.length+' coincidencia'+(hits.length===1?'':'s')+' para '+raw+'.';
-  if(hits.length>1)hits.slice(0,80).forEach(h=>{const b=document.createElement('button');b.type='button';b.className='result';b.innerHTML='<b>'+esc(h.code)+'</b><small>TGW · Página '+h.page+'</small>';b.onclick=()=>showTgw(h,b);box.appendChild(b)});
-  showTgw(hits[0],null);
+  $('tgwStatus').textContent=hits.length+' transporte'+(hits.length===1?'':'s')+' único'+(hits.length===1?'':'s')+' para '+raw+'.';
+  if(hits.length>1)hits.slice(0,80).forEach(({group})=>{
+    const b=document.createElement('button');b.type='button';b.className='result';
+    b.innerHTML='<b>'+esc(group.key)+'</b><small>TGW · '+esc(tgwPageLabel(group))+'</small>';
+    b.onclick=()=>showTgw(group.entries[0],b);box.appendChild(b)
+  });
+  showTgw(hits[0].group.entries[0],null);
 }
 function tgwAssetMatches(code){
   const source=(fullAssets&&fullAssets.length)?fullAssets:MAPPED_ASSETS;
-  const m=String(code||'').toUpperCase().match(/^(F\d{3})\.(\d{3,4})/);
-  if(!m)return [];
-  const prefix=m[1],num=m[2];
-  const rex=new RegExp('(?:^|_)'+num+'(?:_|$)');
-  const scored=[];
+  const key=tgwCanonicalRef(code);
+  if(!key)return [];
+  // Sólo QR de esa posición exacta; no confundir 1199.5 con 1199.6.
+  const seen=new Set(),found=[];
   for(const r of source){
-    const eq=String(r.e||'').toUpperCase(),line=String(r.l||'').toUpperCase();
-    let score=0;
-    if(eq.startsWith(prefix+'_')&&rex.test(eq))score+=150;
-    if(line.startsWith(prefix+' ')&&rex.test(eq))score+=30;
-    if(score)scored.push({r,score});
+    if(tgwCanonicalRef(r.e)!==key||seen.has(r.c))continue;
+    seen.add(r.c);found.push(r);
   }
-  scored.sort((a,b)=>b.score-a.score||String(a.r.e).localeCompare(String(b.r.e)));
-  const seen=new Set(),out=[];for(const x of scored){if(!seen.has(x.r.c)){seen.add(x.r.c);out.push(x.r)}if(out.length>=12)break}
-  return out;
+  return found;
 }
 async function renderTgwQR(code){
   const box=$('tgwQr'),content=$('tgwQrContent');if(!box||!content)return;box.style.display='block';content.innerHTML='<div class="status">Buscando QR relacionado…</div>';
@@ -1787,9 +1818,17 @@ async function renderTgwQR(code){
 function showTgw(h,btn){
   if(btn){Array.from($('tgwResults').children).forEach(x=>x.classList.remove('active'));btn.classList.add('active')}
   const pg=TGW.pages.find(x=>x.page===h.page);if(!pg)return;tgwActive={h,pg};tgwZoom=3.2;
+  const group=TGW_GROUPS.get(tgwCanonicalRef(h.code)||h.code),choices=$('tgwPageChoices');
+  choices.replaceChildren();choices.hidden=!group||group.pages.length<2;
+  if(group&&group.pages.length>1)for(const page of group.pages){
+    const b=document.createElement('button');b.type='button';b.textContent='Pág. '+page;
+    b.classList.toggle('selected',page===h.page);
+    b.onclick=()=>{const next=group.entries.find(e=>e.page===page);if(next)showTgw(next,null)};
+    choices.appendChild(b);
+  }
   $('tgwTitle').textContent=h.code;$('tgwCtx').textContent='TGW · Página '+h.page;$('tgwViewer').style.display='block';
   const img=$('tgwImg');img.onload=renderTgw;img.onerror=()=>{$('tgwStatus').textContent='Error al cargar la imagen del layout TGW.'};img.src=tgwPageSrc(h.page);if(img.complete&&img.naturalWidth)renderTgw();
-  renderTgwQR(h.root||h.code).catch(()=>{});
+  renderTgwQR(h.code).catch(()=>{});
 }
 function renderTgw(){if(!tgwActive)return;const {h,pg}=tgwActive,crop=$('tgwCrop'),bw=crop.clientWidth,img=$('tgwImg'),s=bw/pg.w;$('tgwCanvas').style.width=bw+'px';$('tgwCanvas').style.height=(pg.h*s)+'px';img.style.width=bw+'px';const m=$('tgwMark'),b=h.box,pad=9;m.style.display='block';m.style.left=(b[0]*s-pad)+'px';m.style.top=(b[1]*s-pad)+'px';m.style.width=Math.max(18,(b[2]-b[0])*s+pad*2)+'px';m.style.height=Math.max(18,(b[3]-b[1])*s+pad*2)+'px';applyTgwZoom()}
 function applyTgwZoom(){$('tgwCanvas').style.transform='scale('+tgwZoom+')';centerTgw()}
@@ -1936,7 +1975,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     </div>
     <div class="help-version">
       <strong>Versión actual</strong>
-      <p><b>Versión:</b> <span id="helpVersion">v0.1.75 BETA · recorridos acumuladores / CLA 2 / alias</span> · <b>Actualizada:</b> 14/10/2026</p>
+      <p><b>Versión:</b> <span id="helpVersion">v0.1.76 BETA · TGW unificado / alias / CLA</span> · <b>Actualizada:</b> 14/10/2026</p>
       <p><b>DEMATIC:</b> incluidos todos los PLCs de DEMATIC.</p><p><b>Vanderlande:</b> transportes pendientes de añadir; el buscador de QR ya está operativo.</p><p><b>TGW:</b> búsqueda visual de transportes TGW.</p>
     </div>
     <h3>¿Cómo actualizar si tienes una versión antigua?</h3>
@@ -1991,7 +2030,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 <script id="v69-teams-report-script">
 (function(){
   const TEAMS_USER='Albertomsa@ext.inditex.com';
-  const VERSION='v0.1.75 BETA';
+  const VERSION='v0.1.76 BETA';
   const DRAFT_KEY='amsReportDraftV1';
   const modal=document.getElementById('reportModal');
   const openMain=document.getElementById('reportBtn');

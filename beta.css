@@ -26,9 +26,6 @@ main{padding-bottom:76px}
 html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 html body input,html body select,html body textarea{font-size:16px!important;min-width:0;max-width:100%}
 html body #stickyAuwaSelect{font-size:16px!important}
-.van-construction{animation:vanConstructionBetaBlink 1.5s ease-in-out infinite alternate}
-@keyframes vanConstructionBetaBlink{from{background:#fff9dc;border-color:#e0b400;box-shadow:0 0 0 0 #ffcc0000}to{background:#ffe16c;border-color:#b58e00;box-shadow:0 0 0 4px #ffcc0040}}
-@media(prefers-reduced-motion:reduce){.van-construction{animation:none}}
 @media(max-width:600px){.report-modal{padding:10px}.report-card{margin:0 auto;padding:14px}.report-actions{flex-direction:column}.report-actions a{flex:auto}.report-head h2{font-size:18px}.report-fab{min-height:44px!important;height:44px}.v71-query-row{gap:6px}.v71-query-row button{padding:0 12px}.v71-hit small{overflow-wrap:anywhere}}
 /* Un activo por QR; todas sus páginas dentro de la misma ficha. */
 #assetLayouts{margin-top:18px;border-top:1px solid #ddd;padding-top:6px}
@@ -61,3 +58,6 @@ html body #stickyAuwaSelect{font-size:16px!important}
 
 /* Encuadre del recorrido completo de los acumuladores, sin ampliar la página. */
 #layoutViewer.accumulator-view .crop{height:58vh;min-height:260px;max-height:620px}
+
+/* Retirada del aviso en el HTML de versiones anteriores. */
+#vanSection .van-construction{display:none!important}

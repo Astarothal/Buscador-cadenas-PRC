@@ -1,6 +1,11 @@
-/* Grupo 5 · v0.1.88 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
+/* Grupo 5 · v0.1.90 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
 (() => {
   'use strict';
+  // Compatibilidad con el HTML publicado: actualización sin recargar los planos incrustados.
+  document.querySelectorAll('.van-construction').forEach(node=>node.remove());
+  document.querySelectorAll('.v71-beta, #helpVersion').forEach(node=>{
+    node.textContent=node.textContent.replace(/v0\.1\.\d+/g,'v0.1.90');
+  });
   const el = (id) => document.getElementById(id);
   const GROUPS = {
     garment: 'Prenda colgada',
@@ -472,9 +477,9 @@
   window.v71GetReportContext=()=>{
     if(el('checkSection').classList.contains('active'))return {key:'check',section:'Checklist',query:'',detail:''};
     if(opened)return opened;
-    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v0.1.88 BETA'};
+    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v0.1.90 BETA'};
   };
-  el('v71Form').addEventListener('submit',event=>{event.preventDefault();search()});
+  el('v71Form').addEventListener('submit',event=>{event.preventDefault();el('v71Query').blur();search()});
   el('v71Clear').addEventListener('click',()=>{el('v71Query').value='';search();el('v71Query').focus()});
   for(const btn of document.querySelectorAll('.v71-filter-row [data-filter]')){
     btn.addEventListener('click',()=>{

@@ -1,4 +1,4 @@
-/* Grupo 5 · v0.1.76 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
+/* Grupo 5 · v0.1.86 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
 (() => {
   'use strict';
   const el = (id) => document.getElementById(id);
@@ -28,7 +28,7 @@
     return 'misc';
   }
   const allows=(group)=>filter==='all'||group===filter;
-  const hit=(group,title,subtitle,details,open,rank=2)=>({group,title,subtitle,details,open,rank});
+  const hit=(group,title,subtitle,details,open,rank=2,loc=null)=>({group,title,subtitle,details,open,rank,...(loc?.kind==='qr'?{qr:loc.code}:loc?{loc}:{})});
   // v0.1.71 · Búsqueda rápida de clasificadores Durkopp: CLA 1–6 e indocks 1–5.
   // Página 5 del layout PRC, con pockets 451–456 y acumuladores 801–806.
   // Pockets se visualizan como cadenas CT; acumuladores como trazados verdes de bypass BP.
@@ -95,11 +95,11 @@
           const pocketHit=(LAYOUT.chains[item.chain]||[]).find(h=>h.page===5);
           if(pocketHit)selectLayout(item.chain,{...pocketHit,type:'chain',claPocket:true},null);
           else searchLayout();
-        },rank));
+        },rank,{kind:'prc',type:'chain',key:item.chain}));
       items.push(hit('garment','Acumulador '+item.acc,
         'Durkopp · CLA '+item.n,'Clasificador '+item.n+' · trazado de dos ramales · plano P05',()=>{
           showClaAccumulator(item);
-        },rank+1));
+        },rank+1,{kind:'prc',type:'bypass',key:item.acc}));
     }
     return true;
   }
@@ -111,7 +111,7 @@
       items.push(hit('garment','Indock '+item.n+' · Cadena '+item.chain,
         'Durkopp · Prenda colgada','Indock '+item.n+' · cadena asociada '+item.chain,()=>{
           el('layoutQ').value=item.chain;searchLayout();
-        },-70+item.n));
+        },-70+item.n,{kind:'prc',type:'chain',key:item.chain}));
     }
     return true;
   }
@@ -185,7 +185,7 @@
         'Durkopp · Prenda colgada',
         'Cadena '+chain+' · '+LAYOUT.chains[chain].length+' posiciones en planos',()=>{
           el('layoutQ').value=chain;searchLayout();
-        },-60));
+        },-60,{kind:'prc',type:'chain',key:chain}));
     }
     return true;
   }
@@ -195,7 +195,7 @@
     if(LAYOUT.chains[key]?.length){
       items.push(hit('garment','Cadena '+key,'Durkopp · Prenda colgada',LAYOUT.chains[key].length+' posiciones en planos',()=>{
         el('layoutQ').value=key;searchLayout();
-      },0));
+      },0,{kind:'prc',type:'chain',key}));
     }
     if(LAYOUT.bypasses[key]?.length){
       const acc=CLA_ACC_INDEX.get(key);
@@ -207,7 +207,7 @@
           layoutMatches=LAYOUT.bypasses[key].map(h=>({...h,type:'bypass'}));
           showLayoutMatch(0);
         }else searchLayout();
-      },0));
+      },0,{kind:'prc',type:'bypass',key}));
     }
   }
   function searchDematic(raw,q,items){
@@ -224,7 +224,7 @@
         paqPlcFilter=plc;
         el('paqPlcSelect').value=plc;
         showPaq(h,pos||null,null);
-      },rank));
+      },rank,{kind:'dematic',plc,pos}));
     };
     const plcQuery=Array.from(DEMATIC_PLC).filter(p=>compact(p)===q || (q.length>=4&&compact(p).includes(q)));
     for (const plc of plcQuery){
@@ -248,20 +248,21 @@
       }
     }
   }
-  function searchTgwIndex(raw,q,items,matched){
+  function searchTgwIndex(raw,q,items){
     if(!allows('multi'))return;
     // Un resultado por transporte real, aunque tenga dos páginas en el plano.
     for(const {group,rank} of tgwSearchGroups(raw)){
-      matched.add(group.key);
       items.push(hit('multi',group.key,'TGW · Multishuttle',
         'Plano TGW · '+tgwPageLabel(group),()=>{
           el('tgwQ').value=group.key;
           showTgw(group.entries[0],null);
-        },rank));
+        },rank,{kind:'tgw',code:group.key}));
     }
   }
   function searchVanIndex(q,items){
     if(!allows('parcel'))return;
+    const plans=vanPlanQuery(q);
+    if(plans.length){for(const h of plans)items.push(hit('parcel',`Plano Vanderlande · PLC${h.plc} · LCC${h.lcc}`,'Vanderlande · '+vanArea(h.plc),'Plano de referencia de zona',()=>vanOpen(h.plc,h.lcc,h.code,null),0));return;}
     const seen=new Set();
     for(const h of VANDERLANDE_INDEX){
       const key=compact(h.code);
@@ -271,53 +272,27 @@
       items.push(hit('parcel',h.code,'Vanderlande · PLC'+h.plc,'Plano EM · LCC'+String(h.lcc).padStart(2,'0'),()=>{
         el('vanQ').value=activeQuery;
         vanOpen(h.plc,h.lcc,h.code,null);
-      },score(h.code,q)));
+      },score(h.code,q),{kind:'van',code:h.code}));
     }
   }
-  function searchQRAssets(raw,q,items,tgwMatched){
-    const source=fullAssets||MAPPED_ASSETS;
+  function searchQRAssets(raw,q,items){
     const numericShort=/^\d{1,3}$/.test(raw.trim());
-    for(const r of source){
-      const id=String(r.c||''),code=String(r.e||''),line=String(r.l||'');
-      const group=classifyAsset(r);
+    for(const r of MedinaAssets.records()){
+      const id=String(r.c||''),code=String(r.e||''),line=String(r.l||''),group=classifyAsset(r);
       if(!allows(group))continue;
       let rank=5;
-      const canonicalQr=group==='multi'?tgwCanonicalRef(code):null;
-      const canonicalQuery=group==='multi'?tgwCanonicalRef(raw):null;
-      if((canonicalQr&&canonicalQuery&&canonicalQr===canonicalQuery)||compact(id)===q||compact(code)===q)rank=0;
-      else if(numericShort)continue; // Evita mostrar códigos QR no relacionados con una cadena de 3 cifras.
+      const canonical=group==='multi'?tgwCanonicalRef(code):null,query=group==='multi'?tgwCanonicalRef(raw):null;
+      if((canonical&&query&&canonical===query)||compact(id)===q||compact(code)===q)rank=0;
+      else if(numericShort)continue;
       else if(compact(id).startsWith(q)||compact(code).startsWith(q))rank=1;
       else if(compact(id).includes(q)||compact(code).includes(q))rank=2;
       else if(compact(line).includes(q))rank=3;
-      if(rank>3)continue;
-      if(group==='multi'&&canonicalQr&&TGW_GROUPS.has(canonicalQr)){
-        // Un único resultado TGW para el código del plano y su(s) QR.
-        if(tgwMatched.has(canonicalQr))continue;
-        tgwMatched.add(canonicalQr);
-        const related=TGW_GROUPS.get(canonicalQr);
-        items.push(hit('multi',canonicalQr,'TGW · Multishuttle',
-          'Plano TGW · '+tgwPageLabel(related)+' · QR '+id,()=>{
-            el('tgwQ').value=canonicalQr;
-            showTgw(related.entries[0],null);
-          },rank));
-        continue;
-      }
-      // Los transportes Vanderlande con QR se abren en su visor específico si tienen PLC asociado.
-      if(group==='parcel'&&vanIsQrTransport(r)){
-        const v=vanQrHit(r);
-        items.push(hit('parcel',code,'Vanderlande · QR '+id,line||'Transporte',()=>{
-          el('vanQ').value=activeQuery;
-          vanOpen(v.plc,v.lcc,v.code,v.asset);
-        },rank));
-      }else{
-        items.push(hit(group,code||id,'QR instalación · '+id,line||'Equipo de la instalación',()=>{
-          el('qrQ').value=activeQuery;
-          showQR(r);
-        },rank));
-      }
+      if(rank<=3)items.push(hit(group,code||id,'QR '+id,line||'Activo',()=>showQR(r),rank,{kind:'qr',code:id}));
     }
   }
   function setView(section,tag,ctx){
+    const back=el('assetToolBack');if(back)back.hidden=true;
+    ChainHighlight.clear();
     document.querySelectorAll('main > section.section').forEach(sectionEl=>sectionEl.classList.toggle('active',sectionEl.id===section));
     el('v71DetailBar').hidden=false;
     el('v71DetailTag').textContent=tag;
@@ -329,7 +304,26 @@
     applyMakerTheme(map[section]||'layout');
     window.scrollTo(0,0);
   }
+  function showAsset(asset,query=activeQuery){
+    if(!asset)return;
+    setView('qrSection','Activo · QR '+asset.qr,{key:'qr',section:'Activo QR '+asset.qr,query,detail:asset.aliases.join(' · ')+' · '+asset.pages.map(p=>p.label).join(' / ')+(asset.referencePages?.length?' · Planos de referencia pendientes de verificar: '+asset.referencePages.map(p=>p.label).join(' / '):'')});
+    showQR(asset.record);
+    window.MedinaUsage?.track('asset',{qr:asset.qr});
+  }
+  window.medinaShowAsset=showAsset;
+  window.medinaOpenAssetTool=(asset,tool)=>{
+    const section={prc:'layoutSection',dematic:'paqSection',tgw:'tgwSection',van:'vanSection'}[tool.kind];
+    const query=opened?.query||activeQuery;
+    setView(section,'Herramientas · QR '+asset.qr,{key:section.replace('Section',''),section:'Activo QR '+asset.qr,query,detail:asset.record.e});
+    MedinaAssets.runTool(asset,tool);
+    window.MedinaUsage?.track('plan',{filter:tool.kind});
+    let back=el('assetToolBack');
+    if(!back){back=document.createElement('button');back.id='assetToolBack';back.type='button';el('v71DetailBar').appendChild(back);}
+    back.hidden=false;back.textContent='← Activo QR '+asset.qr;back.onclick=()=>showAsset(asset,query);
+  };
   function openHit(h){
+    if(h.asset){showAsset(h.asset);return;}
+    window.MedinaUsage?.track('plan',{filter:h.group});
     const section=h.subtitle.startsWith('Durkopp')?'layoutSection':h.subtitle.startsWith('Dematic')?'paqSection':h.subtitle.startsWith('Vanderlande')?'vanSection':h.subtitle.startsWith('TGW')?'tgwSection':'qrSection';
     setView(section, GROUPS[h.group]||'QR instalación', {
       key:section.replace('Section',''),section:GROUPS[h.group]||'QR instalación',
@@ -344,6 +338,8 @@
     return filter==='all'?['garment','parcel','multi','misc']:[filter];
   }
   function render(items,raw){
+    items=MedinaAssets.unifyHits(items);
+    window.MedinaUsage?.track('search',{query:raw,filter,results:items.length});
     const box=el('v71Results');box.replaceChildren();
     if(!items.length){
       const em=document.createElement('div');em.className='v71-empty';
@@ -366,7 +362,7 @@
       let limit=25;
       function append(start,end){
         for(const h of own.slice(start,end)){
-          const b=document.createElement('button');b.type='button';b.className='v71-hit';
+          const b=document.createElement('button');b.type='button';b.className='v71-hit';if(h.qr)b.dataset.qr=h.qr;
           const left=document.createElement('span');
           const strong=document.createElement('b');strong.textContent=h.title;
           const small=document.createElement('small');small.textContent=h.subtitle+' · '+h.details;
@@ -389,13 +385,14 @@
   }
   async function search(){
     const raw=el('v71Query').value.trim();
-    const q=compact(raw);
+    const q=compact(raw).replace(/^QR(?=\d{4,}$)/,'');
     const my=++serial;
     activeQuery=raw;lastSearch=raw;
     el('v71Clear').hidden=!raw;
     if(window.hideMissingReport)hideMissingReport('v71Status');
     if(!q){el('v71Status').textContent='Escribe una referencia, PLC o QR para comenzar.';el('v71Results').replaceChildren();return;}
     el('v71Status').textContent='Buscando en '+FILTER_LABEL[filter].toLowerCase()+'…';
+    await MedinaAssets.ensure();if(my!==serial)return;
     const items=[];
     // Una búsqueda CLA se resuelve con su pareja pockets/acumulador, evitando ruido QR.
     if(searchCla(raw,q,items)){
@@ -408,6 +405,7 @@
         change.onclick=()=>document.querySelector('.v71-filter-row [data-filter="garment"]').click();
         area.append(note,change);
         el('v71Status').textContent='Este clasificador pertenece a Prenda colgada.';
+        window.MedinaUsage?.track('search',{query:raw,filter,results:0});
       }else{
         currentItems=items;render(items,raw);
       }
@@ -423,6 +421,7 @@
         change.onclick=()=>document.querySelector('.v71-filter-row [data-filter="garment"]').click();
         area.append(note,change);
         el('v71Status').textContent='Este indock pertenece a Prenda colgada.';
+        window.MedinaUsage?.track('search',{query:raw,filter,results:0});
       }else{
         currentItems=items;render(items,raw);
       }
@@ -440,6 +439,7 @@
         change.onclick=()=>document.querySelector('.v71-filter-row [data-filter="garment"]').click();
         area.append(note,change);
         el('v71Status').textContent='Este elemento pertenece a Prenda colgada.';
+        window.MedinaUsage?.track('search',{query:raw,filter,results:0});
       }else{
         currentItems=items;render(items,raw);
       }
@@ -447,18 +447,19 @@
     }
     searchDurkopp(raw,q,items);
     searchDematic(raw,q,items);
-    const tgwMatched=new Set();
-    searchTgwIndex(raw,q,items,tgwMatched);
+    searchTgwIndex(raw,q,items);
     searchVanIndex(q,items);
     if(q.length>=2){
       try{await loadFullAssets()}catch(err){console.warn('Búsqueda limitada a base QR ligera',err)}
       if(my!==serial)return;
-      searchQRAssets(raw,q,items,tgwMatched);
+      searchQRAssets(raw,q,items);
     }
     if(my!==serial)return;
     currentItems=items;render(items,raw);
   }
   function openHome(){
+    el('usageOpen').classList.remove('active');el('usageOpen').removeAttribute('aria-current');el('v71Home').setAttribute('aria-current','page');
+    const back=el('assetToolBack');if(back)back.hidden=true;ChainHighlight.clear();
     document.querySelectorAll('main > section.section').forEach(sec=>sec.classList.toggle('active',sec.id==='unifiedSection'));
     body.classList.remove('v71-detail');
     el('v71DetailBar').hidden=true;
@@ -469,7 +470,7 @@
   window.v71GetReportContext=()=>{
     if(el('checkSection').classList.contains('active'))return {key:'check',section:'Checklist',query:'',detail:''};
     if(opened)return opened;
-    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v0.1.76 BETA'};
+    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v0.1.86 BETA'};
   };
   el('v71Form').addEventListener('submit',event=>{event.preventDefault();search()});
   el('v71Clear').addEventListener('click',()=>{el('v71Query').value='';search();el('v71Query').focus()});
@@ -483,12 +484,11 @@
   el('v71Return').onclick=openHome;
   el('v71Home').onclick=openHome;
   el('v71Checklist').onclick=()=>{
-    el('checkOpen').click();el('unifiedSection').classList.remove('active');el('v71DetailBar').hidden=true;body.classList.remove('v71-detail');
+    el('usageOpen').classList.remove('active');el('checkOpen').click();el('unifiedSection').classList.remove('active');el('v71DetailBar').hidden=true;body.classList.remove('v71-detail');
     opened=null;el('v71Home').classList.remove('active');el('v71Checklist').classList.add('active');
   };
   el('checkBack').textContent='← Volver al buscador';
   el('checkBack').onclick=openHome;
-  el('v71Help').onclick=()=>el('helpBtn').click();
   el('qrBack').onclick=openHome;
   openHome();
 })();

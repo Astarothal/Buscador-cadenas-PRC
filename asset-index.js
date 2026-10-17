@@ -2,6 +2,8 @@
 (() => {
   const compact = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().replace(/[^A-Z0-9]/g, '');
   const qrKey = value => String(value ?? '').trim().replace(/^QR\s*[:#-]?\s*/i, '');
+  // Alta confirmada por Medina (17/10/2026). Plano pendiente; QR numérico generado y verificado mediante lectura independiente.
+  const confirmedAdditions = [{c:'311903',e:'SS1_IND_16',l:'SS1 Inducción 16 · Paquetería',q:'/jv8EtBuuLt1dduursF5B/qv4BQAvjPn5/LrosWTvHf4lgB0q/lSsFw2uvSl1fIuqsEEfK/qkgA=',s:21}];
   let catalog, loading, renderSerial = 0;
   const locationKey = loc => loc.kind === 'dematic' ? `dematic|${compact(loc.plc)}|${compact(loc.pos)}`
     : loc.kind === 'prc' ? `prc|${loc.type}|${loc.key}` : `${loc.kind}|${compact(loc.code)}`;
@@ -105,7 +107,7 @@
   }
   async function ensure() {
     if (catalog) return catalog;
-    if (!loading) loading = loadFullAssets().then(rows => catalog = build([...rows, ...MAPPED_ASSETS])).finally(() => { loading = null; });
+    if (!loading) loading = loadFullAssets().then(rows => catalog = build([...rows, ...MAPPED_ASSETS, ...confirmedAdditions])).finally(() => { loading = null; });
     return loading;
   }
   function get(qr) { return catalog?.byQR.get(qrKey(qr)); }

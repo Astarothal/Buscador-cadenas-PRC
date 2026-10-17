@@ -1036,7 +1036,7 @@ body[data-theme] .paq-head{background:#fafaf9!important}
 
 <style>.tgw-page-choices{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.tgw-page-choices[hidden]{display:none}.tgw-page-choices button{font-size:12px;border:1px solid #9ca3af;background:transparent;border-radius:6px;padding:5px 10px;color:inherit}.tgw-page-choices button.selected{border-color:#00825f;background:#e3f4ed;color:#114c39}</style>
 <style id="v71-unified-styles">
-/* Grupo 5 · v0.1.86 BETA: búsqueda unificada */
+/* Grupo 5 · v0.1.88 BETA: búsqueda unificada */
 .v71-nav{display:flex;gap:7px;margin-top:9px}
 .v71-nav-button{flex:1;min-height:38px!important;border:1px solid #d9d9d4!important;border-radius:8px!important;background:#fff!important;color:#333!important;font-size:12px!important;font-weight:650!important;box-shadow:none!important;padding:5px 8px!important}
 .v71-nav-button.active{background:#222!important;color:white!important;border-color:#222!important}
@@ -1102,7 +1102,7 @@ body.v71-detail #vanSection > .van-filterbar{display:none!important}
   <p>Prenda colgada y la base de búsqueda se guardan con la aplicación. Para el resto, abre cada plano una vez o descarga todos (aprox. 85 MB). El almacenamiento pertenece a este navegador y dispositivo; se pierde si borras sus datos.</p>
 </details>
 <section id="unifiedSection" class="section active" aria-label="Buscador unificado">
-  <div class="v71-intro"><span class="v71-beta">BETA PRIVADA v0.1.86</span><h2>Buscar en toda la instalación</h2><p>Una sola búsqueda de cadenas, bypass, transportes, planos, PLC y QR.</p></div>
+  <div class="v71-intro"><span class="v71-beta">BETA PRIVADA v0.1.88</span><h2>Buscar en toda la instalación</h2><p>Una sola búsqueda de cadenas, bypass, transportes, planos, PLC y QR.</p></div>
   <form id="v71Form" class="v71-form" autocomplete="off">
     <label for="v71Query" class="v71-label">Código, posición o número de QR</label>
     <div class="v71-query-row"><input type="search" id="v71Query" enterkeyhint="search" autocapitalize="characters" spellcheck="false" placeholder="Ej.: Splitter 1, CLA 1, INDOCK 1, 229" aria-describedby="v71Status"><button type="submit">Buscar</button></div>
@@ -1264,6 +1264,7 @@ body.v71-detail #vanSection > .van-filterbar{display:none!important}
 <script src="auwa-equivalencias.js"></script>
 <script src="ct-lines.js"></script>
 <script src="bp-lines.js"></script>
+<script src="./accumulator-traces.js"></script>
 <script src="plane-gestures.js"></script>
 <script src="chain-highlight.js"></script>
 <script>
@@ -1481,6 +1482,7 @@ function selectLayout(key,h,b){
   $('sharedPlaneControls').style.display='flex';
   ChainHighlight.clear();
   $('layoutMultiViewer').style.display='none';$('layoutMultiViewer').innerHTML='';
+  $('layoutViewer').classList.toggle('accumulator-view',!!h.accumulator);
   active={key:key,h:h};zoom=h.accumulator?1.35:h.claPocket?1.6:h.type==='chain'?3.0:3.4;
   const sec=(h.type==='chain'?GARMENT_SECCIONADORES[String(key)]:null);
   $('secBtn').style.display=sec?'':'none';
@@ -1501,11 +1503,13 @@ function renderLayout(){
   if(sec&&secVisible&&sec.page===active.h.page){sm.classList.remove('hidden');sm.style.left=(sec.x*s-9)+'px';sm.style.top=(sec.y*s-9)+'px'}else sm.classList.add('hidden');
   const traced=ChainHighlight.attach($('canvas'),$('layoutImg'),(h.type==='chain'?'CT':'BP')+active.key,h.page,p,h.type==='bypass'?(LAYOUT.bypasses[String(active.key)]||[]).filter(q=>q.page===h.page):[]);
   m.style.display=traced?'none':'';$('markerToggle').style.display=traced?'none':'';
+  if(h.accumulator)zoom=MedinaAccumulatorTraces.fit(active.key,p,bw||Math.max(280,window.innerWidth-64),$('crop').clientHeight||Math.min(620,Math.max(260,window.innerHeight*.58)));
   applyZoom();
   $('secmark').classList.add('hidden');
   $('canvas').querySelectorAll('.layout-page-cabinet').forEach(m=>m.remove());
   if(h.type==='chain'){renderSectionMarkers($('canvas'),active.key,h.page,bw);renderCabinetMarkers($('canvas'),active.key,h.page,bw);}
   PlaneGestures.bind($('crop'),$('canvas'),zoom,z=>{zoom=z});
+  if(h.accumulator){const selected=active;centerMark();requestAnimationFrame(()=>{if(active===selected)centerMark()});}
 }
 function applyZoom(){$('canvas').style.transform='scale('+zoom+')';centerMark()}
 function centerMark(){if(!active)return;const p=LAYOUT.pages[active.h.page-1],h=active.h,s=$('crop').clientWidth/p.w;const tracePts=h.accumulator?(BP_LINES['BP'+active.key]?.[h.page]?.boundsPoints||[]):h.claPocket?(CT_LINES['CT'+active.key]?.[h.page]?.boundsPoints||[]):[];
@@ -2011,7 +2015,7 @@ $('layoutQ').value='';
     </div>
     <div class="help-version">
       <strong>Versión actual</strong>
-      <p><b>Versión:</b> <span id="helpVersion">v0.1.86 BETA privada · Sin conexión / reportes Teams</span> · <b>Actualizada:</b> 17/10/2026</p>
+      <p><b>Versión:</b> <span id="helpVersion">v0.1.88 BETA privada · Sin conexión / reportes Teams</span> · <b>Actualizada:</b> 17/10/2026</p>
       <p><b>DEMATIC:</b> incluidos todos los PLCs de DEMATIC.</p><p><b>Vanderlande:</b> 54 planos EM disponibles por PLC. En las fichas se distingue entre planos asociados, referencias por numeración y referencias de zona. PLM4 sigue pendiente de asociar.</p><p><b>TGW:</b> búsqueda visual de transportes TGW.</p>
     </div>
     <h3>¿Cómo actualizar si tienes una versión antigua?</h3>

@@ -1,12 +1,12 @@
 /* Medina beta: shell atómico por versión; planos conservados entre actualizaciones. */
 importScripts('./offline-assets.js');
-const SHELL_CACHE = 'medina-beta-shell-v0.1.86';
+const SHELL_CACHE = 'medina-beta-shell-v0.1.88';
 const PLAN_CACHE = 'medina-beta-plans-v1';
 const absolute = path => new URL(path, self.registration.scope).href;
 const SHELL = ['./usage-core.js','./usage.js','./asset-index.js','./van-verified.js','./qr-policy.js','./index.html','./unified-search.js','./reports.js','./offline.js','./beta.css',
   './offline-assets.js','./manifest.webmanifest','./favicon.png','./icon.svg','./icon-192.png',
   './icon-512.png','./apple-touch-icon.png','./auwa-equivalencias.js','./ct-lines.js',
-  './bp-lines.js','./plane-gestures.js','./chain-highlight.js'].map(absolute);
+  './bp-lines.js','./accumulator-traces.js','./plane-gestures.js','./chain-highlight.js'].map(absolute);
 const PLANS = self.MEDINA_OFFLINE_ASSETS.map(absolute);
 const planSet = new Set(PLANS), shellSet = new Set(SHELL);
 let warming = null;

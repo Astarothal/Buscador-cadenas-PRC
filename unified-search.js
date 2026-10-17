@@ -1,4 +1,4 @@
-/* Grupo 5 · v0.1.86 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
+/* Grupo 5 · v0.1.88 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
 (() => {
   'use strict';
   const el = (id) => document.getElementById(id);
@@ -190,8 +190,10 @@
     return true;
   }
   function searchDurkopp(raw,q,items){
-    if(!allows('garment')||!/^[0-9]{1,4}$/.test(raw))return;
-    const key=String(Number(raw));
+    if(!allows('garment'))return;
+    const named=q.match(/^(?:ACUMULADOR|ACUM|ACC)(?:CLA([1-6])|(80[1-6]))$/);
+    if(!named&&!/^[0-9]{1,4}$/.test(raw))return;
+    const key=named?(named[2]||String(800+Number(named[1]))):String(Number(raw));
     if(LAYOUT.chains[key]?.length){
       items.push(hit('garment','Cadena '+key,'Durkopp · Prenda colgada',LAYOUT.chains[key].length+' posiciones en planos',()=>{
         el('layoutQ').value=key;searchLayout();
@@ -470,7 +472,7 @@
   window.v71GetReportContext=()=>{
     if(el('checkSection').classList.contains('active'))return {key:'check',section:'Checklist',query:'',detail:''};
     if(opened)return opened;
-    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v0.1.86 BETA'};
+    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v0.1.88 BETA'};
   };
   el('v71Form').addEventListener('submit',event=>{event.preventDefault();search()});
   el('v71Clear').addEventListener('click',()=>{el('v71Query').value='';search();el('v71Query').focus()});

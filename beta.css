@@ -58,3 +58,6 @@ html body #stickyAuwaSelect{font-size:16px!important}
 #helpBtn{width:32px!important;height:32px!important;min-width:32px!important;max-width:32px!important;min-height:32px!important;max-height:32px!important;aspect-ratio:1/1;border-radius:50%!important;padding:0!important;box-sizing:border-box!important;display:flex!important;align-items:center;justify-content:center;line-height:1!important;font-size:16px!important;flex:0 0 32px!important}
 #helpBtn::before{content:"";position:absolute;inset:-6px;border-radius:50%}
 .asset-reference-note{padding:12px;border:1px solid #d4bf72;background:#fff9e6;color:#66531c;border-radius:8px;font-size:13px;line-height:1.55}.asset-reference-label{margin:0 0 10px;font-size:12px;color:#79651f}.asset-layout-actions button:disabled{opacity:.6;cursor:default}
+
+/* Encuadre del recorrido completo de los acumuladores, sin ampliar la página. */
+#layoutViewer.accumulator-view .crop{height:58vh;min-height:260px;max-height:620px}

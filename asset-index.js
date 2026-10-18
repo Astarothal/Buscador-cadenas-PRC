@@ -197,9 +197,27 @@
       head.appendChild(actions);card.appendChild(head);
       const crop = document.createElement('div');crop.className = 'asset-layout-crop';
       const canvas = document.createElement('div');canvas.className = 'asset-layout-canvas';
-      const img = document.createElement('img');img.alt = `${asset.record.e} · QR ${asset.qr} · ${page.label}`;img.loading = 'lazy';
+      const img = document.createElement('img');img.alt = `${asset.record.e} · QR ${asset.qr} · ${page.label}`;img.loading = n===0?'eager':'lazy';if(n===0)img.fetchPriority='high';
       canvas.appendChild(img);crop.appendChild(canvas);card.appendChild(crop);panel.appendChild(card);
-      let ready = false;
+      let ready = false, viewMode = 'focus';
+      const pw=page.width||1,ph=page.height||1,points=[];
+      for(const b of page.boxes)points.push([b[0],b[1]],[b[0]+b[2],b[1]+b[3]]);
+      for(const trace of page.traces)for(const p of trace.boundsPoints||[])points.push([p[0]/pw,p[1]/ph]);
+      const located=!page.referenceBasis&&points.length>0;
+      focus.disabled=!located;
+      const centerAsset=()=>{
+        if(!located)return;
+        const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);
+        const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+        // Primero deja que el visor alcance su altura disponible; después encuadra todas las marcas o el recorrido.
+        PlaneGestures.set(crop,7);
+        const width=crop.clientWidth||320,ratio=(page.height||img.naturalHeight||1)/(page.width||img.naturalWidth||1);
+        const height=crop.clientHeight||Math.min(width*ratio*7,window.innerHeight*.58);
+        const zoom=Math.max(1,Math.min(7,.78/Math.max(.001,x1-x0),height*.78/(width*ratio*Math.max(.001,y1-y0))));
+        PlaneGestures.set(crop,zoom);
+        crop.scrollLeft=Math.max(0,(x0+x1)/2*width*zoom-(crop.clientWidth||width)/2);
+        crop.scrollTop=Math.max(0,(y0+y1)/2*width*ratio*zoom-(crop.clientHeight||height)/2);
+      };
       const init = () => {
         const width = crop.clientWidth || 320, pw = page.width || img.naturalWidth || 1, ph = page.height || img.naturalHeight || 1;
         canvas.style.width = width + 'px';canvas.style.height = width * ph / pw + 'px';img.style.width = width + 'px';
@@ -212,17 +230,20 @@
           ChainHighlight.attach(canvas, img, key, page.page, { w: pw, h: ph }, page.bypassMarkers);
         }
         PlaneGestures.bind(crop, canvas, 1);ready = true;
+        if(viewMode==='focus')centerAsset();
       };
       img.addEventListener('load', init);
-      whole.onclick = () => { if (!ready) init();PlaneGestures.set(crop, 1);crop.scrollLeft = 0;crop.scrollTop = 0; };
-      focus.onclick = () => {
-        if (!ready) init();const b = page.boxes[0];
-        if (b) { const zoom=page.verified?7:3;PlaneGestures.set(crop, zoom);const width = crop.clientWidth || 320, ratio = (page.height || img.naturalHeight || 1) / (page.width || img.naturalWidth || 1);crop.scrollLeft = Math.max(0, (b[0] + b[2] / 2) * width * zoom - crop.clientWidth / 2);crop.scrollTop = Math.max(0, (b[1] + b[3] / 2) * width * ratio * zoom - crop.clientHeight / 2); }
-        else PlaneGestures.set(crop, 1.6);
-      };
+      whole.onclick = () => { viewMode='whole';if (!ready) init();PlaneGestures.set(crop, 1);crop.scrollLeft = 0;crop.scrollTop = 0; };
+      focus.onclick = () => { viewMode='focus';if (!ready) init();else centerAsset(); };
       img.src = page.kind === 'prc' ? pageData(page.page) : page.image;
       if (img.complete && img.naturalWidth) init();
     });
+    // La entrada muestra el plano; las cargas tardías no vuelven a mover la página.
+    const first=panel.querySelector('.asset-layout-page');
+    if(first&&$('qrSection').classList.contains('active')){
+      first.style.scrollMarginTop=((document.querySelector('header')?.getBoundingClientRect().height||0)+8)+'px';
+      first.scrollIntoView({block:'start',behavior:'instant'});
+    }
   }
   window.MedinaAssets = Object.freeze({ ensure, get, forLocation, rowsForLocation, unifyHits, renderLegacy, runTool, render, build, records: () => catalog?.records || fullAssets || MAPPED_ASSETS });
 })();

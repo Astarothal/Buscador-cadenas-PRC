@@ -1,6 +1,6 @@
 /* Medina beta: shell atómico por versión; planos conservados entre actualizaciones. */
 importScripts('./offline-assets.js');
-const SHELL_CACHE = 'medina-beta-shell-v0.1.92';
+const SHELL_CACHE = 'medina-beta-shell-v0.1.92-copy1';
 const PLAN_CACHE = 'medina-beta-plans-v1';
 const absolute = path => new URL(path, self.registration.scope).href;
 const SHELL = ['./usage-core.js','./usage.js','./asset-index.js','./van-verified.js','./qr-policy.js','./index.html','./unified-search.js','./reports.js','./offline.js','./beta.css',

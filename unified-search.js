@@ -1,11 +1,39 @@
 /* Grupo 5 · v0.1.92 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
 (() => {
   'use strict';
-  // Compatibilidad con el HTML publicado: actualización sin recargar los planos incrustados.
+
+  // Actualiza los textos sin sustituir el HTML que contiene los planos.
   document.querySelectorAll('.van-construction').forEach(node=>node.remove());
-  document.querySelectorAll('.v71-beta, #helpVersion').forEach(node=>{
-    node.textContent=node.textContent.replace(/v0\.1\.\d+/g,'v0.1.92');
-  });
+  const compactText=(selector,text)=>{const node=document.querySelector(selector);if(node)node.textContent=text;};
+  document.querySelectorAll('.v71-intro p,.v71-footnote,.qr-installation-sub,#vanSection > .info,#paqSection > .info,#tgwSection > .info,#layoutSection > .status:not([id]),#offlinePanel > p:not([id])').forEach(node=>node.remove());
+  compactText('.v71-intro h2','Buscar');
+  ['v71Status','layoutStatus','vanStatus','qrStatus','paqStatus','tgwStatus'].forEach(id=>compactText('#'+id,''));
+  compactText('#layoutSection .legend','Verde: recorrido · S: seccionador');
+  document.querySelectorAll('.v71-beta').forEach(node=>{node.textContent=node.textContent.replace(/v0\.1\.\d+(?:\.\d+)?/g,'v0.1.92');});
+  const helpCard=document.querySelector('#helpModal .help-card');
+  if(helpCard){
+    const close=document.getElementById('helpClose'),admin=document.getElementById('usageOpen');
+    helpCard.innerHTML="\n    <div class=\"help-head\">\n      <h2 id=\"helpTitle\">Ayuda</h2>\n      <button id=\"helpClose\" class=\"help-close\" type=\"button\" aria-label=\"Cerrar\">×</button>\n    </div>\n    <h3>Añadir a la PDA</h3>\n    <p>Abre el buscador en el navegador y guárdalo en la pantalla de inicio como <b>acceso directo, no como aplicación</b>.</p>\n    <h3>Actualizar</h3>\n    <p>Con conexión, pulsa <b>Actualizar</b>. Si no cambia, cierra todas las pestañas del buscador y vuelve a abrirlo.</p>\n    <button id=\"forceUpdateBtn\" class=\"help-update\" type=\"button\">Actualizar</button>\n    <p id=\"forceUpdateMsg\" class=\"status\" role=\"status\"></p>\n    <h3>Reportar errores</h3>\n    <p><b>Reportar</b> → describe el error → <b>Abrir Teams</b> → envía el mensaje a Medina.</p>\n    <p class=\"status\"><span id=\"helpVersion\">v0.1.92</span></p>\n    <p class=\"help-admin-footer\"><a href=\"#estadisticas\" id=\"usageOpen\" class=\"help-admin-link\">Estadísticas</a></p>";
+    if(close)document.getElementById('helpClose').replaceWith(close);
+    if(admin)document.getElementById('usageOpen').replaceWith(admin);
+    const update=document.getElementById('forceUpdateBtn'),message=document.getElementById('forceUpdateMsg');
+    update.addEventListener('click',async()=>{
+      update.disabled=true;
+      if(!navigator.onLine){message.textContent='Conéctate para actualizar.';update.disabled=false;return;}
+      message.textContent='Comprobando actualización…';
+      try{
+        if('serviceWorker' in navigator){const regs=await navigator.serviceWorker.getRegistrations();for(const reg of regs)if(reg.scope===new URL('./',location.href).href)await reg.update();}
+        message.textContent='Recargando…';setTimeout(()=>location.reload(),700);
+      }catch(_){message.textContent='No se pudo actualizar. Reinténtalo.';update.disabled=false;}
+    });
+  }
+  compactText('.report-recipient','Para: Medina · albertomsa@ext.inditex.com');
+  compactText('#reportSend','Abrir Teams ↗');
+  compactText('.report-preview summary','Ver borrador');
+  const description=document.getElementById('reportDescription');if(description)description.placeholder='Describe el error o la mejora…';
+  compactText('#usageEmpty','Sin actividad en este periodo.');
+  compactText('#usageSection .usage-note','Sesiones anónimas: 30 min de inactividad. Histórico: 90 días. Borradores de Teams: no equivalen a mensajes enviados.');
+  const originalAuwa=window.auwaBlock;if(originalAuwa)window.auwaBlock=links=>originalAuwa(links).replace('Enlace AUWA pendiente de asociar para este equipo.','Enlace pendiente.');
   const el = (id) => document.getElementById(id);
   const GROUPS = {
     garment: 'Prenda colgada',
@@ -350,7 +378,7 @@
     const box=el('v71Results');box.replaceChildren();
     if(!items.length){
       const em=document.createElement('div');em.className='v71-empty';
-      em.textContent='No se ha encontrado la referencia «'+raw+'» en las zonas seleccionadas. Comprueba el código o repórtalo a Medina.';
+      em.textContent='Sin coincidencias para «'+raw+'».';
       box.appendChild(em);
       el('v71Status').textContent='Sin resultados en '+FILTER_LABEL[filter]+'.';
       if(typeof window.showMissingReport==='function')window.showMissingReport('v71Status',raw);
@@ -397,7 +425,7 @@
     activeQuery=raw;lastSearch=raw;
     el('v71Clear').hidden=!raw;
     if(window.hideMissingReport)hideMissingReport('v71Status');
-    if(!q){el('v71Status').textContent='Escribe una referencia, PLC o QR para comenzar.';el('v71Results').replaceChildren();return;}
+    if(!q){el('v71Status').textContent='';el('v71Results').replaceChildren();return;}
     el('v71Status').textContent='Buscando en '+FILTER_LABEL[filter].toLowerCase()+'…';
     await MedinaAssets.ensure();if(my!==serial)return;
     const items=[];
@@ -406,12 +434,12 @@
       if(!allows('garment')){
         const area=el('v71Results');area.replaceChildren();
         const note=document.createElement('div');note.className='v71-empty';
-        note.textContent='Los clasificadores CLA están en Prenda colgada. Cambia a ese filtro o a Todos.';
+        note.textContent='Selecciona Prenda colgada.';
         const change=document.createElement('button');change.type='button';change.className='v71-more';
         change.textContent='Ver en Prenda colgada';
         change.onclick=()=>document.querySelector('.v71-filter-row [data-filter="garment"]').click();
         area.append(note,change);
-        el('v71Status').textContent='Este clasificador pertenece a Prenda colgada.';
+        el('v71Status').textContent='Prenda colgada';
         window.MedinaUsage?.track('search',{query:raw,filter,results:0});
       }else{
         currentItems=items;render(items,raw);
@@ -422,12 +450,12 @@
       if(!allows('garment')){
         const area=el('v71Results');area.replaceChildren();
         const note=document.createElement('div');note.className='v71-empty';
-        note.textContent='Los indocks están en Prenda colgada. Cambia a ese filtro o a Todos.';
+        note.textContent='Selecciona Prenda colgada.';
         const change=document.createElement('button');change.type='button';change.className='v71-more';
         change.textContent='Ver en Prenda colgada';
         change.onclick=()=>document.querySelector('.v71-filter-row [data-filter="garment"]').click();
         area.append(note,change);
-        el('v71Status').textContent='Este indock pertenece a Prenda colgada.';
+        el('v71Status').textContent='Prenda colgada';
         window.MedinaUsage?.track('search',{query:raw,filter,results:0});
       }else{
         currentItems=items;render(items,raw);

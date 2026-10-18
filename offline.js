@@ -8,7 +8,7 @@
     badge.textContent = navigator.onLine ? 'Con conexión' : 'Sin conexión';
     badge.dataset.offline = String(!navigator.onLine);
     button.disabled = busy || !navigator.onLine || !registration;
-    if (!navigator.onLine && !busy) detail.textContent = 'Puedes buscar y abrir los planos guardados. AUWA, IMMS y Teams necesitan red.';
+    if (!navigator.onLine && !busy) detail.textContent = 'Solo planos guardados. AUWA, IMMS y Teams: sin conexión.';
   }
   function status(data) {
     lastStatus = data;
@@ -16,9 +16,9 @@
       busy = data.running;
       detail.textContent = data.running
         ? `Guardando planos: ${data.saved} de ${data.total} · ${data.failed} pendientes.`
-        : `${data.saved} de ${data.total} recursos de planos guardados.${data.failed ? ' Algunos no se han podido guardar. Pulsa «Guardar todos los planos» para reintentar.' : ' Disponibles sin conexión en este dispositivo.'}`;
+        : `${data.saved} de ${data.total} planos guardados.${data.failed ? ' Pendientes: reintentar descarga.' : ''}`;
     } else if (!busy) {
-      detail.textContent = `${data.saved} de ${data.total} recursos de planos guardados. Los planos que abras se guardan automáticamente.`;
+      detail.textContent = `${data.saved} de ${data.total} planos guardados.`;
     }
     button.textContent = busy ? 'Guardando planos…' : 'Guardar todos los planos';
     connection();
@@ -47,7 +47,7 @@
       await cache.put(url.href, response);
       tell('OFFLINE_STATUS');
     } catch (_) {
-      detail.textContent = 'No se ha podido guardar este plano. Comprueba la conexión o el espacio del dispositivo.';
+      detail.textContent = 'Plano no guardado. Revisa conexión y espacio.';
     }
   }
   function imageNotice(img, failed) {
@@ -62,7 +62,7 @@
       retry.onclick = () => { const src = img.src;img.removeAttribute('src');img.src = src; };
       note.append(text, retry);viewer.prepend(note);
     }
-    note.firstChild.textContent = navigator.onLine ? 'No se ha podido cargar este plano. Puedes reintentarlo.' : 'Este plano todavía no está guardado. Conéctate y ábrelo una vez para poder usarlo sin conexión.';
+    note.firstChild.textContent = navigator.onLine ? 'No se pudo cargar el plano.' : 'Este plano todavía no está guardado. Conéctate para abrirlo.';
   }
   document.addEventListener('load', event => {
     if (event.target.tagName !== 'IMG') return;
@@ -74,14 +74,14 @@
   button.addEventListener('click', () => {
     if (!navigator.onLine) return;
     busy = true;connection();button.textContent = 'Guardando planos…';
-    detail.textContent = 'Preparando la descarga de todos los planos (aprox. 85 MB)…';
+    detail.textContent = 'Descargando planos (85 MB)…';
     tell('PRECACHE_ALL');
   });
   window.addEventListener('online', () => { connection();tell('OFFLINE_STATUS'); });
   window.addEventListener('offline', connection);
   connection();
   if (!('serviceWorker' in navigator) || !location.protocol.startsWith('http')) {
-    detail.textContent = 'Este navegador no permite guardar la aplicación sin conexión. Usa la URL HTTPS en Safari, Chrome o Edge.';
+    detail.textContent = 'Guardado sin conexión no disponible en este navegador.';
     button.disabled = true;return;
   }
   navigator.serviceWorker.addEventListener('message', event => {
@@ -94,6 +94,6 @@
     connection();tell('OFFLINE_STATUS');
     document.querySelectorAll('img').forEach(saveLoadedPlan);
   }).catch(() => {
-    detail.textContent = 'No se ha podido activar el modo sin conexión. Recarga con conexión para reintentarlo.';
+    detail.textContent = 'Guardado sin conexión no disponible. Recarga para reintentar.';
   });
 })();

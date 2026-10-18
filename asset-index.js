@@ -162,19 +162,19 @@
     const my = ++renderSerial;
     let panel = document.getElementById('assetLayouts');
     if (!panel) { panel = document.createElement('div');panel.id = 'assetLayouts';$('qrDetail').insertBefore(panel,$('qrFooter')); }
-    panel.replaceChildren();panel.textContent = 'Cargando páginas del activo…';panel.dataset.qr = qrKey(row.c);
+    panel.replaceChildren();panel.textContent = 'Cargando planos…';panel.dataset.qr = qrKey(row.c);
     await ensure();if (my !== renderSerial) return;
     const asset = get(row.c);panel.replaceChildren();if (!asset) return;
     $('qrEq').textContent = asset.record.e;$('qrLine').textContent = asset.lines.join(' · ');
     const aliases = document.createElement('div');aliases.className = 'asset-aliases';
     const displayAliases=[...new Set([...asset.aliases,...asset.refs.map(r=>(r.type==='chain'?'Cadena ':'Bypass ')+r.key),...asset.pages.flatMap(p=>p.tools.filter(t=>t.kind==='tgw').map(t=>t.code))])];
-    if (displayAliases.length > 1) { const title = document.createElement('b');title.textContent = 'Referencias del mismo activo';aliases.appendChild(title);for (const name of displayAliases) { const line = document.createElement('div');line.textContent = name;aliases.appendChild(line); }panel.appendChild(aliases); }
+    if (displayAliases.length > 1) { const title = document.createElement('b');title.textContent = 'Referencias';aliases.appendChild(title);for (const name of displayAliases) { const line = document.createElement('div');line.textContent = name;aliases.appendChild(line); }panel.appendChild(aliases); }
     const links = new Map();for (const r of asset.rows) for (const link of auwaLinksForAsset(r)) links.set(link.url, link);
     $('qrAuwa').innerHTML = auwaBlock([...links.values()]);
     const references=asset.referencePages||[],displayPages=[...asset.pages,...references];
-    const heading = document.createElement('h3');heading.textContent = asset.pages.length ? `Todas las páginas del activo (${asset.pages.length})` : references.length ? `Planos de referencia de Vanderlande (${references.length})` : 'Plano pendiente de asociar';panel.appendChild(heading);
-    if(references.length){const note=document.createElement('p');note.className='asset-reference-note';note.textContent=references.some(p=>p.referenceBasis==='number')?'La numeración de la referencia coincide con el índice de estos planos. La asociación del QR y su posición exacta están pendientes de verificar.':'No hay una línea LCC verificada para este QR. Se muestran los planos disponibles de su PLC como referencia de zona; no indican la ubicación exacta del activo.';panel.appendChild(note);}
-    if(!displayPages.length&&asset.rows.some(vanIsQrTransport)){const note=document.createElement('p');note.className='asset-reference-note';note.textContent='La relación de esta zona con los planos cargados sigue pendiente. Puedes reportarla a Medina. No se asigna un PLC ni una posición sin verificar.';panel.appendChild(note);}
+    const heading = document.createElement('h3');heading.textContent = asset.pages.length ? `Planos del activo (${asset.pages.length})` : references.length ? `Planos de referencia (${references.length})` : 'Plano pendiente de asociar';panel.appendChild(heading);
+    if(references.length){const note=document.createElement('p');note.className='asset-reference-note';note.textContent=references.some(p=>p.referenceBasis==='number')?'Referencia por numeración · posición sin verificar.':'Referencia de zona · posición sin verificar.';panel.appendChild(note);}
+    if(!displayPages.length&&asset.rows.some(vanIsQrTransport)){const note=document.createElement('p');note.className='asset-reference-note';note.textContent='PLC pendiente · posición sin verificar.';panel.appendChild(note);}
     // El aviso de Vanderlande sigue presente en la ficha unificada.
     if (asset.rows.some(vanIsQrTransport)) {
       const warning = document.querySelector('#vanSection .van-construction')?.cloneNode(true);
@@ -185,8 +185,8 @@
       const id = `asset-${asset.qr}-page-${n}`, card = document.createElement('article');card.id = id;card.className = 'asset-layout-page viewer';card.dataset.pageKey = page.key;if(page.referenceBasis)card.dataset.reference=page.referenceBasis;
       const jump = document.createElement('a');jump.href = '#' + id;jump.textContent = (page.referenceBasis?'Referencia · ':'')+page.label;index.appendChild(jump);
       const head = document.createElement('div');head.className = 'asset-layout-head';const title = document.createElement('h4');title.textContent = page.label;head.appendChild(title);
-      if(page.referenceBasis){const badge=document.createElement('p');badge.className='asset-reference-label';badge.textContent=page.referenceBasis==='number'?'Plano candidato por numeración · sin posición verificada':'Plano de referencia de zona · sin posición verificada';head.appendChild(badge);}
-      if(page.verified){const proof=document.createElement('p');proof.className='asset-reference-label';proof.textContent=page.verified.physicalMark?`Posición ${page.verified.position} verificada en plano original${page.verified.photocell?' · Fotocélula '+page.verified.photocell:''}`:`Referencia mecánica ${page.verified.position} localizada en el plano original`;head.appendChild(proof);const source=window.MedinaVanVerified.source(page.verified.sourceKey);if(source){const link=document.createElement('a');link.href=source.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='PDF original en Drive';head.appendChild(link);}}
+      if(page.referenceBasis){const badge=document.createElement('p');badge.className='asset-reference-label';badge.textContent=page.referenceBasis==='number'?'Referencia por numeración · sin posición verificada':'Referencia de zona · sin posición verificada';head.appendChild(badge);}
+      if(page.verified){const proof=document.createElement('p');proof.className='asset-reference-label';proof.textContent=page.verified.physicalMark?`Posición ${page.verified.position} verificada${page.verified.photocell?' · Fotocélula '+page.verified.photocell:''}`:`Referencia mecánica ${page.verified.position} localizada`;head.appendChild(proof);const source=window.MedinaVanVerified.source(page.verified.sourceKey);if(source){const link=document.createElement('a');link.href=source.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='PDF original';head.appendChild(link);}}
       const actions = document.createElement('div');actions.className = 'asset-layout-actions';
       const whole = document.createElement('button');whole.type = 'button';whole.textContent = 'Página completa';
       const focus = document.createElement('button');focus.type = 'button';focus.textContent = page.referenceBasis?'Posición sin verificar':'Centrar activo';if(page.referenceBasis)focus.disabled=true;

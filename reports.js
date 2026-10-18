@@ -23,7 +23,7 @@
     try {
       localStorage.setItem(key, JSON.stringify({ type: type.value, description: description.value, context, updatedAt: new Date().toISOString() }));
       main.classList.add('pending');return true;
-    } catch (_) { feedback.textContent = 'El navegador no permite guardar el borrador. Copia el texto antes de cerrar.';return false; }
+    } catch (_) { feedback.textContent = 'No se pudo guardar. Copia el borrador.';return false; }
   }
   function refresh() {
     preview.value = message();
@@ -42,7 +42,7 @@
     description.value = typeof options.description === 'string' ? options.description : draft?.description || '';
     if (options.context || options.description !== undefined) context = options.context || current();
     $('reportContext').textContent = ['Sección: ' + context.section, context.query ? 'Búsqueda: ' + context.query : '', context.detail || ''].filter(Boolean).join(' · ');
-    feedback.textContent = options.status || (draft ? 'Borrador recuperado con su contexto original. Puedes revisarlo antes de abrir Teams.' : 'Revisa el borrador. Abrir Teams no envía el mensaje.');
+    feedback.textContent = options.status || (draft ? 'Borrador recuperado.' : 'Revisa y envía desde Teams.');
     modal.style.display = 'block';modal.removeAttribute('aria-hidden');document.body.style.overflow = 'hidden';
     refresh();description.focus();
   }
@@ -68,26 +68,26 @@
     refresh();save();
   });
   link.addEventListener('click', event => {
-    if (!description.value.trim()) { event.preventDefault();feedback.textContent = 'Describe el problema o la mejora antes de abrir Teams.';description.focus();return; }
+    if (!description.value.trim()) { event.preventDefault();feedback.textContent = 'Escribe una descripción.';description.focus();return; }
     refresh();const saved = save();
     if (!navigator.onLine) {
-      event.preventDefault();if (saved) feedback.textContent = 'Sin conexión. Borrador guardado con su búsqueda. Vuelve a abrirlo cuando tengas red.';
+      event.preventDefault();if (saved) feedback.textContent = 'Sin conexión. Borrador guardado.';
       return;
     }
-    if (saved) feedback.textContent = 'Se abre el borrador en Teams. El texto se conserva aquí hasta que pulses «Descartar borrador».';
+    if (saved) feedback.textContent = 'Abriendo Teams…';
   });
   $('reportCopy').onclick = async () => {
     refresh();
-    try { await navigator.clipboard.writeText(preview.value);feedback.textContent = 'Texto copiado. Puedes pegarlo en Teams.'; }
-    catch (_) { preview.focus();preview.select();feedback.textContent = 'Selecciona y copia el texto del borrador.'; }
+    try { await navigator.clipboard.writeText(preview.value);feedback.textContent = 'Copiado.'; }
+    catch (_) { preview.focus();preview.select();feedback.textContent = 'Selecciona y copia el borrador.'; }
   };
   $('reportDiscard').onclick = () => {
     try { localStorage.removeItem(key); } catch (_) {}
     main.classList.remove('pending');description.value = '';type.value = 'Problema';context = current();refresh();
     $('reportContext').textContent = 'Sección: ' + context.section + (context.query ? ' · Búsqueda: ' + context.query : '');
-    feedback.textContent = 'Borrador descartado. Puedes preparar otro reporte.';
+    feedback.textContent = 'Borrador descartado.';
   };
-  window.addEventListener('online', () => { if (read()) feedback.textContent = 'Ya hay conexión. Revisa el borrador y abre Teams cuando quieras.'; });
+  window.addEventListener('online', () => { if (read()) feedback.textContent = 'Con conexión · borrador disponible.'; });
   if (read()) main.classList.add('pending');
   window.hideMissingReport = statusId => {
     document.querySelectorAll('.missing-report-wrap').forEach(node => { if (node.dataset.status === statusId) node.remove(); });
@@ -99,8 +99,8 @@
     const captured = { ...current(), query };
     const wrap = document.createElement('div');wrap.className = 'missing-report-wrap';wrap.dataset.status = statusId;
     const button = document.createElement('button');button.type = 'button';button.className = 'missing-report-btn';button.textContent = 'Reportar falta en Teams';
-    const note = document.createElement('span');note.className = 'missing-report-note';note.textContent = 'Prepara un borrador dirigido a Medina.';
-    button.onclick = () => open({ context: captured, type: 'Información que falta', description: 'No se encuentra en el buscador: ' + query, status: 'Revisa el reporte de información que falta antes de abrir Teams.' });
+    const note = document.createElement('span');note.className = 'missing-report-note';note.textContent = '';
+    button.onclick = () => open({ context: captured, type: 'Información que falta', description: 'No se encuentra en el buscador: ' + query, status: 'Revisa y envía desde Teams.' });
     wrap.append(button, note);status.insertAdjacentElement('afterend', wrap);
   };
 })();

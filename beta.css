@@ -59,5 +59,8 @@ html body #stickyAuwaSelect{font-size:16px!important}
 /* Encuadre del recorrido completo de los acumuladores, sin ampliar la página. */
 #layoutViewer.accumulator-view .crop{height:58vh;min-height:260px;max-height:620px}
 
-/* Retirada del aviso en el HTML de versiones anteriores. */
-#vanSection .van-construction{display:none!important}
+/* Icono de valla: junto al nombre, con espacio fijo en móvil y escritorio. */
+.v71-hit>span:first-child{min-width:0}
+.v71-hit-heading{display:flex;align-items:center;gap:8px;min-width:0}
+.v71-hit-heading b{min-width:0}
+.v71-hit-icon{display:block;width:52px!important;height:36px!important;object-fit:contain;flex:0 0 52px;pointer-events:none}

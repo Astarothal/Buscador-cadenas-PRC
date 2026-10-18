@@ -160,6 +160,8 @@
   function toolLabel(tool) { return tool.kind === 'prc' ? `Herramientas ${tool.type === 'chain' ? 'cadena' : 'bypass'} ${tool.key}` : 'Herramientas del plano'; }
   async function render(row) {
     const my = ++renderSerial;
+    const footer=$('qrFooter'),auwa=$('qrAuwa');
+    if(footer&&auwa&&auwa.parentElement!==footer)footer.prepend(auwa);
     let panel = document.getElementById('assetLayouts');
     if (!panel) { panel = document.createElement('div');panel.id = 'assetLayouts';$('qrDetail').insertBefore(panel,$('qrFooter')); }
     panel.replaceChildren();panel.textContent = 'Cargando planos…';panel.dataset.qr = qrKey(row.c);

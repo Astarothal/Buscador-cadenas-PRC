@@ -1,7 +1,6 @@
 /* Grupo 5 · v0.1.92 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
 (() => {
   'use strict';
-
   // Actualiza los textos sin sustituir el HTML que contiene los planos.
   document.querySelectorAll('.van-construction').forEach(node=>node.remove());
   const compactText=(selector,text)=>{const node=document.querySelector(selector);if(node)node.textContent=text;};
@@ -402,7 +401,18 @@
           const strong=document.createElement('b');strong.textContent=h.title;
           const small=document.createElement('small');small.textContent=h.subtitle+' · '+h.details;
           const arrow=document.createElement('span');arrow.className='v71-hit-arrow';arrow.setAttribute('aria-hidden','true');arrow.textContent='›';
-          left.append(strong,small);b.append(left,arrow);
+          const refs=h.asset?.refs||[h.loc];
+          const isChain=refs.some(ref=>ref?.kind==='prc'&&ref.type==='chain');
+          const isBypass=refs.some(ref=>ref?.kind==='prc'&&ref.type==='bypass'&&!CLA_DATA.some(cla=>cla.acc===String(ref.key)));
+          const isSorter=refs.some(ref=>ref?.kind==='prc'&&ref.type==='chain'&&CLA_DATA.some(cla=>cla.chain===String(ref.key)));
+          const iconName=isSorter?'clasificador':isChain?'valla':isBypass?'bypass':null;
+          if(iconName){
+            const heading=document.createElement('span');heading.className='v71-hit-heading';
+            const icon=document.createElement('img');icon.className='v71-hit-icon';icon.src='./asset-icons/'+iconName+'.webp';
+            icon.width=52;icon.height=36;icon.alt='';icon.setAttribute('aria-hidden','true');
+            heading.append(icon,strong);left.append(heading,small);
+          }else left.append(strong,small);
+          b.append(left,arrow);
           b.addEventListener('click',()=>openHit(h));group.appendChild(b);
         }
       }

@@ -405,7 +405,10 @@
           const isChain=refs.some(ref=>ref?.kind==='prc'&&ref.type==='chain');
           const isBypass=refs.some(ref=>ref?.kind==='prc'&&ref.type==='bypass'&&!CLA_DATA.some(cla=>cla.acc===String(ref.key)));
           const isSorter=refs.some(ref=>ref?.kind==='prc'&&ref.type==='chain'&&CLA_DATA.some(cla=>cla.chain===String(ref.key)));
-          const iconName=isSorter?'clasificador':isChain?'valla':isBypass?'bypass':null;
+          const isAccumulator=refs.some(ref=>ref?.kind==='prc'&&ref.type==='bypass'&&CLA_DATA.some(cla=>cla.acc===String(ref.key)));
+          const isDematicGG=(h.asset?.rows||[]).some(row=>{const parts=String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_');return parts[1]==='GGC'||parts[1]==='GG'&&DEMATIC_PLC.has(parts[0]);});
+          const isDematicKK=(h.asset?.rows||[]).some(row=>{const parts=String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_');return ['KKR','KKRA'].includes(parts[1])||parts[1]==='KK'&&DEMATIC_PLC.has(parts[0]);});
+          const iconName=isAccumulator?'acumulador':isSorter?'clasificador':isChain?'valla':isBypass?'bypass':isDematicGG?'dematic-gg':isDematicKK?'dematic-kk':null;
           if(iconName){
             const heading=document.createElement('span');heading.className='v71-hit-heading';
             const icon=document.createElement('img');icon.className='v71-hit-icon';icon.src='./asset-icons/'+iconName+'.webp';

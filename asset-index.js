@@ -99,6 +99,8 @@
       }
     }
     for (const asset of byQR.values()) {
+      asset.typeLabel=asset.rows.some(row=>String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[1]==='C2H')?'Formadora':'';
+      if(asset.typeLabel)asset.lines=asset.lines.map(line=>line.replace(/l[ií]neas?\s+formadora/ig,'Formadora'));
       asset.pages = [...asset.pageMap.values()].sort((a, b) => a.kind.localeCompare(b.kind) || Number(!!b.verified?.physicalMark)-Number(!!a.verified?.physicalMark) || a.page - b.page || a.label.localeCompare(b.label, 'es', { numeric: true }));
       const references=[...asset.referenceMap.values()].filter(p=>!asset.pageMap.has(p.key));
       asset.referencePages=references.filter(p=>!references.some(q=>q.referenceBasis==='number')||p.referenceBasis==='number').sort((a,b)=>a.page-b.page);
@@ -134,7 +136,7 @@
     for (const item of merged.values()) {
       const pages = item.asset.pages;
       item.subtitle = `${item.group === 'multi' ? 'TGW · ' : ''}QR ${item.qr}`;
-      item.details = [item.asset.record.e, pages.length ? `${pages.length} página${pages.length === 1 ? '' : 's'} de layout` : item.asset.referencePages?.length ? `${item.asset.referencePages.length} plano${item.asset.referencePages.length===1?'':'s'} de referencia · ubicación pendiente` : item.asset.record.l].filter(Boolean).join(' · ');
+      item.details = [item.asset.typeLabel, item.asset.record.e, pages.length ? `${pages.length} página${pages.length === 1 ? '' : 's'} de layout` : item.asset.referencePages?.length ? `${item.asset.referencePages.length} plano${item.asset.referencePages.length===1?'':'s'} de referencia · ubicación pendiente` : item.asset.record.l].filter(Boolean).join(' · ');
     }
     return [...unresolved, ...merged.values()];
   }

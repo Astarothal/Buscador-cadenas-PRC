@@ -54,6 +54,7 @@
   function classifyAsset(r) {
     const eq=String(r.e||'').toUpperCase(),line=String(r.l||'').toUpperCase();
     const prefix=eq.split('_')[0];
+    if(/^PLC(?:850|857)_C2H(?:_|$)/.test(eq))return 'garment';
     if(EMP.has(prefix) || /PRENDA COLGADA|DURKOPP|DÜRKOPP|PLC25[0-9]|PLC26[0-9]/i.test(eq+' '+line))return 'garment';
     if(/^F\d{3}$/.test(prefix) || /^W\d{3}$/.test(prefix) || prefix==='MS' || /MULTISHUTTLE|MULTI SHUTTLE/i.test(line))return 'multi';
     if(DEMATIC_PLC.has(prefix)||VANDERLANDE_PREFIX.has(prefix)||/PAQUETER[IÍ]A|TRANSPORTADOR|CINTA|SILO|CLASIFICADOR DE PAQUETER[IÍ]A/i.test(line))return 'parcel';
@@ -408,7 +409,14 @@
           const isAccumulator=refs.some(ref=>ref?.kind==='prc'&&ref.type==='bypass'&&CLA_DATA.some(cla=>cla.acc===String(ref.key)));
           const isDematicGG=(h.asset?.rows||[]).some(row=>{const parts=String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_');return parts[1]==='GGC'||parts[1]==='GG'&&DEMATIC_PLC.has(parts[0]);});
           const isDematicKK=(h.asset?.rows||[]).some(row=>{const parts=String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_');return ['KKR','KKRA'].includes(parts[1])||parts[1]==='KK'&&DEMATIC_PLC.has(parts[0]);});
-          const iconName=isAccumulator?'acumulador':isSorter?'clasificador':isChain?'valla':isBypass?'bypass':isDematicGG?'dematic-gg':isDematicKK?'dematic-kk':null;
+          const k12rRows=(h.asset?.rows||[]).filter(row=>String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[1]==='K12R');
+          const k12rIcon=k12rRows.length?(k12rRows.some(row=>String(row.e||'').toUpperCase().split('_')[0]==='EMP2')?'k12r-emp2':'k12r'):null;
+          const isLRC=(h.asset?.rows||[]).some(row=>String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[1]==='LRC');
+          const isRSPN=(h.asset?.rows||[]).some(row=>String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[1]==='RSPN');
+          const isLRD=(h.asset?.rows||[]).some(row=>String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[1]==='LRD');
+          const isLRJ=(h.asset?.rows||[]).some(row=>/^LRJ(?:\d+)?$/.test(String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[1]||''));
+          const isFormer=h.asset?.typeLabel==='Formadora';
+          const iconName=k12rIcon|| (isLRJ?'lrj':isLRD?'lrd':isRSPN?'rspn':isLRC?'lrc':isFormer?'formadora-c2h':isAccumulator?'acumulador':isSorter?'clasificador':isChain?'valla':isBypass?'bypass':isDematicGG?'dematic-gg':isDematicKK?'dematic-kk':null);
           if(iconName){
             const heading=document.createElement('span');heading.className='v71-hit-heading';
             const icon=document.createElement('img');icon.className='v71-hit-icon';icon.src='./asset-icons/'+iconName+'.webp';

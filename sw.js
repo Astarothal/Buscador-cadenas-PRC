@@ -1,12 +1,12 @@
 /* Medina beta: shell atómico por versión; planos conservados entre actualizaciones. */
 importScripts('./offline-assets.js');
-const SHELL_CACHE = 'medina-beta-shell-v0.1.92-lrj2';
+const SHELL_CACHE = 'medina-beta-shell-v0.1.92-k12rtal1';
 const PLAN_CACHE = 'medina-beta-plans-v1';
 const absolute = path => new URL(path, self.registration.scope).href;
 const SHELL = ['./usage-core.js','./usage.js','./asset-index.js','./van-verified.js','./qr-policy.js','./index.html','./unified-search.js','./reports.js','./offline.js','./beta.css',
   './offline-assets.js','./manifest.webmanifest','./favicon.png','./icon.svg','./icon-192.png',
   './icon-512.png','./apple-touch-icon.png','./auwa-equivalencias.js','./ct-lines.js',
-  './bp-lines.js','./accumulator-traces.js','./plane-gestures.js','./chain-highlight.js','./asset-icons/valla.webp','./asset-icons/bypass.webp','./asset-icons/clasificador.webp','./asset-icons/acumulador.webp','./asset-icons/dematic-gg.webp','./asset-icons/dematic-kk.webp','./asset-icons/formadora-c2h.webp','./asset-icons/k12r.webp','./asset-icons/k12r-emp2.webp','./asset-icons/lrc.webp','./asset-icons/rspn.webp','./asset-icons/lrd.webp','./asset-icons/lrj.webp'].map(absolute);
+  './bp-lines.js','./accumulator-traces.js','./plane-gestures.js','./chain-highlight.js','./asset-icons/valla.webp','./asset-icons/bypass.webp','./asset-icons/clasificador.webp','./asset-icons/acumulador.webp','./asset-icons/dematic-gg.webp','./asset-icons/dematic-kk.webp','./asset-icons/formadora-c2h.webp','./asset-icons/k12r.webp','./asset-icons/k12r-emp2.webp','./asset-icons/lrc.webp','./asset-icons/rspn.webp','./asset-icons/lrd.webp','./asset-icons/lrj.webp','./asset-icons/k12r-tal.webp'].map(absolute);
 const PLANS = self.MEDINA_OFFLINE_ASSETS.map(absolute);
 const planSet = new Set(PLANS), shellSet = new Set(SHELL);
 let warming = null;

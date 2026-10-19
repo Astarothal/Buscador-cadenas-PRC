@@ -410,7 +410,7 @@
           const isDematicGG=(h.asset?.rows||[]).some(row=>{const parts=String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_');return parts[1]==='GGC'||parts[1]==='GG'&&DEMATIC_PLC.has(parts[0]);});
           const isDematicKK=(h.asset?.rows||[]).some(row=>{const parts=String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_');return ['KKR','KKRA'].includes(parts[1])||parts[1]==='KK'&&DEMATIC_PLC.has(parts[0]);});
           const k12rRows=(h.asset?.rows||[]).filter(row=>String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[1]==='K12R');
-          const k12rIcon=k12rRows.length?(k12rRows.some(row=>String(row.e||'').toUpperCase().split('_')[0]==='EMP2')?'k12r-emp2':'k12r'):null;
+          const k12rIcon=k12rRows.length?(k12rRows.some(row=>String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[0]==='TAL')?'k12r-tal':k12rRows.some(row=>String(row.e||'').toUpperCase().split('_')[0]==='EMP2')?'k12r-emp2':'k12r'):null;
           const isLRC=(h.asset?.rows||[]).some(row=>String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[1]==='LRC');
           const isRSPN=(h.asset?.rows||[]).some(row=>String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[1]==='RSPN');
           const isLRD=(h.asset?.rows||[]).some(row=>String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[1]==='LRD');

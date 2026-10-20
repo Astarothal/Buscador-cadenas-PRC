@@ -416,8 +416,9 @@
           const isLRD=(h.asset?.rows||[]).some(row=>String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[1]==='LRD');
           const isLRJ=(h.asset?.rows||[]).some(row=>/^LRJ(?:\d+)?$/.test(String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[1]||''));
           const isESC=(h.asset?.rows||[]).some(row=>String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[1]==='ESC');
+          const isKCC=(h.asset?.rows||[]).some(row=>/(?:^|[_.])KCC(?:[_.]|$)/.test(String(row.e||'').toUpperCase().replace(/\s+/g,'')));
           const isFormer=h.asset?.typeLabel==='Formadora';
-          const iconName=k12rIcon|| (isESC?'esc':isLRJ?'lrj':isLRD?'lrd':isRSPN?'rspn':isLRC?'lrc':isFormer?'formadora-c2h':isAccumulator?'acumulador':isSorter?'clasificador':isChain?'valla':isBypass?'bypass':isDematicGG?'dematic-gg':isDematicKK?'dematic-kk':null);
+          const iconName=k12rIcon|| (isKCC?'tgw-kcc':isESC?'esc':isLRJ?'lrj':isLRD?'lrd':isRSPN?'rspn':isLRC?'lrc':isFormer?'formadora-c2h':isAccumulator?'acumulador':isSorter?'clasificador':isChain?'valla':isBypass?'bypass':isDematicGG?'dematic-gg':isDematicKK?'dematic-kk':null);
           if(iconName){
             const heading=document.createElement('span');heading.className='v71-hit-heading';
             const icon=document.createElement('img');icon.className='v71-hit-icon';icon.src='./asset-icons/'+iconName+'.webp';

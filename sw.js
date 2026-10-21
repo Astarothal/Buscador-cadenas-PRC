@@ -1,6 +1,6 @@
 /* Medina beta: shell atómico por versión; planos conservados entre actualizaciones. */
 importScripts('./offline-assets.js');
-const SHELL_CACHE = 'medina-beta-shell-v0.1.92-bctgw2';
+const SHELL_CACHE = 'medina-beta-shell-v0.1.92-offlinefull1';
 const PLAN_CACHE = 'medina-beta-plans-v1';
 const absolute = path => new URL(path, self.registration.scope).href;
 const SHELL = ['./usage-core.js','./usage.js','./asset-index.js','./van-verified.js','./qr-policy.js','./index.html','./unified-search.js','./reports.js','./offline.js','./beta.css',
@@ -26,26 +26,45 @@ async function valid(response, url) {
     : url.endsWith('.css') ? type.includes('text/css')
     : url.endsWith('.html') ? type.includes('text/html') : true;
 }
-async function cachedCount() {
-  const cache = await caches.open(PLAN_CACHE);
-  return (await cache.keys()).filter(request => planSet.has(request.url)).length;
+async function verifiedCount(name, urls) {
+  const cache = await caches.open(name);
+  let count = 0;
+  for (let i=0;i<urls.length;i+=8) {
+    const found=await Promise.all(urls.slice(i,i+8).map(async url=>await valid(await cache.match(url),url)));
+    count+=found.filter(Boolean).length;
+  }
+  return count;
+}
+async function cachedCount() { return verifiedCount(PLAN_CACHE,PLANS); }
+async function snapshot() {
+  const saved=await cachedCount(), shellSaved=await verifiedCount(SHELL_CACHE,SHELL);
+  return {saved,total:PLANS.length,shellSaved,shellTotal:SHELL.length,complete:saved===PLANS.length&&shellSaved===SHELL.length};
 }
 async function notify(data) {
   const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
   clients.forEach(client => client.postMessage(data));
 }
 async function reportStatus() {
-  await notify({ type: 'OFFLINE_STATUS', saved: await cachedCount(), total: PLANS.length });
+  await notify({ type: 'OFFLINE_STATUS', ...await snapshot(), running:!!warming });
 }
 async function warmPlans() {
   if (warming) return warming;
   warming = (async () => {
     const cache = await caches.open(PLAN_CACHE);
+    const shell=await caches.open(SHELL_CACHE);
+    for(const url of SHELL){
+      if(await valid(await shell.match(url),url))continue;
+      try{
+        const source=url===absolute('./index.html')?self.registration.scope:url;
+        const response=await fetch(new Request(source,{cache:'reload'}));
+        if(await valid(response,url))await shell.put(url,response);
+      }catch(_){}
+    }
     let saved = await cachedCount(), failed = 0;
     await notify({ type: 'OFFLINE_PROGRESS', saved, failed, total: PLANS.length, running: true });
     for (let i = 0; i < PLANS.length; i += 4) {
       await Promise.all(PLANS.slice(i, i + 4).map(async url => {
-        if (await cache.match(url)) return;
+        if (await valid(await cache.match(url),url)) return;
         try {
           const response = await fetch(new Request(url, { cache: 'reload' }));
           if (!await valid(response, url)) throw new Error('Plano no disponible');
@@ -54,7 +73,7 @@ async function warmPlans() {
       }));
       await notify({ type: 'OFFLINE_PROGRESS', saved, failed, total: PLANS.length, running: true });
     }
-    await notify({ type: 'OFFLINE_PROGRESS', saved: await cachedCount(), failed, total: PLANS.length, running: false });
+    await notify({ type: 'OFFLINE_PROGRESS', ...await snapshot(), failed, running: false });
   })().finally(() => { warming = null; });
   return warming;
 }

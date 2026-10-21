@@ -4,23 +4,27 @@
   const badge = $('offlineState'), detail = $('offlineDetail'), button = $('offlineDownload');
   const planCache = 'medina-beta-plans-v1';
   let registration, lastStatus = null, busy = false;
+  const pendingKey='medina-offline-download-pending';
+  let resumeWanted=false;
+  try{resumeWanted=localStorage.getItem(pendingKey)==='1';}catch(_){}
   function connection() {
     badge.textContent = navigator.onLine ? 'Con conexión' : 'Sin conexión';
     badge.dataset.offline = String(!navigator.onLine);
     button.disabled = busy || !navigator.onLine || !registration;
-    if (!navigator.onLine && !busy) detail.textContent = 'Solo planos guardados. AUWA, IMMS y Teams: sin conexión.';
+    if (!navigator.onLine && !busy) {
+      detail.textContent=lastStatus?.complete?'Listo sin conexión · Todos los mapas guardados.':`Sin conexión · ${lastStatus?.saved||0} de ${lastStatus?.total||'…'} mapas guardados.`;
+    }
   }
   function status(data) {
     lastStatus = data;
-    if (data.type === 'OFFLINE_PROGRESS') {
-      busy = data.running;
-      detail.textContent = data.running
-        ? `Guardando planos: ${data.saved} de ${data.total} · ${data.failed} pendientes.`
-        : `${data.saved} de ${data.total} planos guardados.${data.failed ? ' Pendientes: reintentar descarga.' : ''}`;
-    } else if (!busy) {
-      detail.textContent = `${data.saved} de ${data.total} planos guardados.`;
+    if(data.type==='OFFLINE_PROGRESS')busy=Boolean(data.running);
+    if(data.complete){
+      resumeWanted=false;try{localStorage.removeItem(pendingKey);}catch(_){}
     }
-    button.textContent = busy ? 'Guardando planos…' : 'Guardar todos los planos';
+    detail.textContent = busy ? `Descargando: ${data.saved} de ${data.total} mapas.`
+      : data.complete ? 'Listo sin conexión · Todos los mapas guardados.'
+      : `${data.saved} de ${data.total} mapas guardados.${data.failed?' Pendientes: reintentar descarga.':''}`;
+    button.textContent=busy?'Descargando…':data.complete?'Verificar descarga':'Descargar todo para uso offline';
     connection();
   }
   function tell(type) {
@@ -71,13 +75,16 @@
   document.addEventListener('error', event => {
     if (event.target.tagName === 'IMG' && /\.webp(?:\?|$)/.test(event.target.src)) imageNotice(event.target, true);
   }, true);
-  button.addEventListener('click', () => {
-    if (!navigator.onLine) return;
-    busy = true;connection();button.textContent = 'Guardando planos…';
-    detail.textContent = 'Descargando planos (85 MB)…';
+  async function downloadAll() {
+    if(!navigator.onLine||busy||!registration)return;
+    resumeWanted=true;try{localStorage.setItem(pendingKey,'1');}catch(_){}
+    busy=true;connection();button.textContent='Descargando…';
+    detail.textContent='Descargando buscador y mapas (aprox. 95 MB)…';
+    try{await navigator.storage?.persist?.();}catch(_){}
     tell('PRECACHE_ALL');
-  });
-  window.addEventListener('online', () => { connection();tell('OFFLINE_STATUS'); });
+  }
+  button.addEventListener('click',downloadAll);
+  window.addEventListener('online',()=>{connection();tell('OFFLINE_STATUS');if(resumeWanted)downloadAll();});
   window.addEventListener('offline', connection);
   connection();
   if (!('serviceWorker' in navigator) || !location.protocol.startsWith('http')) {
@@ -92,6 +99,7 @@
     registration = reg;
     await navigator.serviceWorker.ready;
     connection();tell('OFFLINE_STATUS');
+    if(resumeWanted)downloadAll();
     document.querySelectorAll('img').forEach(saveLoadedPlan);
   }).catch(() => {
     detail.textContent = 'Guardado sin conexión no disponible. Recarga para reintentar.';

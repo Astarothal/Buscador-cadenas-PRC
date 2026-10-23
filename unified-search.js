@@ -1,4 +1,4 @@
-/* Grupo 5 · v0.1.92 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
+/* Grupo 5 · v0.1.93 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
 (() => {
   'use strict';
   // Actualiza los textos sin sustituir el HTML que contiene los planos.
@@ -8,11 +8,11 @@
   compactText('.v71-intro h2','Buscar');
   ['v71Status','layoutStatus','vanStatus','qrStatus','paqStatus','tgwStatus'].forEach(id=>compactText('#'+id,''));
   compactText('#layoutSection .legend','Verde: recorrido · S: seccionador');
-  document.querySelectorAll('.v71-beta').forEach(node=>{node.textContent=node.textContent.replace(/v0\.1\.\d+(?:\.\d+)?/g,'v0.1.92');});
+  document.querySelectorAll('.v71-beta').forEach(node=>{node.textContent=node.textContent.replace(/v0\.1\.\d+(?:\.\d+)?/g,'v0.1.93');});
   const helpCard=document.querySelector('#helpModal .help-card');
   if(helpCard){
     const close=document.getElementById('helpClose'),admin=document.getElementById('usageOpen');
-    helpCard.innerHTML="\n    <div class=\"help-head\">\n      <h2 id=\"helpTitle\">Ayuda</h2>\n      <button id=\"helpClose\" class=\"help-close\" type=\"button\" aria-label=\"Cerrar\">×</button>\n    </div>\n    <h3>Añadir a la PDA</h3>\n    <p>Abre el buscador en el navegador y guárdalo en la pantalla de inicio como <b>acceso directo, no como aplicación</b>.</p>\n    <h3>Actualizar</h3>\n    <p>Con conexión, pulsa <b>Actualizar</b>. Si no cambia, cierra todas las pestañas del buscador y vuelve a abrirlo.</p>\n    <button id=\"forceUpdateBtn\" class=\"help-update\" type=\"button\">Actualizar</button>\n    <p id=\"forceUpdateMsg\" class=\"status\" role=\"status\"></p>\n    <h3>Reportar errores</h3>\n    <p><b>Reportar</b> → describe el error → <b>Abrir Teams</b> → envía el mensaje a Medina.</p>\n    <p class=\"status\"><span id=\"helpVersion\">v0.1.92</span></p>\n    <p class=\"help-admin-footer\"><a href=\"#estadisticas\" id=\"usageOpen\" class=\"help-admin-link\">Estadísticas</a></p>";
+    helpCard.innerHTML="\n    <div class=\"help-head\">\n      <h2 id=\"helpTitle\">Ayuda</h2>\n      <button id=\"helpClose\" class=\"help-close\" type=\"button\" aria-label=\"Cerrar\">×</button>\n    </div>\n    <h3>Añadir a la PDA</h3>\n    <p>Abre el buscador en el navegador y guárdalo en la pantalla de inicio como <b>acceso directo, no como aplicación</b>.</p>\n    <h3>Actualizar</h3>\n    <p>Con conexión, pulsa <b>Actualizar</b>. Si no cambia, cierra todas las pestañas del buscador y vuelve a abrirlo.</p>\n    <button id=\"forceUpdateBtn\" class=\"help-update\" type=\"button\">Actualizar</button>\n    <p id=\"forceUpdateMsg\" class=\"status\" role=\"status\"></p>\n    <h3>Reportar errores</h3>\n    <p><b>Reportar</b> → describe el error → <b>Abrir Teams</b> → envía el mensaje a Medina.</p>\n    <p class=\"status\"><span id=\"helpVersion\">v0.1.93</span></p>\n    <p class=\"help-admin-footer\"><a href=\"#estadisticas\" id=\"usageOpen\" class=\"help-admin-link\">Estadísticas</a></p>";
     if(close)document.getElementById('helpClose').replaceWith(close);
     if(admin)document.getElementById('usageOpen').replaceWith(admin);
     const update=document.getElementById('forceUpdateBtn'),message=document.getElementById('forceUpdateMsg');
@@ -422,6 +422,7 @@
           const isLRD=(h.asset?.rows||[]).some(row=>String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[1]==='LRD');
           const isLRJ=(h.asset?.rows||[]).some(row=>/^LRJ(?:\d+)?$/.test(String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[1]||''));
           const isESC=(h.asset?.rows||[]).some(row=>String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[1]==='ESC');
+          const isGDD=(h.asset?.rows||[]).some(row=>String(row.e||'').toUpperCase().replace(/\s+/g,'').split('_')[1]==='GDD');
           const isBC=(h.asset?.rows||[]).some(row=>classifyAsset(row)==='multi'&&/(?:^|[_.])BC(?:[_.]|$)/.test(String(row.e||'').toUpperCase().replace(/\s+/g,'')));
           const isKRC=(h.asset?.rows||[]).some(row=>/(?:^|[_.])KRC(?:[_.]|$)/.test(String(row.e||'').toUpperCase().replace(/\s+/g,'')));
           const isKAC=(h.asset?.rows||[]).some(row=>/(?:^|[_.])KAC(?:[_.]|$)/.test(String(row.e||'').toUpperCase().replace(/\s+/g,'')));
@@ -429,7 +430,7 @@
           const isPWT=(h.asset?.rows||[]).some(row=>/(?:^|[_.])PWT(?:[_.]|$)/.test(String(row.e||'').toUpperCase().replace(/\s+/g,'')));
           const isKCC=(h.asset?.rows||[]).some(row=>/(?:^|[_.])KCC(?:[_.]|$)/.test(String(row.e||'').toUpperCase().replace(/\s+/g,'')));
           const isFormer=h.asset?.typeLabel==='Formadora';
-          const iconName=k12rIcon|| (isBC?'tgw-bc':isKRC?'tgw-krc':isKAC?'tgw-kac':isKCS?'tgw-kcs':isPWT?'tgw-pwt':isKCC?'tgw-kcc':isESC?'esc':isLRJ?'lrj':isLRD?'lrd':isRSPN?'rspn':isLRC?'lrc':isFormer?'formadora-c2h':isAccumulator?'acumulador':isSorter?'clasificador':isChain?'valla':isBypass?'bypass':isDematicGG?'dematic-gg':isDematicKK?'dematic-kk':null);
+          const iconName=k12rIcon|| (isGDD?'gdd':isBC?'tgw-bc':isKRC?'tgw-krc':isKAC?'tgw-kac':isKCS?'tgw-kcs':isPWT?'tgw-pwt':isKCC?'tgw-kcc':isESC?'esc':isLRJ?'lrj':isLRD?'lrd':isRSPN?'rspn':isLRC?'lrc':isFormer?'formadora-c2h':isAccumulator?'acumulador':isSorter?'clasificador':isChain?'valla':isBypass?'bypass':isDematicGG?'dematic-gg':isDematicKK?'dematic-kk':null);
           if(iconName){
             const heading=document.createElement('span');heading.className='v71-hit-heading';
             const icon=document.createElement('img');icon.className='v71-hit-icon';icon.src='./asset-icons/'+iconName+'.webp';
@@ -539,7 +540,7 @@
   window.v71GetReportContext=()=>{
     if(el('checkSection').classList.contains('active'))return {key:'check',section:'Checklist',query:'',detail:''};
     if(opened)return opened;
-    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v0.1.92 BETA'};
+    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v0.1.93 BETA'};
   };
   el('v71Form').addEventListener('submit',event=>{event.preventDefault();el('v71Query').blur();search()});
   el('v71Clear').addEventListener('click',()=>{el('v71Query').value='';search();el('v71Query').focus()});

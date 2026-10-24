@@ -104,11 +104,26 @@
       asset.pages = [...asset.pageMap.values()].sort((a, b) => a.kind.localeCompare(b.kind) || Number(!!b.verified?.physicalMark)-Number(!!a.verified?.physicalMark) || a.page - b.page || a.label.localeCompare(b.label, 'es', { numeric: true }));
       const references=[...asset.referenceMap.values()].filter(p=>!asset.pageMap.has(p.key));
       asset.referencePages=references.filter(p=>!references.some(q=>q.referenceBasis==='number')||p.referenceBasis==='number').sort((a,b)=>a.page-b.page);
-      asset.documents=electricalDocuments.filter(doc=>asset.refs.some(ref=>ref.kind==='prc'&&ref.type==='chain'&&doc.chains.includes(String(ref.key))));
+      asset.documents=documentsForRefs(asset.refs);
       delete asset.pageMap;delete asset.referenceMap;
     }
     return { byQR, bindings, records };
   }
+  function documentsForRefs(refs){
+    const prcRefs=refs.filter(ref=>ref.kind==='prc');
+      const documentChains=new Set();
+      for(const ref of prcRefs){
+        if(ref.type==='chain')documentChains.add(String(ref.key));
+        if(ref.type==='bypass'){
+          const relation=GARMENT_RELATIONS.bypass[String(ref.key)];
+          if(relation)for(const chain of [relation.from,relation.to])documentChains.add(String(chain));
+        }
+      }
+      const documents=electricalDocuments.filter(doc=>doc.chains.some(chain=>documentChains.has(chain))).map(doc=>({...doc,category:'Esquema eléctrico'}));
+      if(prcRefs.length)documents.push({title:'Ajuste horquilla',category:'Mantenimiento mecánico',url:'./documents/ajuste-horquilla.pdf'});
+    return documents;
+  }
+  function documentsForLocation(loc){return documentsForRefs([loc]);}
   async function ensure() {
     if (catalog) return catalog;
     if (!loading) loading = loadFullAssets().then(rows => catalog = build([...rows, ...MAPPED_ASSETS, ...confirmedAdditions])).finally(() => { loading = null; });
@@ -162,29 +177,29 @@
     if (tool.kind === 'van') { const row=asset.rows.find(r=>compact(r.e)===compact(tool.code))||asset.record;$('vanQ').value = row.e;vanOpen(tool.plc, tool.lcc, tool.code, row); }
   }
   function toolLabel(tool) { return tool.kind === 'prc' ? `Herramientas ${tool.type === 'chain' ? 'cadena' : 'bypass'} ${tool.key}` : 'Herramientas del plano'; }
-  function renderElectrical(asset,panel){
+  function renderDocumentation(asset,panel,actionBar=null){
     if(!asset.documents?.length)return;
     const section=document.createElement('details');section.className='asset-electrical';
-    const summary=document.createElement('summary');summary.textContent='Documentación eléctrica';section.appendChild(summary);
+    const summary=document.createElement('summary');summary.textContent='Documentación';section.appendChild(summary);
+    const list=document.createElement('ul');list.className='asset-document-list';
     for(const doc of asset.documents){
-      const article=document.createElement('article');article.className='asset-electrical-doc';
-      const label=document.createElement('h4');label.textContent='Cadena '+doc.chains.join(' / ');
-      const link=document.createElement('a');link.href=doc.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Abrir PDF ↗';link.title=doc.title;
-      const frame=document.createElement('iframe');frame.title='Esquema eléctrico · '+label.textContent;frame.loading='lazy';frame.dataset.src=doc.url.replace(/\/view(?:\?.*)?$/,'/preview');
-      article.append(label,link,frame);section.appendChild(article);
+      const item=document.createElement('li');
+      const link=document.createElement('a');link.href=doc.url;link.target='_blank';link.rel='noopener noreferrer';
+      link.textContent=(doc.chains?'Esquema eléctrico · Cadena '+doc.chains.join(' / '):doc.title)+' ↗';
+      link.title=doc.title;item.appendChild(link);list.appendChild(item);
     }
-    section.addEventListener('toggle',()=>{
-      if(section.open)for(const frame of section.querySelectorAll('iframe'))if(!frame.hasAttribute('src'))frame.src=frame.dataset.src;
-    });
+    section.appendChild(list);
     panel.appendChild(section);
-    const actions=panel.querySelector('.asset-layout-actions');
-    if(actions){const button=document.createElement('button');button.type='button';button.className='asset-electrical-open';button.textContent='Esquema eléctrico';button.onclick=()=>{
-      section.open=true;
-      for(const frame of section.querySelectorAll('iframe'))if(!frame.hasAttribute('src'))frame.src=frame.dataset.src;
-      section.style.scrollMarginTop=((document.querySelector('header')?.getBoundingClientRect().height||0)+8)+'px';
-      section.scrollIntoView({block:'start',behavior:'instant'});
-    };actions.appendChild(button);}
+    const actions=actionBar||panel.querySelector('.asset-layout-actions');
+    if(actions){
+      const button=document.createElement('button');button.type='button';button.className='asset-electrical-open';button.textContent='Documentación';
+      button.setAttribute('aria-expanded','false');
+      button.onclick=()=>{section.open=!section.open;button.setAttribute('aria-expanded',String(section.open));};
+      section.addEventListener('toggle',()=>button.setAttribute('aria-expanded',String(section.open)));
+      actions.appendChild(button);
+    }
   }
+
   async function render(row) {
     const my = ++renderSerial;
     const footer=$('qrFooter'),auwa=$('qrAuwa');
@@ -265,7 +280,7 @@
       img.src = page.kind === 'prc' ? pageData(page.page) : page.image;
       if (img.complete && img.naturalWidth) init();
     });
-    renderElectrical(asset,panel);
+    renderDocumentation(asset,panel);
     // La entrada muestra el plano; las cargas tardías no vuelven a mover la página.
     const first=panel.querySelector('.asset-layout-page');
     if(first&&$('qrSection').classList.contains('active')){
@@ -273,5 +288,5 @@
       first.scrollIntoView({block:'start',behavior:'instant'});
     }
   }
-  window.MedinaAssets = Object.freeze({ ensure, get, forLocation, rowsForLocation, unifyHits, renderLegacy, runTool, render, build, records: () => catalog?.records || fullAssets || MAPPED_ASSETS });
+  window.MedinaAssets = Object.freeze({ documentsForLocation, renderDocumentation, ensure, get, forLocation, rowsForLocation, unifyHits, renderLegacy, runTool, render, build, records: () => catalog?.records || fullAssets || MAPPED_ASSETS });
 })();

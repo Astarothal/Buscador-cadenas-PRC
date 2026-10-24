@@ -1,4 +1,4 @@
-/* Grupo 5 · v0.1.93 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
+/* Grupo 5 · v0.1.94.1 BETA · Unifica motores existentes sin modificar sus índices ni sus visores. */
 (() => {
   'use strict';
   // Actualiza los textos sin sustituir el HTML que contiene los planos.
@@ -8,11 +8,11 @@
   compactText('.v71-intro h2','Buscar');
   ['v71Status','layoutStatus','vanStatus','qrStatus','paqStatus','tgwStatus'].forEach(id=>compactText('#'+id,''));
   compactText('#layoutSection .legend','Verde: recorrido · S: seccionador');
-  document.querySelectorAll('.v71-beta').forEach(node=>{node.textContent=node.textContent.replace(/v0\.1\.\d+(?:\.\d+)?/g,'v0.1.93');});
+  document.querySelectorAll('.v71-beta').forEach(node=>{node.textContent=node.textContent.replace(/v0\.1\.\d+(?:\.\d+)?/g,'v0.1.94.1');});
   const helpCard=document.querySelector('#helpModal .help-card');
   if(helpCard){
     const close=document.getElementById('helpClose'),admin=document.getElementById('usageOpen');
-    helpCard.innerHTML="\n    <div class=\"help-head\">\n      <h2 id=\"helpTitle\">Ayuda</h2>\n      <button id=\"helpClose\" class=\"help-close\" type=\"button\" aria-label=\"Cerrar\">×</button>\n    </div>\n    <h3>Añadir a la PDA</h3>\n    <p>Abre el buscador en el navegador y guárdalo en la pantalla de inicio como <b>acceso directo, no como aplicación</b>.</p>\n    <h3>Actualizar</h3>\n    <p>Con conexión, pulsa <b>Actualizar</b>. Si no cambia, cierra todas las pestañas del buscador y vuelve a abrirlo.</p>\n    <button id=\"forceUpdateBtn\" class=\"help-update\" type=\"button\">Actualizar</button>\n    <p id=\"forceUpdateMsg\" class=\"status\" role=\"status\"></p>\n    <h3>Reportar errores</h3>\n    <p><b>Reportar</b> → describe el error → <b>Abrir Teams</b> → envía el mensaje a Medina.</p>\n    <p class=\"status\"><span id=\"helpVersion\">v0.1.93</span></p>\n    <p class=\"help-admin-footer\"><a href=\"#estadisticas\" id=\"usageOpen\" class=\"help-admin-link\">Estadísticas</a></p>";
+    helpCard.innerHTML="\n    <div class=\"help-head\">\n      <h2 id=\"helpTitle\">Ayuda</h2>\n      <button id=\"helpClose\" class=\"help-close\" type=\"button\" aria-label=\"Cerrar\">×</button>\n    </div>\n    <h3>Añadir a la PDA</h3>\n    <p>Abre el buscador en el navegador y guárdalo en la pantalla de inicio como <b>acceso directo, no como aplicación</b>.</p>\n    <h3>Actualizar</h3>\n    <p>Con conexión, pulsa <b>Actualizar</b>. Si no cambia, cierra todas las pestañas del buscador y vuelve a abrirlo.</p>\n    <button id=\"forceUpdateBtn\" class=\"help-update\" type=\"button\">Actualizar</button>\n    <p id=\"forceUpdateMsg\" class=\"status\" role=\"status\"></p>\n    <h3>Reportar errores</h3>\n    <p><b>Reportar</b> → describe el error → <b>Abrir Teams</b> → envía el mensaje a Medina.</p>\n    <p class=\"status\"><span id=\"helpVersion\">v0.1.94.1</span></p>\n    <p class=\"help-admin-footer\"><a href=\"#estadisticas\" id=\"usageOpen\" class=\"help-admin-link\">Estadísticas</a></p>";
     if(close)document.getElementById('helpClose').replaceWith(close);
     if(admin)document.getElementById('usageOpen').replaceWith(admin);
     const update=document.getElementById('forceUpdateBtn'),message=document.getElementById('forceUpdateMsg');
@@ -328,6 +328,7 @@
   function setView(section,tag,ctx){
     const back=el('assetToolBack');if(back)back.hidden=true;
     ChainHighlight.clear();
+    body.classList.remove('v71-prc-detail');
     document.querySelectorAll('main > section.section').forEach(sectionEl=>sectionEl.classList.toggle('active',sectionEl.id===section));
     el('v71DetailBar').hidden=false;
     el('v71DetailTag').textContent=tag;
@@ -341,6 +342,12 @@
   }
   function showAsset(asset,query=activeQuery){
     if(!asset)return;
+    const prc=asset.refs.find(ref=>ref.kind==='prc'&&ref.type==='chain')||asset.refs.find(ref=>ref.kind==='prc'&&ref.type==='bypass');
+    if(prc){
+      setView('layoutSection',(prc.type==='chain'?'Cadena ':'Bypass ')+prc.key,{key:'layout',section:'Activo QR '+asset.qr,query,detail:asset.record.e});
+      el('layoutQ').value=prc.key;searchLayout();
+      window.MedinaUsage?.track('asset',{qr:asset.qr});return;
+    }
     setView('qrSection','Activo · QR '+asset.qr,{key:'qr',section:'Activo QR '+asset.qr,query,detail:asset.aliases.join(' · ')+' · '+asset.pages.map(p=>p.label).join(' / ')+(asset.referencePages?.length?' · Planos de referencia pendientes de verificar: '+asset.referencePages.map(p=>p.label).join(' / '):'')});
     showQR(asset.record);
     window.MedinaUsage?.track('asset',{qr:asset.qr});
@@ -355,6 +362,25 @@
     let back=el('assetToolBack');
     if(!back){back=document.createElement('button');back.id='assetToolBack';back.type='button';el('v71DetailBar').appendChild(back);}
     back.hidden=false;back.textContent='← Activo QR '+asset.qr;back.onclick=()=>showAsset(asset,query);
+  };
+  // La vista PRC es la ficha única: las entradas por número, QR y conexiones comparten visor.
+  const originalGarmentRelation=renderGarmentRelation;
+  renderGarmentRelation=(key,h)=>{
+    originalGarmentRelation(key,h);
+    body.classList.add('v71-prc-detail');
+    el('v71DetailTag').textContent=(h.type==='chain'?'Cadena ':'Bypass ')+key;
+    const controls=el('sharedPlaneControls'),relation=el('garmentRelation');
+    relation.after(controls);
+    controls.querySelectorAll('.asset-electrical-open').forEach(node=>node.remove());
+    let docs=el('prcDocumentation');
+    if(!docs){docs=document.createElement('div');docs.id='prcDocumentation';el('asset').before(docs);}
+    controls.after(docs);
+    docs.replaceChildren();
+    MedinaAssets.renderDocumentation({documents:MedinaAssets.documentsForLocation({kind:'prc',type:h.type,key})},docs,controls);
+    // Las relaciones siguen en la misma ficha al abrir un bypass de entrada o salida.
+    relation.querySelectorAll('[data-bp]').forEach(button=>button.onclick=()=>{
+      el('layoutQ').value=button.dataset.bp;searchLayout();window.scrollTo(0,0);
+    });
   };
   function openHit(h){
     if(h.asset){showAsset(h.asset);return;}
@@ -528,6 +554,7 @@
     currentItems=items;render(items,raw);
   }
   function openHome(){
+    body.classList.remove('v71-prc-detail');
     el('usageOpen').classList.remove('active');el('usageOpen').removeAttribute('aria-current');el('v71Home').setAttribute('aria-current','page');
     const back=el('assetToolBack');if(back)back.hidden=true;ChainHighlight.clear();
     document.querySelectorAll('main > section.section').forEach(sec=>sec.classList.toggle('active',sec.id==='unifiedSection'));
@@ -540,7 +567,7 @@
   window.v71GetReportContext=()=>{
     if(el('checkSection').classList.contains('active'))return {key:'check',section:'Checklist',query:'',detail:''};
     if(opened)return opened;
-    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v0.1.93 BETA'};
+    return {key:'unified',section:FILTER_LABEL[filter],query:el('v71Query').value.trim(),detail:'Buscador unificado · v0.1.94.1 BETA'};
   };
   el('v71Form').addEventListener('submit',event=>{event.preventDefault();el('v71Query').blur();search()});
   el('v71Clear').addEventListener('click',()=>{el('v71Query').value='';search();el('v71Query').focus()});

@@ -70,3 +70,16 @@ html body #stickyAuwaSelect{font-size:16px!important}
 .asset-electrical-doc h4{font-size:13px;margin:14px 0 8px}
 .asset-electrical-doc>a{display:inline-block;min-height:36px;color:#174c89;font-weight:600}
 .asset-electrical-doc iframe{display:block;width:100%;height:70vh;min-height:320px;border:1px solid #ddd;border-radius:5px;background:#fafafa;margin:8px 0}
+
+/* Ficha única de cadenas y bypass: visor PRC con tres acciones. */
+.v71-prc-detail #layoutSection .layout-search-row,
+.v71-prc-detail #planeDimToggle,
+.v71-prc-detail #layoutViewer .controls,
+.v71-prc-detail #layoutMultiViewer .page-tools {display:none!important}
+.v71-prc-detail #sharedPlaneControls {display:flex!important;gap:8px;margin:12px 0}
+.v71-prc-detail #sharedPlaneControls button {font-size:13px;padding:9px 12px}
+.v71-prc-detail #garmentRelation {margin-top:0}
+
+.asset-document-list{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:4px}
+.asset-document-list a{display:block;padding:10px 8px;color:#174c89;font-size:13px;font-weight:600;border-radius:5px;text-decoration:underline}
+.asset-document-list a:hover{background:#f0f5fa}

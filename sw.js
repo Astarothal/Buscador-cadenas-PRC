@@ -1,9 +1,9 @@
 /* Medina beta: shell atómico por versión; planos conservados entre actualizaciones. */
 importScripts('./offline-assets.js');
-const SHELL_CACHE = 'medina-beta-shell-v0.1.93-gdd';
+const SHELL_CACHE = 'medina-beta-shell-v0.1.94.1-documentation-list';
 const PLAN_CACHE = 'medina-beta-plans-v1';
 const absolute = path => new URL(path, self.registration.scope).href;
-const SHELL = ['./usage-core.js','./usage.js','./asset-index.js','./van-verified.js','./qr-policy.js','./index.html','./unified-search.js','./reports.js','./offline.js','./beta.css',
+const SHELL = ['./documents/ajuste-horquilla.pdf','./usage-core.js','./usage.js','./asset-index.js','./van-verified.js','./qr-policy.js','./index.html','./unified-search.js','./reports.js','./offline.js','./beta.css',
   './offline-assets.js','./manifest.webmanifest','./favicon.png','./icon.svg','./icon-192.png',
   './icon-512.png','./apple-touch-icon.png','./auwa-equivalencias.js','./ct-lines.js',
   './bp-lines.js','./accumulator-traces.js','./plane-gestures.js','./chain-highlight.js','./asset-icons/valla.webp','./asset-icons/bypass.webp','./asset-icons/clasificador.webp','./asset-icons/acumulador.webp','./asset-icons/dematic-gg.webp','./asset-icons/dematic-kk.webp','./asset-icons/formadora-c2h.webp','./asset-icons/k12r.webp','./asset-icons/k12r-emp2.webp','./asset-icons/lrc.webp','./asset-icons/rspn.webp','./asset-icons/lrd.webp','./asset-icons/lrj.webp','./asset-icons/k12r-tal.webp','./asset-icons/esc.webp','./asset-icons/tgw-kcc.webp','./asset-icons/tgw-pwt.webp','./asset-icons/tgw-kcs.webp','./asset-icons/tgw-kac.webp','./asset-icons/tgw-krc.webp','./asset-icons/tgw-bc.webp','./asset-icons/gdd.webp'].map(absolute);
@@ -13,6 +13,10 @@ let warming = null;
 async function valid(response, url) {
   if (!response || !response.ok || response.redirected) return false;
   const type = response.headers.get('content-type') || '';
+  if (url.endsWith('.pdf')) {
+    const bytes=new Uint8Array(await response.clone().arrayBuffer());
+    return bytes.length>=5 && String.fromCharCode(...bytes.slice(0,5))==='%PDF-';
+  }
   if (url.endsWith('.webp')) {
     if (type.startsWith('image/')) return true;
     // Sites puede servir WebP como octet-stream. Verificamos los bytes, no una página de acceso.
